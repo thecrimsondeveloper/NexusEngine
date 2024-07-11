@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe8684e83ee8c5478ef8be89e2e0e89, type: 3}
+  m_Name: Feeding Frenzy Hippo Session
+  m_EditorClassIdentifier: 
+  sessionName: 
+  loadDelay: 0
+  dependencies: []
+  postLoadDependencies:
+  - {fileID: 11400000, guid: a21b300013b42ad4d9964677dcd79b43, type: 2}
+  SessionPrefab: {fileID: 3764238162222592927, guid: 42bc02a60a63b8940b44ebcebf97c434, type: 3}
+  playerMode: 0
+  hippoPlayerPrefab: {fileID: 5599325886144294031, guid: 24d6cb683a94e184bac81cb3f4ea097b, type: 3}
+  soldierPlayerPrefab: {fileID: 828462953717498274, guid: 22abd0a5b313f1c46ac4594fb693d4e6, type: 3}

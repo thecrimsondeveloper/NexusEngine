@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:TOYBOX/Assets/LLGD_Toolkit/DependencyResolver/Editor/DependencyViewer.cs.meta
+guid: 7c37310f9121b1f49bb29d861a98411e
+========
+guid: 4a0941cf460d10f4896e47197fb26ed6
+>>>>>>>> development:TOYBOX/Assets/LLGD_Toolkit/DependencyResolver/DependencyCollection.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

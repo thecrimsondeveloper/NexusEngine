@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc8a7ef6ee151804fb73d1d4b5b9f23a, type: 3}
+  m_Name: XRPlayerSettings
+  m_EditorClassIdentifier: 
+  neckHeight: 0.15
+  punchSpeed: 0.5
+  timeToTrackAverages: 0.2
+  leftHandOffset: {x: -90, y: -90, z: 0}
+  rightHandOffset: {x: 90, y: -90, z: 0}
+  leftHandPositionOffset: {x: 0, y: 0.075, z: 0.015}
+  rightHandPositionOffset: {x: 0, y: 0.075, z: 0.015}

@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: Assets/_TOYBOX/01_MiniGames/OpenWorldSession/OpenWorld_Demo.unity
+    guid: adf442a15c961b843b756982ee84cdb2
+  - enabled: 0
+    path: Assets/_TOYBOX/_Games/CosmicCrafter/CosmicCrafter.unity
+    guid: a696be90e4c4e64438fdfd58b526ea93
+  - enabled: 0
+    path: Assets/_TOYBOX/01_MiniGames/ArcadeRoom/SpaceBoy/Nexus_Testing/NexusFPSTest.unity
+    guid: 7043f3208affb634a8a10965555fd0ca
+  - enabled: 0
+    path: Assets/_TOYBOX/01_MiniGames/FeedingFrenzySession/FeedingFrenzy_Multiplayer.unity
+    guid: 1c2ccb064e955f84d8c72f7bf369cc41
+  - enabled: 0
+    path: Assets/_TOYBOX/01_MiniGames/ArcadeRoom/GridDash/GridDashTesting.unity
+    guid: 45341a741dfe22a4081a0b739836878d
+  - enabled: 0
+    path: Assets/_TOYBOX/01_MiniGames/ArcadeRoom/BEUB_Demo.unity
+    guid: 178b774f34a999f468f03026e15352b9
+  - enabled: 0
+    path: Assets/_TOYBOX/02_XR/VR_Player_Passthrough_Additive.unity
+    guid: 5a12e9790a2b2c64d9d45a0206ac7ac6
+  - enabled: 0
+    path: Assets/_TOYBOX/00_Launcher/Launcher.unity
+    guid: 3b77eb0b39291044db989c8900028efe
+  - enabled: 0
+    path: Assets/_TOYBOX/00_Launcher/Deprecated/Launcher_old.unity
+    guid: 1cb56ee132f99064a8f936767775efee
+  - enabled: 0
+    path: Assets/_TOYBOX/01_MiniGames/00_Whack-a-mole_Session/FlashlightScene_Testing.unity
+    guid: fedc824cc9ea8e9419c3777f4b18e4fe
+  - enabled: 0
+    path: Assets/_TOYBOX/01_MiniGames/00_Whack-a-mole_Session/WackAMole_Testing.unity
+    guid: 12adb42d5c321c3488c54761435aeb14
+  - enabled: 0
+    path: Assets/_TOYBOX/01_MiniGames/00_CPR_Training_Session/CPR_Training.unity
+    guid: 0efd05be31bdd9642bc253a74c9fe955
+  - enabled: 0
+    path: Assets/_TOOLKIT/_XR/Deprecated/SnapToDeskExample.unity
+    guid: 64df068de74b32e4997f06a72fbfa9c1
+  - enabled: 0
+    path: Assets/_TOYBOX/00_Launcher/GameUI/GameUI_Additive.unity
+    guid: b8c190c5dd641e346a889682b4590dfb
+  - enabled: 0
+    path: Assets/LLGD_Samples/_XR/OVRSceneManager_Additive.unity
+    guid: 565a56318ba0af64396bd29497b01089
+  - enabled: 1
+    path: Assets/_TOYBOX/01_MiniGames/OpenWorldSession/_OpenWorldGame/00_Scenes/Home.unity
+    guid: 3defbcba2a59e214bbcbe9441846f1db
+  - enabled: 1
+    path: Assets/_TOYBOX/02_XR/VR_Player_Additive.unity
+    guid: 9c1304df4bf474746ae45f29fdab7b9a
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 0d7dba342b77f0f4e87a94da157df7a9, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 11e96cbdcc3f2344082d4d5dd90eb1b0, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 5c30dac73d98d684b81b19eca724ce37, type: 2}

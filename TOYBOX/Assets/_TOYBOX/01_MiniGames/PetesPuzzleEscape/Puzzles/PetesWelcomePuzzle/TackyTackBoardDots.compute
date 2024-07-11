@@ -1,0 +1,22 @@
+#pragma kernel CSMain
+
+RWTexture2D<float4> surface;
+float2 target;
+float distanceThreshold; //adjust this value as needed for the dot size
+
+[numthreads(8,8,1)]
+void CSMain (uint2 id : SV_DispatchThreadID)
+{
+    float2 uv = float2((float)id.x / 1024, (float)id.y / 1024);
+
+    float2 delta = target - uv;
+    float distanceSquared = dot(delta, delta);
+
+    // If the current pixel is within the distance threshold from the target point, add a dot
+    if (distanceSquared < distanceThreshold * distanceThreshold)
+    {
+        //lerp between black and grey smoothly
+        float4 color = lerp(float4(1, 1, 1, 1), float4(0, 0, 0, 1), distanceSquared / (distanceThreshold * distanceThreshold));
+        surface[id.xy] -= color;
+    }
+}

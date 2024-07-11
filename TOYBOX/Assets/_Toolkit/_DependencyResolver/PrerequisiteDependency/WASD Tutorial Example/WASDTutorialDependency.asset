@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e064a50d40fd9a478812434460f6e3d, type: 3}
+  m_Name: WASDTutorialDependency
+  m_EditorClassIdentifier: 
+  type: 4
+  resolver: {fileID: -5900623918087039107, guid: 18579b42334ba3946acfca18861c8733, type: 3}
+  prerequisiteEvents:
+    onPreRequisiteLoaded:
+      m_PersistentCalls:
+        m_Calls: []
+    onPrerequisiteCompleted:
+      m_PersistentCalls:
+        m_Calls: []

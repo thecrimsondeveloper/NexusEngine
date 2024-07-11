@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131d4da376cf2d34fa998505ed53a773, type: 3}
+  m_Name: BeatEmUpBilly'sArcade_SessionData_DebugPlayer
+  m_EditorClassIdentifier: 
+  sessionName: Beat Em Up Billy's Arcade
+  hasTutorial: 0
+  loadDelay: 0
+  dependencies:
+  - {fileID: 11400000, guid: dbdbd6f9386623a43a682b982c348a25, type: 2}
+  SessionPrefab: {fileID: 7403456023534950443, guid: 5ec79b1e73b0a7a42a6ba4e51fcfebac, type: 3}

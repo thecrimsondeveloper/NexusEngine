@@ -1,0 +1,48 @@
+using System;
+using Cysharp.Threading.Tasks;
+using Toolkit.Sequences;
+using UnityEngine;
+
+namespace ToyBox.Minigames.EscapeRoom
+{
+    public class GlassBoxPuzzle : MonoSequence
+    {
+        protected override UniTask Finish()
+        {
+            // Logic for async finish
+            return UniTask.CompletedTask;
+        }
+
+        protected override UniTask WhenLoad()
+        {
+            // Logic for async load
+            return UniTask.CompletedTask;
+        }
+
+        protected override UniTask Unload()
+        {
+            // Logic for async unload
+            return UniTask.CompletedTask;
+        }
+
+        protected override void AfterLoad()
+        {
+            // Logic to execute after load
+        }
+
+        protected override void OnStart()
+        {
+            // Logic to execute on start
+        }
+
+        protected override void OnFinished()
+        {
+            // Logic to execute when sequence is finished
+        }
+
+        protected override void OnUnload()
+        {
+            // Logic to execute on sequence unload
+        }
+    }
+}

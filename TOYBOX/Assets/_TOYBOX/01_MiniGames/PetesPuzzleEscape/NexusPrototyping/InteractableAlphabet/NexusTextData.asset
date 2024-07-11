@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd08d127e13dc1a42b640cb06b816e92, type: 3}
+  m_Name: NexusTextData
+  m_EditorClassIdentifier: 
+  textObjects:
+  - character: 65
+    gameObject: {fileID: 5995783104626635315, guid: 1b0a4e8fe9a020a4c94b6884e27239c4, type: 3}
+  - character: 66
+    gameObject: {fileID: 5995783104626635315, guid: cf25c0fc22bd8d04bb3af3cb2df982e1, type: 3}
+  - character: 67
+    gameObject: {fileID: 5995783104626635315, guid: 66861d13d49dd3b44a713032949982d6, type: 3}
+  - character: 68
+    gameObject: {fileID: 5995783104626635315, guid: d4c841236b431d0499afcbf7c86c6e0e, type: 3}
+  - character: 69
+    gameObject: {fileID: 5995783104626635315, guid: f0fce12de0d152940a83cacc7cc790b4, type: 3}
+  - character: 70
+    gameObject: {fileID: 5995783104626635315, guid: 4f0cfb4e01b1278448b91e247486ef21, type: 3}
+  - character: 71
+    gameObject: {fileID: 5995783104626635315, guid: 049c28c191a46714288f1851c46fd0f5, type: 3}
+  - character: 72
+    gameObject: {fileID: 5995783104626635315, guid: fcba4c713e14eaf4b942fb333fa94b10, type: 3}
+  - character: 73
+    gameObject: {fileID: 5995783104626635315, guid: 8f65afecba730374f9b646abab4621b1, type: 3}
+  - character: 74
+    gameObject: {fileID: 5995783104626635315, guid: 9890f4d27f89b2b4aba41262c17de9ad, type: 3}
+  - character: 75
+    gameObject: {fileID: 5995783104626635315, guid: 2b273f16f8dc4584b8ff2b9603e1b48c, type: 3}
+  - character: 76
+    gameObject: {fileID: 5995783104626635315, guid: 80b59cd12b33cfd41ac51ff1563f6ce2, type: 3}
+  - character: 77
+    gameObject: {fileID: 5995783104626635315, guid: f63c52daa57fc1444b64dd777da8b79d, type: 3}
+  - character: 78
+    gameObject: {fileID: 5995783104626635315, guid: 9221ff7c4d9f01e4f81848bdd1b52f2e, type: 3}
+  - character: 79
+    gameObject: {fileID: 5995783104626635315, guid: 1485c5dae151f254a9d3844862c13848, type: 3}
+  - character: 80
+    gameObject: {fileID: 5995783104626635315, guid: b659512ca43896d4fa5cc6c89d8bea60, type: 3}
+  - character: 81
+    gameObject: {fileID: 5995783104626635315, guid: ec741243c5b93424d9808a6e4512d526, type: 3}
+  - character: 82
+    gameObject: {fileID: 5995783104626635315, guid: afbd82e7d0f52fd49935ed8d9883d368, type: 3}
+  - character: 83
+    gameObject: {fileID: 5995783104626635315, guid: 402f862979607e0408a1b4209f9fc635, type: 3}
+  - character: 84
+    gameObject: {fileID: 5995783104626635315, guid: 9cdba0ad0f274ef4ea61e902074230cc, type: 3}
+  - character: 85
+    gameObject: {fileID: 5995783104626635315, guid: 854d6db51eaa7d842bdebc8f3ba9215e, type: 3}
+  - character: 86
+    gameObject: {fileID: 5995783104626635315, guid: 6b1753f8fdd283b41b838b978cc0248c, type: 3}
+  - character: 87
+    gameObject: {fileID: 5995783104626635315, guid: ba042a16f88693b4d858bb4934fb7814, type: 3}
+  - character: 88
+    gameObject: {fileID: 5995783104626635315, guid: a0cb501356fa0144681c078379ea9ce3, type: 3}
+  - character: 89
+    gameObject: {fileID: 5995783104626635315, guid: e83b7c43708b1074a92053c8920d50ca, type: 3}
+  - character: 90
+    gameObject: {fileID: 5995783104626635315, guid: af1e2cb088b2a834493f8f95b06963cd, type: 3}
