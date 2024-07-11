@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace Toolkit
 {
-    public class Tickables : MonoSingleton<Tickables>
+    public class Tickables : MonoBehaviour
     {
 
 
@@ -19,12 +19,12 @@ namespace Toolkit
 
         public static void Register(ITickable tickable)
         {
-            Instance.Internal_Register(tickable);
+            // Instance.Internal_Register(tickable);
         }
 
         public static void Unregister(ITickable tickable)
         {
-            Instance.Internal_Unregister(tickable);
+            // Instance.Internal_Unregister(tickable);
         }
 
 
