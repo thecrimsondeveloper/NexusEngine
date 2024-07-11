@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Sirenix.OdinInspector;
 using Toolkit.NexusEngine;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,7 +13,7 @@ namespace Toolkit
 
 
 
-        [ShowInInspector] static List<TickLoop> tickLoops = new List<TickLoop>();
+        static List<TickLoop> tickLoops = new List<TickLoop>();
 
 
 

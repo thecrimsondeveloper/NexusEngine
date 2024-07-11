@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Toolkit.Sequences
@@ -18,7 +17,7 @@ namespace Toolkit.Sequences
         [SerializeField] UnityEngine.Object _sequence = null;
 
 
-        [SerializeField, ShowIf(nameof(_instance))] UnityEngine.Object _instance;
+        [SerializeField] UnityEngine.Object _instance;
 
         private void Awake()
         {
@@ -76,7 +75,7 @@ namespace Toolkit.Sequences
             // }
         }
 
-        [Button]
+
         public virtual void Run()
         {
             if (IsSequencePrefab() && _instance == null)
@@ -122,7 +121,6 @@ namespace Toolkit.Sequences
 
         }
 
-        [Button]
         public virtual void Stop()
         {
             if (_sequence && _sequence is ISequence sequence)

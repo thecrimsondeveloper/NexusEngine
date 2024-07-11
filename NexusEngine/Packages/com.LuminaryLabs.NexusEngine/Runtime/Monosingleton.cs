@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
 {
 
 
-    [ShowInInspector, FoldoutGroup("Singleton")] private static T instance = null;
-    [SerializeField, FoldoutGroup("Singleton")] bool shouldPersistBetweenScenes = false;
+    private static T instance = null;
+    [SerializeField] bool shouldPersistBetweenScenes = false;
 
     protected static T Instance
     {
