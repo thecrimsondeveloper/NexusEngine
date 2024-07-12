@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace Toolkit
 {
-    public class Tickables : MonoBehaviour
+    public class Tickables : MonoSingleton<Tickables>
     {
 
 
@@ -16,15 +16,28 @@ namespace Toolkit
         static List<TickLoop> tickLoops = new List<TickLoop>();
 
 
+        static List<ITickable> updateTickables = new List<ITickable>();
 
         public static void Register(ITickable tickable)
         {
-            // Instance.Internal_Register(tickable);
+            Instance.Internal_Register(tickable);
         }
 
         public static void Unregister(ITickable tickable)
         {
-            // Instance.Internal_Unregister(tickable);
+            Instance.Internal_Unregister(tickable);
+        }
+
+
+
+        public static void RegisterUpdateTickable(ITickable tickable)
+        {
+            Instance.Internal_RegisterUpdateTickable(tickable);
+        }
+
+        public static void UnregisterUpdateTickable(ITickable tickable)
+        {
+            Instance.Internal_UnregisterUpdateTickable(tickable);
         }
 
 
@@ -61,6 +74,16 @@ namespace Toolkit
                     return;
                 }
             }
+        }
+
+        private void Internal_RegisterUpdateTickable(ITickable tickable)
+        {
+            updateTickables.Add(tickable);
+        }
+
+        private void Internal_UnregisterUpdateTickable(ITickable tickable)
+        {
+            updateTickables.Remove(tickable);
         }
 
         private void Update()

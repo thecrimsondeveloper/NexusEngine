@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,23 +14,30 @@ namespace Toolkit.Sequences
     {
         private static readonly Dictionary<Guid, IBaseSequence> runningSequences = new Dictionary<Guid, IBaseSequence>();
 
-        private static void RegisterSequence(IBaseSequence sequence)
+        public static void RegisterSequence(IBaseSequence sequence)
         {
+            if (sequence.guid == Guid.Empty)
+            {
+                sequence.guid = Guid.NewGuid();
+            }
+
             if (runningSequences.ContainsKey(sequence.guid))
             {
                 Debug.LogWarning("Sequence already running");
                 return;
             }
+
             runningSequences.Add(sequence.guid, sequence);
         }
 
-        private static void UnregisterSequence(IBaseSequence sequence)
+        public static void UnregisterSequence(IBaseSequence sequence)
         {
             if (!runningSequences.ContainsKey(sequence.guid))
             {
                 Debug.LogWarning("Sequence not running");
                 return;
             }
+
             runningSequences.Remove(sequence.guid);
         }
 
@@ -40,31 +48,20 @@ namespace Toolkit.Sequences
 
         public static async UniTask Run(IBaseSequence sequence, SequenceRunData runData = null)
         {
-            // Prerequisites
             Debug.Log("Running sequence: " + sequence.GetType().Name);
-            if (sequence.guid != Guid.Empty && runningSequences.ContainsKey(sequence.guid))
+            if (IsRunning(sequence))
             {
                 Debug.LogWarning("Sequence already running");
                 return;
             }
 
-            if (runData != null && runData.Replace != null && runData.Replace.guid != Guid.Empty && runningSequences.ContainsKey(runData.Replace.guid))
+            if (runData?.Replace != null && IsRunning(runData.Replace))
             {
-                if (sequence is IAsyncSequence || sequence is IAsyncDataSequence)
-                {
-                    await Stop(runData.Replace);
-                }
-                else
-                {
-                    Stop(runData.Replace);
-                }
+                await Stop(runData.Replace);
             }
 
-            // Setup and run logic
-            sequence.guid = Guid.NewGuid();
             RegisterSequence(sequence);
 
-            // Async load if the sequence has async functions
             if (sequence is IAsyncSequence aSequence)
             {
                 await aSequence.LoadSequence();
@@ -74,7 +71,6 @@ namespace Toolkit.Sequences
                 await aDataSequence.LoadSequence(runData?.InitializationData);
             }
 
-            // Post load logic
             if (sequence is ISequence standardSequence)
             {
                 standardSequence.Load();
@@ -84,25 +80,17 @@ namespace Toolkit.Sequences
                 dataSequence.Load(runData?.InitializationData);
             }
 
-            if (runData != null && runData.SuperSequence != null)
-            {
-                sequence.superSequence = runData.SuperSequence;
-            }
-
-            // Start the sequence
             sequence.SequenceStart();
         }
 
-
         public static async UniTask Stop(IBaseSequence sequence)
         {
-            if (!runningSequences.ContainsKey(sequence.guid))
+            if (!IsRunning(sequence))
             {
                 Debug.LogWarning("Sequence not running");
                 return;
             }
 
-            // If has async functions, await
             if (sequence is IAsyncSequence aSequence)
             {
                 await aSequence.UnloadSequence();
@@ -120,10 +108,9 @@ namespace Toolkit.Sequences
             UnregisterSequence(sequence);
         }
 
-
         public static async UniTask Finish(IBaseSequence sequence)
         {
-            if (!runningSequences.ContainsKey(sequence.guid))
+            if (!IsRunning(sequence))
             {
                 Debug.LogWarning("Sequence not running");
                 return;
@@ -145,12 +132,88 @@ namespace Toolkit.Sequences
 
             UnregisterSequence(sequence);
         }
+
+        public static void ForEach(Action<IBaseSequence> action)
+        {
+            foreach (var sequence in runningSequences.Values)
+            {
+                action(sequence);
+            }
+        }
+
+        public static string GetSequenceTree()
+        {
+            string tree = "";
+            foreach (var sequence in runningSequences.Values)
+            {
+                tree += sequence.GetType().Name + "\n";
+            }
+            return tree;
+        }
+
+        public static List<SequenceDetails> GetSequenceDetails()
+        {
+            var details = new List<SequenceDetails>();
+
+            foreach (var sequence in runningSequences.Values)
+            {
+                if (sequence is ISequence seq)
+                {
+                    var sequenceDetail = new SequenceDetails
+                    {
+                        SequenceType = seq.GetType().Name,
+                        Fields = new List<FieldDetails>()
+                    };
+
+                    var fields = seq.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    foreach (var field in fields)
+                    {
+                        sequenceDetail.Fields.Add(new FieldDetails
+                        {
+                            FieldName = field.Name,
+                            FieldType = field.FieldType.Name,
+                            FieldValue = field.GetValue(seq)?.ToString()
+                        });
+                    }
+
+                    var properties = seq.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    foreach (var property in properties)
+                    {
+                        if (property.CanRead)
+                        {
+                            sequenceDetail.Fields.Add(new FieldDetails
+                            {
+                                FieldName = property.Name,
+                                FieldType = property.PropertyType.Name,
+                                FieldValue = property.GetValue(seq)?.ToString()
+                            });
+                        }
+                    }
+
+                    details.Add(sequenceDetail);
+                }
+            }
+
+            return details;
+        }
     }
 
     public class SequenceRunData
     {
-        public IBaseSequence SuperSequence { get; set; }
         public IBaseSequence Replace { get; set; }
         public object InitializationData { get; set; }
+    }
+
+    public class SequenceDetails
+    {
+        public string SequenceType { get; set; }
+        public List<FieldDetails> Fields { get; set; }
+    }
+
+    public class FieldDetails
+    {
+        public string FieldName { get; set; }
+        public string FieldType { get; set; }
+        public string FieldValue { get; set; }
     }
 }
