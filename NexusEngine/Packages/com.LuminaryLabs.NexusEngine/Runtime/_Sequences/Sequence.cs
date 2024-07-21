@@ -201,6 +201,7 @@ namespace Toolkit.Sequences
     public class SequenceRunData
     {
         public IBaseSequence Replace { get; set; }
+        public IBaseSequence SuperSequence { get; set; }
         public object InitializationData { get; set; }
     }
 

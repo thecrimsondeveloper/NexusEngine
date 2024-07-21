@@ -11,6 +11,7 @@ namespace Toolkit.Sequences
     public interface IBaseSequence
     {
         IBaseSequence superSequence { get; set; }
+        object currentData { get; set; }
         Guid guid { get; set; }
 
 

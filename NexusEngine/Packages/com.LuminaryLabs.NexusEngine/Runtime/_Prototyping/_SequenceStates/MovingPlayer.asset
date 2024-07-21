@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: MovingPlayer
   m_EditorClassIdentifier: 
   ID: 0
-  SubSequenceIDs:
+  SubSequenceReferences:
   - {fileID: 11400000, guid: 582ab1b06a54ee94596091de9f0af6e7, type: 2}
   - {fileID: 11400000, guid: 6f5d02e0ba7ede041ae4b60cc32a1f65, type: 2}

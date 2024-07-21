@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters;
 using UnityEngine;
 
 namespace Toolkit.Sequences
@@ -13,6 +14,7 @@ namespace Toolkit.Sequences
             OnEnable,
             Manual
         }
+        [SerializeField] UnityEngine.Object data = null;
         [SerializeField] RunMode _runMode = RunMode.OnAwake;
         [SerializeField] UnityEngine.Object _sequence = null;
 
@@ -67,35 +69,35 @@ namespace Toolkit.Sequences
                     }
                 }
             }
-
-            // if (_sequence is ISequence)
-            // {
-            //     Debug.LogWarning("SequenceController requires a MonoBehaviour that implements ISequence.");
-            //     _sequence = null;
-            // }
         }
 
 
-        public virtual void Run()
+        public async virtual void Run()
         {
-            if (IsSequencePrefab() && _instance == null)
+            if (IsSequencePrefab())
             {
                 if (_sequence is GameObject obj)
                 {
                     GameObject _instanceObject = Instantiate(obj, transform);
-                    _instance = _instanceObject;
-                    _sequence = _instanceObject.GetComponent<ISequence>() as MonoBehaviour;
+                    _instance = _instanceObject.GetComponent<ISequence>() as Object;
                 }
                 else if (_sequence is MonoBehaviour mono)
                 {
                     GameObject _instanceObject = Instantiate(mono.gameObject, transform);
-                    _instance = _instanceObject;
-                    _sequence = _instanceObject.GetComponent<ISequence>() as MonoBehaviour;
+                    _instance = _instanceObject.GetComponent<ISequence>() as Object;
                 }
             }
             else if (_sequence != null)
             {
-                _instance = IsSequencePrefab() ? _instance : IsSequenceScriptable() ? _sequence : null;
+                if (IsSequenceScriptable())
+                {
+                    //create a copy of the scriptable object
+                    _instance = Instantiate(_sequence);
+                }
+                else if (IsSequencePrefab() == false)
+                {
+                    _instance = null;
+                }
             }
             else
             {
@@ -103,20 +105,26 @@ namespace Toolkit.Sequences
                 return;
             }
 
-            if (_sequence is ISequence sequence)
+            if (_instance is IBaseSequence instanceSequence)
             {
-                BeforeRun(sequence);
-                Sequence.Run(sequence);
-                AfterRun(sequence);
+                BeforeRun(instanceSequence);
+
+
+                SequenceRunData runData = new SequenceRunData
+                {
+                    InitializationData = data
+                };
+                await Sequence.Run(instanceSequence, runData);
+                AfterRun(instanceSequence);
             }
         }
 
-        protected virtual void BeforeRun(ISequence sequence)
+        protected virtual void BeforeRun(IBaseSequence sequence)
         {
 
         }
 
-        protected virtual void AfterRun(ISequence sequence)
+        protected virtual void AfterRun(IBaseSequence sequence)
         {
 
         }

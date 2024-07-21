@@ -1,57 +1,79 @@
 using System;
 using Cysharp.Threading.Tasks;
-using Toolkit.Sequences;
 using UnityEngine;
 
 namespace Toolkit.Sequences
 {
     public class EntitySequence : MonoSequence
     {
-        [SerializeField] public PlayerMovementHandler movementHandler;
-        [SerializeField] public PlayerVisualsHandler visualsHandler;
+        [SerializeField] private PlayerMovementHandler movementHandler;
+        [SerializeField] private PlayerVisualsHandler visualsHandler;
 
-        protected override async UniTask Finish()
+        public IBaseSequence MovementHandler
         {
-            Debug.Log("PlayerSequence finished.");
-            await UniTask.CompletedTask;
+            get => movementHandler;
+            set => movementHandler = value as PlayerMovementHandler;
+        }
+
+        public IBaseSequence VisualsHandler
+        {
+            get => visualsHandler;
+            set => visualsHandler = value as PlayerVisualsHandler;
         }
 
         protected override async UniTask WhenLoad()
         {
-            // Run the visual handler for the loading sequence
-            Sequence.Run(visualsHandler);
-            Sequence.Run(movementHandler);
+            Debug.Log("EntitySequence loading...");
 
 
-            Debug.Log("PlayerSequence loaded.");
-        }
+            if (VisualsHandler != null)
+            {
+                await Sequence.Run(VisualsHandler);
+            }
 
-        protected override async UniTask Unload()
-        {
-            Debug.Log("PlayerSequence unloaded.");
-            await UniTask.CompletedTask;
+            if (MovementHandler != null)
+            {
+                await Sequence.Run(MovementHandler);
+            }
+
+            Debug.Log("EntitySequence loaded.");
         }
 
         protected override void OnStart()
         {
-            // Run the movement handler
-            Sequence.Run(movementHandler);
-            Debug.Log("PlayerSequence started.");
+            Debug.Log("EntitySequence started.");
+
+            if (MovementHandler != null)
+            {
+                Sequence.Run(MovementHandler).Forget();
+            }
+        }
+
+        protected override async UniTask Finish()
+        {
+            Debug.Log("EntitySequence finishing...");
+            await UniTask.CompletedTask;
+        }
+
+        protected override async UniTask Unload()
+        {
+            Debug.Log("EntitySequence unloading...");
+            await UniTask.CompletedTask;
         }
 
         protected override void AfterLoad()
         {
-            Debug.Log("PlayerSequence after load.");
+            Debug.Log("EntitySequence after load.");
         }
 
         protected override void OnFinished()
         {
-            Debug.Log("PlayerSequence finished.");
+            Debug.Log("EntitySequence finished.");
         }
 
         protected override void OnUnload()
         {
-            Debug.Log("PlayerSequence unloaded.");
+            Debug.Log("EntitySequence unloaded.");
         }
     }
 }
