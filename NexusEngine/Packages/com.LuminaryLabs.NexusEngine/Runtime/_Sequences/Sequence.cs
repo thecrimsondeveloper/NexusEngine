@@ -96,6 +96,7 @@ namespace Toolkit.Sequences
 
         public static async UniTask Stop(IBaseSequence sequence)
         {
+            Debug.Log("Stopping sequence: " + sequence.GetType().Name);
             if (!runningSequences.ContainsKey(sequence.guid))
             {
                 Debug.LogWarning("Sequence not running");
@@ -105,15 +106,23 @@ namespace Toolkit.Sequences
             // If has async functions, await
             if (sequence is IAsyncSequence aSequence)
             {
+                Debug.Log("Sequence is IAsyncSequence");
                 await aSequence.UnloadSequence();
+            }
+            else if (sequence is IAsyncDataSequence aDataSequence)
+            {
+                Debug.Log("Sequence is IAsyncDataSequence");
+                await aDataSequence.UnloadSequence();
             }
 
             if (sequence is ISequence iSequence)
             {
+                Debug.Log("Sequence is ISequence");
                 iSequence.Unload();
             }
             else if (sequence is IDataSequence dataSequence)
             {
+                Debug.Log("Sequence is IDataSequence");
                 dataSequence.Unload();
             }
 
