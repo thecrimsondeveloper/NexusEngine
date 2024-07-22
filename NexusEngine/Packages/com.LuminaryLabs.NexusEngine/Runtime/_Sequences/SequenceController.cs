@@ -55,7 +55,7 @@ namespace Toolkit.Sequences
                 for (int i = 0; i < monos.Length; i++)
                 {
                     Debug.Log("SequenceController: " + monos[i].GetType());
-                    if (monos[i] is ISequence)
+                    if (monos[i] is IBaseSequence)
                     {
                         _sequence = monos[i];
                         break;
@@ -84,13 +84,13 @@ namespace Toolkit.Sequences
                 {
                     GameObject _instanceObject = Instantiate(obj, transform);
                     _instance = _instanceObject;
-                    _sequence = _instanceObject.GetComponent<ISequence>() as MonoBehaviour;
+                    _sequence = _instanceObject.GetComponent<IBaseSequence>() as MonoBehaviour;
                 }
                 else if (_sequence is MonoBehaviour mono)
                 {
                     GameObject _instanceObject = Instantiate(mono.gameObject, transform);
                     _instance = _instanceObject;
-                    _sequence = _instanceObject.GetComponent<ISequence>() as MonoBehaviour;
+                    _sequence = _instanceObject.GetComponent<IBaseSequence>() as MonoBehaviour;
                 }
             }
             else if (_sequence != null)
@@ -103,7 +103,7 @@ namespace Toolkit.Sequences
                 return;
             }
 
-            if (_sequence is ISequence sequence)
+            if (_sequence is IBaseSequence sequence)
             {
                 BeforeRun(sequence);
                 Sequence.Run(sequence);
@@ -111,12 +111,12 @@ namespace Toolkit.Sequences
             }
         }
 
-        protected virtual void BeforeRun(ISequence sequence)
+        protected virtual void BeforeRun(IBaseSequence sequence)
         {
 
         }
 
-        protected virtual void AfterRun(ISequence sequence)
+        protected virtual void AfterRun(IBaseSequence sequence)
         {
 
         }
