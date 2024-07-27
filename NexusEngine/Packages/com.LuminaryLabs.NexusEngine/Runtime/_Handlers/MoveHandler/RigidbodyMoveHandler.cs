@@ -8,6 +8,7 @@ namespace LuminaryLabs.Samples
     public class RigidbodyMoveHandler : MoveHandler<RidigbodyMoveHandlerData>
     {
         [SerializeField] Rigidbody rigidbody;
+        [SerializeField] float gravityMultiplier = 1;
         public override UniTask Initialize(RidigbodyMoveHandlerData currentData)
         {
             Debug.Log("RigidbodyMoveHandler.Initialize");
@@ -36,6 +37,8 @@ namespace LuminaryLabs.Samples
 
             rigidbody.velocity = velocity;
             rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+            rigidbody.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
         }
     }
 

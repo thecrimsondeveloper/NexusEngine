@@ -10,7 +10,7 @@ namespace LuminaryLabs.Samples.FlappyBird
     public class Flappy : MonoSequence<FlappyData>
     {
         [SerializeField] MoveHandler moveHandler = null;
-        [SerializeField] CharacterControllerMoveHandlerData moveHandlerData = null;
+        [SerializeField] RidigbodyMoveHandlerData moveHandlerData = null;
 
         public override async UniTask Initialize(FlappyData currentData)
         {
