@@ -167,13 +167,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data:
-    flappy: {fileID: -1311262699452165922, guid: 7e6f85749fe334e41a90385c0fd49552, type: 3}
+    flappy: {fileID: -1311262699452165922, guid: b2bcaec2399102742a518ba8128890d8, type: 3}
     flappyData:
-      moveHandlerPrefab: {fileID: 2711929584505063782, guid: 0657d2afa6a4a8749acddabebefaeefa, type: 3}
-    pipeDirector: {fileID: -484454676441928601, guid: 1808fdff5c354b940bc01f4dce51eeb3, type: 3}
+      moveHandlerPrefab: {fileID: 6445989956318254303, guid: 85550726e0e43914caf8db2f9f62d077, type: 3}
+    pipeDirector: {fileID: -484454676441928601, guid: 2505992e934340744b589a490d1ac5a9, type: 3}
     pipeDirectorData:
-      pipe: {fileID: -6210446699356964361, guid: 02f43c55ddc8d84459816029d11fea09, type: 3}
-      pipeMoveHandlerPrefab: {fileID: -2940666294000048828, guid: 6de388e16558082469d19d3cfbcf92f5, type: 3}
+      pipe: {fileID: -6210446699356964361, guid: 061fdd40e917a1746a5d549105642de8, type: 3}
+      pipeMoveHandlerPrefab: {fileID: -2940666294000048828, guid: fa8b6ff61b4a84849bc2f6c8410308ef, type: 3}
 --- !u!1 &1288406832
 GameObject:
   m_ObjectHideFlags: 0
