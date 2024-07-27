@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Toolkit.Sequences;
 using UnityEngine;
 
-namespace Toolkit.Sequences
+namespace LuminaryLabs.Sequences
 {
     public abstract class MonoSequence : MonoBehaviour, ISequence
     {
@@ -20,5 +18,22 @@ namespace Toolkit.Sequences
         public virtual UniTask Finish() { return UniTask.CompletedTask; }
         public virtual void OnFinished() { }
         public virtual void OnUnloaded() { }
+    }
+
+    public abstract class MonoSequence<T> : MonoSequence
+    {
+        public new T currentData { get; set; }
+
+        public override UniTask Initialize(object currentData = null)
+        {
+            if (currentData is T data)
+            {
+                this.currentData = data;
+                return Initialize(data);
+            }
+            return UniTask.CompletedTask;
+        }
+
+        public abstract UniTask Initialize(T currentData);
     }
 }

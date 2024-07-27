@@ -1,8 +1,9 @@
 using System;
 using Cysharp.Threading.Tasks;
 
-namespace Toolkit.Sequences
+namespace LuminaryLabs.Sequences
 {
+    [System.Serializable]
     public abstract class NexusSequence : ISequence
     {
         public ISequence superSequence { get; set; }
@@ -16,5 +17,23 @@ namespace Toolkit.Sequences
         public virtual UniTask Finish() { return UniTask.CompletedTask; }
         public virtual void OnFinished() { }
         public virtual void OnUnloaded() { }
+    }
+
+
+    public abstract class NexusSequence<T> : NexusSequence
+    {
+        public T data => (T)currentData;
+
+        public override UniTask Initialize(object currentData)
+        {
+            //if is the correct type then call the correct initialize
+            if (currentData is T)
+            {
+                return Initialize((T)currentData);
+            }
+            return UniTask.CompletedTask;
+        }
+
+        public abstract UniTask Initialize(T currentData);
     }
 }
