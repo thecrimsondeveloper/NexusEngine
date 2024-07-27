@@ -2,18 +2,14 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace Toolkit.Sequences
+namespace LuminaryLabs.Sequences
 {
-    [Serializable]
-    public class SequenceEvent : UnityEvent<IBaseSequence> { }
-
     public class Sequence : MonoBehaviour
     {
-        private static readonly Dictionary<Guid, IBaseSequence> runningSequences = new Dictionary<Guid, IBaseSequence>();
+        private static readonly Dictionary<Guid, ISequence> runningSequences = new Dictionary<Guid, ISequence>();
 
-        private static void RegisterSequence(IBaseSequence sequence)
+        private static void RegisterSequence(ISequence sequence)
         {
             if (runningSequences.ContainsKey(sequence.guid))
             {
@@ -23,7 +19,7 @@ namespace Toolkit.Sequences
             runningSequences.Add(sequence.guid, sequence);
         }
 
-        private static void UnregisterSequence(IBaseSequence sequence)
+        private static void UnregisterSequence(ISequence sequence)
         {
             if (!runningSequences.ContainsKey(sequence.guid))
             {
@@ -33,13 +29,15 @@ namespace Toolkit.Sequences
             runningSequences.Remove(sequence.guid);
         }
 
-        public static bool IsRunning(IBaseSequence sequence)
+        public static bool IsRunning(ISequence sequence)
         {
             return runningSequences.ContainsKey(sequence.guid);
         }
 
-        public static async UniTask Run(IBaseSequence sequence, SequenceRunData runData = null)
+        public static async UniTask Run(ISequence sequence, SequenceRunData runData = null)
         {
+            if (runData != null) Debug.Log("Data: " + runData.ToString());
+
             // Prerequisites
             Debug.Log("Running sequence: " + sequence.GetType().Name);
             if (sequence.guid != Guid.Empty && runningSequences.ContainsKey(sequence.guid))
@@ -48,53 +46,65 @@ namespace Toolkit.Sequences
                 return;
             }
 
-            if (runData != null && runData.Replace != null && runData.Replace.guid != Guid.Empty && runningSequences.ContainsKey(runData.Replace.guid))
+            if (runData != null && runData.replace != null && runData.replace.guid != Guid.Empty && runningSequences.ContainsKey(runData.replace.guid))
             {
-                if (sequence is IAsyncSequence || sequence is IAsyncDataSequence)
+                await Stop(runData.replace);
+            }
+
+
+            // Instantiate if the sequence is a MonoBehaviour and a prefab
+            if (sequence is MonoBehaviour monoBehaviour)
+            {
+                GameObject sequenceObject = monoBehaviour.gameObject;
+                if (sequenceObject.scene.name == null)
                 {
-                    await Stop(runData.Replace);
-                }
-                else
-                {
-                    Stop(runData.Replace);
+                    GameObject instance = Instantiate(sequenceObject);
+                    sequence = instance.GetComponent<ISequence>();
+                    if (sequence == null)
+                    {
+                        Debug.LogError("Instantiated object does not contain an ISequence component.");
+                        Destroy(instance);
+                        return;
+                    }
                 }
             }
+
 
             // Setup and run logic
             sequence.guid = Guid.NewGuid();
             RegisterSequence(sequence);
 
-            // Async load if the sequence has async functions
-            if (sequence is IAsyncSequence aSequence)
+            if (runData != null && runData.superSequence != null)
             {
-                await aSequence.LoadSequence();
-            }
-            else if (sequence is IAsyncDataSequence aDataSequence)
-            {
-                await aDataSequence.LoadSequence(runData?.InitializationData);
-            }
-
-            // Post load logic
-            if (sequence is ISequence standardSequence)
-            {
-                standardSequence.Load();
-            }
-            else if (sequence is IDataSequence dataSequence)
-            {
-                dataSequence.Load(runData?.InitializationData);
+                sequence.superSequence = runData.superSequence;
+                if (sequence is MonoBehaviour mono)
+                {
+                    mono.transform.SetParent(runData.superSequence.GetTransform());
+                    mono.transform.localPosition = runData.spawnPosition;
+                    mono.transform.localRotation = runData.spawnRotation;
+                }
             }
 
-            if (runData != null && runData.SuperSequence != null)
+            if (runData != null)
             {
-                sequence.superSequence = runData.SuperSequence;
+                if (runData.sequenceData != null)
+                {
+                    sequence.currentData = runData.sequenceData;
+                    await sequence.Initialize(sequence.currentData);
+                }
+                else
+                {
+                    await sequence.Initialize();
+                }
+
+
             }
 
-            // Start the sequence
-            sequence.SequenceStart();
+            // Begin the sequence
+            sequence.OnBegin();
         }
 
-
-        public static async UniTask Stop(IBaseSequence sequence)
+        public static async UniTask Stop(ISequence sequence)
         {
             Debug.Log("Stopping sequence: " + sequence.GetType().Name);
             if (!runningSequences.ContainsKey(sequence.guid))
@@ -103,34 +113,12 @@ namespace Toolkit.Sequences
                 return;
             }
 
-            // If has async functions, await
-            if (sequence is IAsyncSequence aSequence)
-            {
-                Debug.Log("Sequence is IAsyncSequence");
-                await aSequence.UnloadSequence();
-            }
-            else if (sequence is IAsyncDataSequence aDataSequence)
-            {
-                Debug.Log("Sequence is IAsyncDataSequence");
-                await aDataSequence.UnloadSequence();
-            }
-
-            if (sequence is ISequence iSequence)
-            {
-                Debug.Log("Sequence is ISequence");
-                iSequence.Unload();
-            }
-            else if (sequence is IDataSequence dataSequence)
-            {
-                Debug.Log("Sequence is IDataSequence");
-                dataSequence.Unload();
-            }
+            await sequence.Unload();
 
             UnregisterSequence(sequence);
         }
 
-
-        public static async UniTask Finish(IBaseSequence sequence)
+        public static async UniTask Finish(ISequence sequence)
         {
             if (!runningSequences.ContainsKey(sequence.guid))
             {
@@ -138,28 +126,50 @@ namespace Toolkit.Sequences
                 return;
             }
 
-            if (sequence is IAsyncSequence aSequence)
-            {
-                await aSequence.FinishSequence();
-            }
-
-            if (sequence is ISequence iSequence)
-            {
-                iSequence.SequenceFinished();
-            }
-            else if (sequence is IDataSequence dataSequence)
-            {
-                dataSequence.SequenceFinished();
-            }
+            await sequence.Finish();
 
             UnregisterSequence(sequence);
         }
     }
 
+    public interface ISequence
+    {
+        ISequence superSequence { get; set; }
+        Guid guid { get; set; }
+        object currentData { get; set; }
+
+        UniTask Initialize(object currentData = null);
+        void OnBegin();
+        UniTask Finish();
+        UniTask Unload();
+        void OnFinished();
+        void OnUnloaded();
+
+        public Transform GetTransform()
+        {
+            if (this is MonoBehaviour monoBehaviour)
+            {
+                return monoBehaviour.transform;
+            }
+            return superSequence != null ? superSequence.GetTransform() : null;
+        }
+    }
+
+
     public class SequenceRunData
     {
-        public IBaseSequence SuperSequence { get; set; }
-        public IBaseSequence Replace { get; set; }
-        public object InitializationData { get; set; }
+        public ISequence superSequence { get; set; }
+        public ISequence replace { get; set; }
+        public object sequenceData { get; set; }
+        public Vector3 spawnPosition { get; set; }
+        public Quaternion spawnRotation { get; set; }
+        public override string ToString()
+        {
+            return "SequenceRunData: " + sequenceData + "\n" +
+                    "SuperSequence: " + (superSequence != null ? superSequence.ToString() : "null") + "\n" +
+                    "Replace: " + (replace != null ? replace.ToString() : "null") + "\n" +
+                    "SpawnPosition: " + spawnPosition + "\n" +
+                    "SpawnRotation: " + spawnRotation;
+        }
     }
 }

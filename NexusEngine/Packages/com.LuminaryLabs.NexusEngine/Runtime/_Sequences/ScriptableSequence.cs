@@ -2,76 +2,41 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Toolkit.Sequences;
 using UnityEngine;
 
-namespace Toolkit.Sequences
+namespace LuminaryLabs.Sequences
 {
-    public abstract class ScriptableSequence : ScriptableObject, IAsyncDataSequence
+    public abstract class ScriptableSequence : ScriptableObject, ISequence
     {
 
-        public object currentData
+        public ISequence superSequence { get; set; }
+        public Guid guid { get; set; }
+        public object currentData { get; set; }
+
+        public abstract UniTask Initialize(object currentData = null);
+        public abstract void OnBegin();
+        public abstract UniTask Unload();
+
+        public virtual UniTask Finish() { return UniTask.CompletedTask; }
+        public virtual void OnFinished() { }
+        public virtual void OnUnloaded() { }
+
+    }
+
+    public abstract class ScriptableSequence<T> : ScriptableSequence
+    {
+        public T data => (T)currentData;
+
+        public override UniTask Initialize(object currentData)
         {
-            get;
-            set;
-        }
-        public Guid guid
-        {
-            get;
-            set;
-        }
-        public IBaseSequence superSequence
-        {
-            get;
-            set;
-        }
-
-        public UniTask OnFinish_Async() { return Finish(); }
-
-        protected abstract UniTask Finish();
-
-        public UniTask OnLoad_Async() { return WhenLoad(); }
-
-        protected abstract UniTask WhenLoad();
-
-        public UniTask UnLoad_Async()
-        {
-            return Unload();
-        }
-
-        protected abstract UniTask Unload();
-
-
-        public void OnSequenceLoad()
-        {
-            AfterLoad();
+            //if is the correct type then call the correct initialize
+            if (currentData is T)
+            {
+                return Initialize((T)currentData);
+            }
+            return UniTask.CompletedTask;
         }
 
-        protected virtual void AfterLoad() { }
-
-        public void OnSequenceStart()
-        {
-            OnStart();
-        }
-
-        protected virtual void OnStart() { }
-
-        public void OnSequenceFinished()
-        {
-            OnFinished();
-        }
-
-
-        protected virtual void OnFinished() { }
-
-
-        public void OnSequenceUnload()
-        {
-            OnUnload();
-        }
-
-
-        protected virtual void OnUnload() { }
-
+        public abstract UniTask Initialize(T currentData);
     }
 }
