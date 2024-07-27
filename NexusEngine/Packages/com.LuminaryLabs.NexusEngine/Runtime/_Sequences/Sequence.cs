@@ -2,18 +2,14 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Toolkit.Sequences
 {
-    [Serializable]
-    public class SequenceEvent : UnityEvent<IBaseSequence> { }
-
     public class Sequence : MonoBehaviour
     {
-        private static readonly Dictionary<Guid, IBaseSequence> runningSequences = new Dictionary<Guid, IBaseSequence>();
+        private static readonly Dictionary<Guid, ISequence> runningSequences = new Dictionary<Guid, ISequence>();
 
-        private static void RegisterSequence(IBaseSequence sequence)
+        private static void RegisterSequence(ISequence sequence)
         {
             if (runningSequences.ContainsKey(sequence.guid))
             {
@@ -23,7 +19,7 @@ namespace Toolkit.Sequences
             runningSequences.Add(sequence.guid, sequence);
         }
 
-        private static void UnregisterSequence(IBaseSequence sequence)
+        private static void UnregisterSequence(ISequence sequence)
         {
             if (!runningSequences.ContainsKey(sequence.guid))
             {
@@ -33,12 +29,12 @@ namespace Toolkit.Sequences
             runningSequences.Remove(sequence.guid);
         }
 
-        public static bool IsRunning(IBaseSequence sequence)
+        public static bool IsRunning(ISequence sequence)
         {
             return runningSequences.ContainsKey(sequence.guid);
         }
 
-        public static async UniTask Run(IBaseSequence sequence, SequenceRunData runData = null)
+        public static async UniTask Run(ISequence sequence, SequenceRunData runData = null)
         {
             // Prerequisites
             Debug.Log("Running sequence: " + sequence.GetType().Name);
@@ -50,51 +46,36 @@ namespace Toolkit.Sequences
 
             if (runData != null && runData.Replace != null && runData.Replace.guid != Guid.Empty && runningSequences.ContainsKey(runData.Replace.guid))
             {
-                if (sequence is IAsyncSequence || sequence is IAsyncDataSequence)
-                {
-                    await Stop(runData.Replace);
-                }
-                else
-                {
-                    Stop(runData.Replace);
-                }
+                await Stop(runData.Replace);
             }
 
             // Setup and run logic
             sequence.guid = Guid.NewGuid();
             RegisterSequence(sequence);
 
-            // Async load if the sequence has async functions
-            if (sequence is IAsyncSequence aSequence)
-            {
-                await aSequence.LoadSequence();
-            }
-            else if (sequence is IAsyncDataSequence aDataSequence)
-            {
-                await aDataSequence.LoadSequence(runData?.InitializationData);
-            }
-
-            // Post load logic
-            if (sequence is ISequence standardSequence)
-            {
-                standardSequence.Load();
-            }
-            else if (sequence is IDataSequence dataSequence)
-            {
-                dataSequence.Load(runData?.InitializationData);
-            }
-
             if (runData != null && runData.SuperSequence != null)
             {
                 sequence.superSequence = runData.SuperSequence;
             }
 
-            // Start the sequence
-            sequence.SequenceStart();
+            if (runData != null)
+            {
+                if (runData.InitializationData != null)
+                {
+                    sequence.currentData = runData.InitializationData;
+                    await sequence.Initialize(sequence.currentData);
+                }
+                else
+                {
+                    await sequence.Initialize();
+                }
+            }
+
+            // Begin the sequence
+            sequence.OnBegin();
         }
 
-
-        public static async UniTask Stop(IBaseSequence sequence)
+        public static async UniTask Stop(ISequence sequence)
         {
             Debug.Log("Stopping sequence: " + sequence.GetType().Name);
             if (!runningSequences.ContainsKey(sequence.guid))
@@ -103,34 +84,12 @@ namespace Toolkit.Sequences
                 return;
             }
 
-            // If has async functions, await
-            if (sequence is IAsyncSequence aSequence)
-            {
-                Debug.Log("Sequence is IAsyncSequence");
-                await aSequence.UnloadSequence();
-            }
-            else if (sequence is IAsyncDataSequence aDataSequence)
-            {
-                Debug.Log("Sequence is IAsyncDataSequence");
-                await aDataSequence.UnloadSequence();
-            }
-
-            if (sequence is ISequence iSequence)
-            {
-                Debug.Log("Sequence is ISequence");
-                iSequence.Unload();
-            }
-            else if (sequence is IDataSequence dataSequence)
-            {
-                Debug.Log("Sequence is IDataSequence");
-                dataSequence.Unload();
-            }
+            await sequence.Unload();
 
             UnregisterSequence(sequence);
         }
 
-
-        public static async UniTask Finish(IBaseSequence sequence)
+        public static async UniTask Finish(ISequence sequence)
         {
             if (!runningSequences.ContainsKey(sequence.guid))
             {
@@ -138,19 +97,7 @@ namespace Toolkit.Sequences
                 return;
             }
 
-            if (sequence is IAsyncSequence aSequence)
-            {
-                await aSequence.FinishSequence();
-            }
-
-            if (sequence is ISequence iSequence)
-            {
-                iSequence.SequenceFinished();
-            }
-            else if (sequence is IDataSequence dataSequence)
-            {
-                dataSequence.SequenceFinished();
-            }
+            await sequence.Finish();
 
             UnregisterSequence(sequence);
         }
@@ -158,8 +105,8 @@ namespace Toolkit.Sequences
 
     public class SequenceRunData
     {
-        public IBaseSequence SuperSequence { get; set; }
-        public IBaseSequence Replace { get; set; }
+        public ISequence SuperSequence { get; set; }
+        public ISequence Replace { get; set; }
         public object InitializationData { get; set; }
     }
 }

@@ -7,71 +7,18 @@ using UnityEngine;
 
 namespace Toolkit.Sequences
 {
-    public abstract class MonoSequence : MonoBehaviour, IAsyncDataSequence
+    public abstract class MonoSequence : MonoBehaviour, ISequence
     {
-        public object currentData
-        {
-            get;
-            set;
-        }
-        public Guid guid
-        {
-            get;
-            set;
-        }
-        public IBaseSequence superSequence
-        {
-            get;
-            set;
-        }
+        public ISequence superSequence { get; set; }
+        public Guid guid { get; set; }
+        public object currentData { get; set; }
 
-        public UniTask OnFinish_Async() { return Finish(); }
+        public abstract UniTask Initialize(object currentData = null);
+        public abstract void OnBegin();
+        public abstract UniTask Unload();
 
-        protected abstract UniTask Finish();
-
-        public UniTask OnLoad_Async() { return WhenLoad(); }
-
-        protected abstract UniTask WhenLoad();
-
-        public UniTask UnLoad_Async()
-        {
-            return Unload();
-        }
-
-        protected abstract UniTask Unload();
-
-
-        public void OnSequenceLoad()
-        {
-            AfterLoad();
-        }
-
-        protected virtual void AfterLoad() { }
-
-        public void OnSequenceStart()
-        {
-            OnStart();
-        }
-
-        protected virtual void OnStart() { }
-
-        public void OnSequenceFinished()
-        {
-            OnFinished();
-        }
-
-
-        protected virtual void OnFinished() { }
-
-
-        public void OnSequenceUnload()
-        {
-            OnUnload();
-        }
-
-
-        protected virtual void OnUnload() { }
-
-
+        public virtual UniTask Finish() { return UniTask.CompletedTask; }
+        public virtual void OnFinished() { }
+        public virtual void OnUnloaded() { }
     }
 }

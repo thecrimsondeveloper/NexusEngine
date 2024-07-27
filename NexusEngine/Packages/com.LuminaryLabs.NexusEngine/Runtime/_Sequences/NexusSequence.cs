@@ -1,15 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Toolkit.Sequences;
-using UnityEngine;
 
 namespace Toolkit.Sequences
 {
-    public abstract class ScriptableSequence : ScriptableObject, ISequence
+    public abstract class NexusSequence : ISequence
     {
-
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
         public object currentData { get; set; }
@@ -21,6 +16,5 @@ namespace Toolkit.Sequences
         public virtual UniTask Finish() { return UniTask.CompletedTask; }
         public virtual void OnFinished() { }
         public virtual void OnUnloaded() { }
-
     }
 }
