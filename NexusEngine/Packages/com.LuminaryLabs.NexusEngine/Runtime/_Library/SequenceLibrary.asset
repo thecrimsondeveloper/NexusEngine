@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: SequenceLibrary
   m_EditorClassIdentifier: 
   resources:
-  - {fileID: 1252336071096740481, guid: a051f6b89aa05b441b1ad482e5edb927, type: 3}
-  - {fileID: 8975605658056689410, guid: dc136346b26b446468ccc66925f1b5dd, type: 3}
-  - {fileID: 1538523865339573019, guid: b922922205ebd5f4d9abb7e59e43d75b, type: 3}
+    keys:
+    - FPSPlayer
+    - VisualHandler
+    - CharacterControllerMoveHandler
+    values:
+    - {fileID: 2679031732668024126, guid: e95d0a003db8eab41a400c9111288b1e, type: 3}
+    - {fileID: -8070865221536652014, guid: 0415fa103a92ffe41aaabcea8fba5f31, type: 3}
+    - {fileID: 2472850667714249526, guid: 7bcaee8f2e6870b449204b8cbaa7febd, type: 3}

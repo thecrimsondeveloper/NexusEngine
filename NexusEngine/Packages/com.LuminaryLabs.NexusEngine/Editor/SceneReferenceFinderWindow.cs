@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Toolkit.Sequences;
+using LuminaryLabs.Sequences;
 using UnityEditor;
 using UnityEngine;
 
@@ -67,7 +67,7 @@ public class SceneReferencesFinderWindow : EditorWindow
                         object value = field.GetValue(component);
 
                         // Check if the field value is of type ISequence
-                        if (typeof(IBaseSequence).IsAssignableFrom(field.FieldType))
+                        if (typeof(ISequence).IsAssignableFrom(field.FieldType))
                         {
                             sceneReferences.Add(new SceneReference(go, component, field, value));
                         }

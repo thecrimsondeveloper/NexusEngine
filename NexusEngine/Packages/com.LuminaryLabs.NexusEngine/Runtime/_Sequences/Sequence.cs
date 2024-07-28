@@ -9,6 +9,7 @@ namespace LuminaryLabs.Sequences
     public class Sequence : MonoBehaviour
     {
         private static readonly Dictionary<Guid, ISequence> runningSequences = new Dictionary<Guid, ISequence>();
+        public static List<ISequence> GetAll() => new List<ISequence>(runningSequences.Values);
 
         private static void RegisterSequence(ISequence sequence)
         {
