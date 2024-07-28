@@ -90,18 +90,18 @@ namespace LuminaryLabs.Sequences
                 if (runData.sequenceData != null)
                 {
                     sequence.currentData = runData.sequenceData;
-                    await sequence.Initialize(sequence.currentData);
+                    await sequence.InitializeSequence(sequence.currentData);
                 }
                 else
                 {
-                    await sequence.Initialize();
+                    await sequence.InitializeSequence();
                 }
 
 
             }
 
             // Begin the sequence
-            sequence.OnBegin();
+            sequence.OnBeginSequence();
         }
 
         public static async UniTask Stop(ISequence sequence)
@@ -113,7 +113,7 @@ namespace LuminaryLabs.Sequences
                 return;
             }
 
-            await sequence.Unload();
+            await sequence.UnloadSequence();
 
             UnregisterSequence(sequence);
         }
@@ -126,7 +126,7 @@ namespace LuminaryLabs.Sequences
                 return;
             }
 
-            await sequence.Finish();
+            await sequence.FinishSequence();
 
             UnregisterSequence(sequence);
         }
@@ -138,12 +138,12 @@ namespace LuminaryLabs.Sequences
         Guid guid { get; set; }
         object currentData { get; set; }
 
-        UniTask Initialize(object currentData = null);
-        void OnBegin();
-        UniTask Finish();
-        UniTask Unload();
-        void OnFinished();
-        void OnUnloaded();
+        UniTask InitializeSequence(object currentData = null);
+        void OnBeginSequence();
+        UniTask FinishSequence();
+        UniTask UnloadSequence();
+        void OnFinishedSequence();
+        void OnUnloadedSequence();
 
         public Transform GetTransform()
         {

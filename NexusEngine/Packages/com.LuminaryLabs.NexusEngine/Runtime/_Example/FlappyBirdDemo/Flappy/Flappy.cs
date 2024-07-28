@@ -22,7 +22,7 @@ namespace LuminaryLabs.Samples.FlappyBird
             await UniTask.NextFrame();
         }
 
-        public override void OnBegin()
+        protected override void OnBegin()
         {
             Debug.Log("Flappy OnBegin");
             Sequence.Run(moveHandler, new SequenceRunData
@@ -42,7 +42,7 @@ namespace LuminaryLabs.Samples.FlappyBird
             }
         }
 
-        public override UniTask Unload()
+        protected override UniTask Unload()
         {
             return UniTask.CompletedTask;
         }

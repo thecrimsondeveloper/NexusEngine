@@ -17,7 +17,7 @@ namespace LuminaryLabs.Samples.FlappyBird
             return UniTask.CompletedTask;
         }
 
-        public override void OnBegin()
+        protected override void OnBegin()
         {
             Debug.Log("PipeDirector.OnBegin: " + pipeSpawnPoint.position);
             Debug.Log("PipeDirector.OnBegin: " + pipeSpawnPoint.rotation);
@@ -34,7 +34,7 @@ namespace LuminaryLabs.Samples.FlappyBird
             }).Forget();
         }
 
-        public override UniTask Unload()
+        protected override UniTask Unload()
         {
             return UniTask.CompletedTask;
         }

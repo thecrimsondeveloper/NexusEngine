@@ -22,7 +22,7 @@ namespace LuminaryLabs.Samples
             // Implement Initialize here
             return UniTask.CompletedTask;
         }
-        public override void OnBegin()
+        protected override void OnBegin()
         {
             // Implement OnBegin here
         }
@@ -37,7 +37,7 @@ namespace LuminaryLabs.Samples
         }
 
 
-        public override UniTask Unload()
+        protected override UniTask Unload()
         {
             // Implement Unload here
             return UniTask.CompletedTask;

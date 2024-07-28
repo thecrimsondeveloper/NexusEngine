@@ -18,7 +18,7 @@ namespace LuminaryLabs.Samples.FlappyBird
             return UniTask.CompletedTask;
         }
 
-        public override void OnBegin()
+        protected override void OnBegin()
         {
             Sequence.Run(movementHandler, new SequenceRunData
             {
@@ -27,7 +27,7 @@ namespace LuminaryLabs.Samples.FlappyBird
             }).Forget();
         }
 
-        public override UniTask Unload()
+        protected override UniTask Unload()
         {
             return UniTask.CompletedTask;
         }

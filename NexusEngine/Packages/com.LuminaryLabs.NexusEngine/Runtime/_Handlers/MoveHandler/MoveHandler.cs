@@ -14,7 +14,7 @@ namespace LuminaryLabs.Samples
 
     public abstract class MoveHandler<T> : MoveHandler where T : MoveHandlerData
     {
-        public override async UniTask Initialize(object currentData)
+        protected override async UniTask Initialize(object currentData)
         {
             Debug.Log("MoveHandler.Initialize");
             if (currentData is T data)
