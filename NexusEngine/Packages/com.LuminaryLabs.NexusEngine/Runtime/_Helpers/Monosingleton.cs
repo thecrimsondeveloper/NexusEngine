@@ -19,6 +19,8 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
                 if (temp == null)
                 {
                     Debug.LogError($"{typeof(T)} is not found in the scene.");
+
+                    temp = new GameObject(typeof(T).ToString()).AddComponent<T>();
                 }
                 return temp;
             }

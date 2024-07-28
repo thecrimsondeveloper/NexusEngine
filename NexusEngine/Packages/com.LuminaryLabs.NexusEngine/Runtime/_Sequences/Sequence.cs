@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -8,17 +9,23 @@ namespace LuminaryLabs.Sequences
     public class Sequence : MonoBehaviour
     {
         private static readonly Dictionary<Guid, ISequence> runningSequences = new Dictionary<Guid, ISequence>();
+        public static List<ISequence> GetAll() => new List<ISequence>(runningSequences.Values);
 
         private static void RegisterSequence(ISequence sequence)
         {
+            if (sequence.guid == Guid.Empty)
+            {
+                sequence.guid = Guid.NewGuid();
+            }
+
             if (runningSequences.ContainsKey(sequence.guid))
             {
                 Debug.LogWarning("Sequence already running");
                 return;
             }
+
             runningSequences.Add(sequence.guid, sequence);
         }
-
         private static void UnregisterSequence(ISequence sequence)
         {
             if (!runningSequences.ContainsKey(sequence.guid))
@@ -26,6 +33,7 @@ namespace LuminaryLabs.Sequences
                 Debug.LogWarning("Sequence not running");
                 return;
             }
+
             runningSequences.Remove(sequence.guid);
         }
 
@@ -40,11 +48,12 @@ namespace LuminaryLabs.Sequences
 
             // Prerequisites
             Debug.Log("Running sequence: " + sequence.GetType().Name);
-            if (sequence.guid != Guid.Empty && runningSequences.ContainsKey(sequence.guid))
+            if (IsRunning(sequence))
             {
                 Debug.LogWarning("Sequence already running");
                 return;
             }
+
 
             if (runData != null && runData.replace != null && runData.replace.guid != Guid.Empty && runningSequences.ContainsKey(runData.replace.guid))
             {
@@ -85,6 +94,7 @@ namespace LuminaryLabs.Sequences
                 }
             }
 
+
             if (runData != null)
             {
                 if (runData.sequenceData != null)
@@ -114,13 +124,12 @@ namespace LuminaryLabs.Sequences
             }
 
             await sequence.UnloadSequence();
-
             UnregisterSequence(sequence);
         }
 
         public static async UniTask Finish(ISequence sequence)
         {
-            if (!runningSequences.ContainsKey(sequence.guid))
+            if (!IsRunning(sequence))
             {
                 Debug.LogWarning("Sequence not running");
                 return;
@@ -129,6 +138,70 @@ namespace LuminaryLabs.Sequences
             await sequence.FinishSequence();
 
             UnregisterSequence(sequence);
+        }
+
+        public static void ForEach(Action<ISequence> action)
+        {
+            foreach (var sequence in runningSequences.Values)
+            {
+                action(sequence);
+            }
+        }
+
+        public static string GetSequenceTree()
+        {
+            string tree = "";
+            foreach (var sequence in runningSequences.Values)
+            {
+                tree += sequence.GetType().Name + "\n";
+            }
+            return tree;
+        }
+
+        public static List<SequenceDetails> GetSequenceDetails()
+        {
+            var details = new List<SequenceDetails>();
+
+            foreach (var sequence in runningSequences.Values)
+            {
+                if (sequence is ISequence seq)
+                {
+                    var sequenceDetail = new SequenceDetails
+                    {
+                        SequenceType = seq.GetType().Name,
+                        Fields = new List<FieldDetails>()
+                    };
+
+                    var fields = seq.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    foreach (var field in fields)
+                    {
+                        sequenceDetail.Fields.Add(new FieldDetails
+                        {
+                            FieldName = field.Name,
+                            FieldType = field.FieldType.Name,
+                            FieldValue = field.GetValue(seq)?.ToString()
+                        });
+                    }
+
+                    var properties = seq.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    foreach (var property in properties)
+                    {
+                        if (property.CanRead)
+                        {
+                            sequenceDetail.Fields.Add(new FieldDetails
+                            {
+                                FieldName = property.Name,
+                                FieldType = property.PropertyType.Name,
+                                FieldValue = property.GetValue(seq)?.ToString()
+                            });
+                        }
+                    }
+
+                    details.Add(sequenceDetail);
+                }
+            }
+
+            return details;
         }
     }
 
@@ -171,5 +244,18 @@ namespace LuminaryLabs.Sequences
                     "SpawnPosition: " + spawnPosition + "\n" +
                     "SpawnRotation: " + spawnRotation;
         }
+    }
+
+    public class SequenceDetails
+    {
+        public string SequenceType { get; set; }
+        public List<FieldDetails> Fields { get; set; }
+    }
+
+    public class FieldDetails
+    {
+        public string FieldName { get; set; }
+        public string FieldType { get; set; }
+        public string FieldValue { get; set; }
     }
 }
