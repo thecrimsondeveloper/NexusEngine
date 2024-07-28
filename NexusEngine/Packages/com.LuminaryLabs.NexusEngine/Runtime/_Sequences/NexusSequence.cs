@@ -61,6 +61,6 @@ namespace LuminaryLabs.Sequences
             return UniTask.CompletedTask;
         }
 
-        public abstract UniTask Initialize(T currentData);
+        protected abstract UniTask Initialize(T currentData);
     }
 }

@@ -10,7 +10,7 @@ namespace LuminaryLabs.Samples.FlappyBird
     {
         [SerializeField] FlappyBirdSequenceData data = null;
 
-        public override UniTask Initialize(FlappyBirdSequenceData currentData)
+        protected override UniTask Initialize(FlappyBirdSequenceData currentData)
         {
             return UniTask.CompletedTask;
         }

@@ -11,7 +11,7 @@ namespace LuminaryLabs.Samples.FlappyBird
         [SerializeField] private Pipe pipePrefab = null;
         [SerializeField] Transform pipeSpawnPoint = null;
 
-        public override UniTask Initialize(PipeDirectorData currentData)
+        protected override UniTask Initialize(PipeDirectorData currentData)
         {
             if (currentData.pipe) pipePrefab = currentData.pipe;
             return UniTask.CompletedTask;

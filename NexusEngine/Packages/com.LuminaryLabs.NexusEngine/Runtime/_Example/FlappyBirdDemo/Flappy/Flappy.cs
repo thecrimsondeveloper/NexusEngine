@@ -12,7 +12,7 @@ namespace LuminaryLabs.Samples.FlappyBird
         [SerializeField] MoveHandler moveHandler = null;
         [SerializeField] RidigbodyMoveHandlerData moveHandlerData = null;
 
-        public override async UniTask Initialize(FlappyData currentData)
+        protected override async UniTask Initialize(FlappyData currentData)
         {
             if (currentData.moveHandlerPrefab)
             {

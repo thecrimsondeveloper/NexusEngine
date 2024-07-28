@@ -12,7 +12,7 @@ namespace LuminaryLabs.Samples.FlappyBird
         [SerializeField] MoveHandler movementHandler = null;
         [SerializeField] TransformMoveHandlerData movementHandlerData = null;
 
-        public override UniTask Initialize(PipeData currentData)
+        protected override UniTask Initialize(PipeData currentData)
         {
             if (currentData.movementHandlerPrefab) movementHandler = currentData.movementHandlerPrefab;
             return UniTask.CompletedTask;
