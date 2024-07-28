@@ -29,7 +29,7 @@ namespace LuminaryLabs.Sequences
         [ShowIf(nameof(_source), SequenceSource.Library)]
         [ShowIf(nameof(_library)), ShowIf(nameof(currentLibraryObject))]
         [ShowInInspector, ReadOnly, LabelText("Current Object")]
-        UnityEngine.Object currentLibraryObject => _library.Get(sequenceName);
+        UnityEngine.Object currentLibraryObject => _library ? _library.Get(sequenceName) : null;
 
 #endif
 
