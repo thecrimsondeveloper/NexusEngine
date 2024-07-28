@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 namespace LuminaryLabs.Sequences
 {
-    public abstract class MonoSequence : MonoBehaviour, ISequence
+    [System.Serializable]
+    public abstract class NexusSequence : ISequence
     {
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
@@ -47,16 +46,17 @@ namespace LuminaryLabs.Sequences
         protected virtual void OnUnloaded() { }
     }
 
-    public abstract class MonoSequence<T> : MonoSequence
-    {
-        public new T currentData { get; set; }
 
-        protected override UniTask Initialize(object currentData = null)
+    public abstract class NexusSequence<T> : NexusSequence
+    {
+        public T data => (T)currentData;
+
+        protected override UniTask Initialize(object currentData)
         {
-            if (currentData is T data)
+            //if is the correct type then call the correct initialize
+            if (currentData is T)
             {
-                this.currentData = data;
-                return Initialize(data);
+                return Initialize((T)currentData);
             }
             return UniTask.CompletedTask;
         }
