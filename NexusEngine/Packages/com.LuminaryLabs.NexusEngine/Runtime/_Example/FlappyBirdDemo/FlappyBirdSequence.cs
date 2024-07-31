@@ -21,13 +21,13 @@ namespace LuminaryLabs.Samples.FlappyBird
             {
                 superSequence = this,
                 sequenceData = data.flappyData
-            }).Forget();
+            });
 
             Sequence.Run(data.pipeDirector, new SequenceRunData
             {
                 superSequence = this,
                 sequenceData = data.pipeDirectorData
-            }).Forget();
+            });
         }
 
         protected override UniTask Unload()

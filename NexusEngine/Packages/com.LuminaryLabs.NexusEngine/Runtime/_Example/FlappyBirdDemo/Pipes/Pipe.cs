@@ -24,7 +24,7 @@ namespace LuminaryLabs.Samples.FlappyBird
             {
                 superSequence = this,
                 sequenceData = movementHandlerData
-            }).Forget();
+            });
         }
 
         protected override UniTask Unload()

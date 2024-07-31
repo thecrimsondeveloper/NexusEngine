@@ -55,33 +55,43 @@ namespace LuminaryLabs.Sequences
 
         public static bool IsRunning(ISequence sequence) => runningSequences.ContainsKey(sequence.guid);
 
-        public static async UniTask Run(ISequence sequence, SequenceRunData runData = null)
+        public static SequenceRunResult Run(ISequence sequence, SequenceRunData runData = null)
         {
-
-            //cleanup
+            SequenceRunResult sequenceObject = new SequenceRunResult();
             if (IsRunning(sequence))
             {
-                return;
+                sequenceObject.sequence = sequence;
+                if (sequenceEvents.TryGetValue(sequence.guid, out var runningEvents))
+                    sequenceObject.events = runningEvents;
+                return sequenceObject;
             }
             //setup
             if (runData == null)
             {
                 runData = new SequenceRunData();
             }
-
             if (runData.sequenceData == null)
             {
                 runData.sequenceData = new object();
             }
 
+            sequence = HandleInstantiation(sequence, runData);
+            SequenceEvents events = RegisterSequence(sequence, runData);
+            RunSequence(sequence, events, runData).Forget();
+
+            return sequenceObject;
+        }
+
+
+
+        static async UniTask RunSequence(ISequence sequence, SequenceEvents events, SequenceRunData runData)
+        {
             //cleanup
             bool hasReplacement = runData.replace != null;
             if (hasReplacement && IsRunning(runData.replace))
             {
                 await Stop(runData.replace);
             }
-            SequenceEvents events = null;
-            sequence = HandleInstantiation(sequence, runData);
             await UniTask.NextFrame();
             sequence.currentData = runData.sequenceData;
             events = RegisterSequence(sequence, runData);
@@ -212,5 +222,13 @@ namespace LuminaryLabs.Sequences
         public string FieldName { get; set; }
         public string FieldType { get; set; }
         public string FieldValue { get; set; }
+    }
+
+
+    public class SequenceRunResult
+    {
+        public ISequence sequence { get; set; }
+        public SequenceEvents events { get; set; }
+
     }
 }

@@ -18,12 +18,12 @@ namespace LuminaryLabs.Example.FPS
             return UniTask.CompletedTask;
         }
 
-        protected override async void OnBegin()
+        protected override void OnBegin()
         {
             if (data.oscillationEntity != null)
             {
 
-                await Sequence.Run(data.oscillationEntity, new SequenceRunData
+                Sequence.Run(data.oscillationEntity, new SequenceRunData
                 {
                     superSequence = this,
                     sequenceData = data.oscillationEntityData,

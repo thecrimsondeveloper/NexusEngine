@@ -31,7 +31,7 @@ namespace LuminaryLabs.Samples.FlappyBird
                 },
                 spawnPosition = pipeSpawnPoint.position,
                 spawnRotation = pipeSpawnPoint.rotation
-            }).Forget();
+            });
         }
 
         protected override UniTask Unload()

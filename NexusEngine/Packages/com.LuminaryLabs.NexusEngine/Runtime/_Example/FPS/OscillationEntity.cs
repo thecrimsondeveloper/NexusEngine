@@ -32,7 +32,7 @@ namespace LuminaryLabs.Example.FPS
                         amplitude = data.amplitude,
                         frequency = data.frequency
                     }
-                }).Forget();
+                });
             }
         }
 

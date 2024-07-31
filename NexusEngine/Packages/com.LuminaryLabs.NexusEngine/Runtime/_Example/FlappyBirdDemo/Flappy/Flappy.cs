@@ -30,7 +30,7 @@ namespace LuminaryLabs.Samples.FlappyBird
                 superSequence = this,
                 sequenceData = moveHandlerData
 
-            }).Forget();
+            });
         }
 
         // Update is called once per frame
