@@ -2,7 +2,8 @@
     "name": "com.NexusEngine.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:3e00de1f97034644dbae0446ab1fbf9e"
+        "GUID:3e00de1f97034644dbae0446ab1fbf9e",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
     ],
     "includePlatforms": [
         "Editor"
