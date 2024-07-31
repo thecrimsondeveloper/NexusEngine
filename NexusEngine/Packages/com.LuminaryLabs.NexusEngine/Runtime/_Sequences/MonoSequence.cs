@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace LuminaryLabs.Sequences
@@ -9,10 +10,12 @@ namespace LuminaryLabs.Sequences
     {
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
+
+        // [ShowInInspector]
         public object currentData { get; set; }
 
 
-        public UniTask InitializeSequence(object currentData)
+        public UniTask InitializeSequence(object currentData = null)
         {
             return Initialize(currentData);
         }
@@ -38,7 +41,7 @@ namespace LuminaryLabs.Sequences
             OnUnloaded();
         }
 
-        protected abstract UniTask Initialize(object currentData = null);
+        protected abstract UniTask Initialize(object currentData);
         protected abstract void OnBegin();
         protected abstract UniTask Unload();
 
