@@ -88,12 +88,14 @@ namespace LuminaryLabs.Sequences
             await sequence.InitializeSequence(runData.sequenceData);
             if (sequence is MonoSequence monoSequence)
             {
-                monoSequence.transform.localPosition = runData.spawnPosition;
-                monoSequence.transform.localRotation = runData.spawnRotation;
                 if (runData.parent != null)
                 {
                     monoSequence.transform.SetParent(runData.parent);
                 }
+
+
+                monoSequence.transform.localPosition = runData.spawnPosition;
+                monoSequence.transform.localRotation = runData.spawnRotation;
             }
 
             if (events != null) events.InvokeEvent(SequenceEventType.OnInitialize); // OnBegin
