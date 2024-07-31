@@ -18,7 +18,6 @@ namespace LuminaryLabs.Example.FPS
             return UniTask.CompletedTask;
         }
 
-        [Button]
         protected override async void OnBegin()
         {
             if (data.oscillationEntity != null)
@@ -28,6 +27,7 @@ namespace LuminaryLabs.Example.FPS
                 {
                     superSequence = this,
                     sequenceData = data.oscillationEntityData,
+                    parent = data.entityParent,
                     onInitialize = () => Debug.Log("OscillationEntity Initialized"),
                     onBegin = () => Debug.Log("OscillationEntity Began"),
                     onFinished = () => Debug.Log("OscillationEntity Finished"),
@@ -44,6 +44,7 @@ namespace LuminaryLabs.Example.FPS
     [System.Serializable]
     public class OscillationEntityDirectorData
     {
+        public Transform entityParent;
         public OscillationEntity oscillationEntity;
         public OscillationEntityData oscillationEntityData;
     }
