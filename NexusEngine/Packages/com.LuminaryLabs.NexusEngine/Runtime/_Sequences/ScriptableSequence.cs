@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace LuminaryLabs.Sequences
@@ -11,6 +12,8 @@ namespace LuminaryLabs.Sequences
 
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
+
+        [ShowInInspector]
         public object currentData { get; set; }
 
 

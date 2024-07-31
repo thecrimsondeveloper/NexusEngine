@@ -1,6 +1,6 @@
 {
   "name": "com.luminarylabs.nexusengine",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "displayName": "Nexus Engine",
   "description": "A powerful engine by LuminaryLabs. Now can right click to create a new MonoSequence Variant",
   "unity": "2021.3",
