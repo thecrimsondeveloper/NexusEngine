@@ -2,14 +2,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using LuminaryLabs.NexusEngine;
 
 public class SequenceGenerator : EditorWindow
 {
+    private MonoScript sequenceTemplateAsset => SequenceEditorSettings.GetSequenceTemplate();
+
     private SequenceView rootSequenceView;
     private string targetNamespace = "YourNamespace";
     private string selectedPath = "No folder selected";
 
-    public MonoScript templateScriptAsset;       // Drag and drop the MonoSequence template here
 
     [MenuItem("Luminary Labs/Generate Sequence")]
     public static void ShowWindow()
@@ -29,8 +31,9 @@ public class SequenceGenerator : EditorWindow
 
         GUILayout.Label("Generate Sequence", EditorStyles.boldLabel);
 
+        MonoScript templateScriptAsset = sequenceTemplateAsset;
+
         // Allow user to assign the templates
-        templateScriptAsset = (MonoScript)EditorGUILayout.ObjectField("Template Script", templateScriptAsset, typeof(MonoScript), false);
         if (rootSequenceView == null)
         {
             if (GUILayout.Button("Create Root Sequence"))
@@ -164,7 +167,7 @@ public class SequenceGenerator : EditorWindow
             return;
         }
 
-        MonoScript templateScript = templateScriptAsset;
+        MonoScript templateScript = sequenceTemplateAsset;
 
         if (templateScript != null)
         {
