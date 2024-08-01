@@ -6,6 +6,7 @@ using System.IO;
 public class SequenceGenerator : EditorWindow
 {
     private SequenceView rootSequenceView;
+    private string targetNamespace = "YourNamespace";
     private string selectedPath = "No folder selected";
 
     public MonoScript templateScriptAsset;       // Drag and drop the MonoSequence template here
@@ -18,6 +19,9 @@ public class SequenceGenerator : EditorWindow
 
     private void OnGUI()
     {
+        // Allow user to assign the target namespace
+        targetNamespace = EditorGUILayout.TextField("Namespace", targetNamespace);
+
         // Display the current selected folder path
         GUILayout.Label("Selected Folder:", EditorStyles.boldLabel);
         GUILayout.Label(selectedPath, EditorStyles.wordWrappedLabel);
@@ -168,9 +172,11 @@ public class SequenceGenerator : EditorWindow
             string className = sequenceView.name.Replace(" ", "");
             string baseClass = GetBaseClassForSequenceType(sequenceView.sequenceType);
 
+
             string modifiedContent = templateContent
                 .Replace("TemplateClass", className)
-                .Replace("TemplateBaseClass", baseClass);
+                .Replace("TemplateBaseClass", baseClass)
+                .Replace("YourNamespace", targetNamespace); // Replace with your own namespace
 
             File.WriteAllText(scriptPath, modifiedContent);
             Debug.Log("Script created: " + scriptPath);
