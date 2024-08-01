@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using LuminaryLabs.NexusEngine;
 using LuminaryLabs.Sequences;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -9,29 +10,29 @@ using UnityEngine;
 namespace LuminaryLabs.Example.FPS
 {
 
-    public class OscillationEntityDirector : MonoSequence
+    public class OscillationEntityDirector : CoreSequence<OscillationEntityDirectorData>
     {
 
-        [SerializeField] OscillationEntityDirectorData data;
-        protected override UniTask Initialize(object currentData = null)
+        protected override UniTask Initialize(OscillationEntityDirectorData currentData = null)
         {
             return UniTask.CompletedTask;
         }
 
         protected override void OnBegin()
         {
-            if (data.oscillationEntity != null)
+            if (currentData.oscillationEntity != null)
             {
-
-                Sequence.Run(data.oscillationEntity, new SequenceRunData
+                Debug.Log("OscillationEntityDirector Began");
+                Sequence.Run(currentData.oscillationEntity, new SequenceRunData
                 {
                     superSequence = this,
-                    sequenceData = data.oscillationEntityData,
-                    parent = data.entityParent,
+                    sequenceData = currentData.oscillationEntityData,
+                    parent = currentData.entityParent,
                     onInitialize = () => Debug.Log("OscillationEntity Initialized"),
                     onBegin = () => Debug.Log("OscillationEntity Began"),
                     onFinished = () => Debug.Log("OscillationEntity Finished"),
                 });
+
             }
         }
 
@@ -42,7 +43,7 @@ namespace LuminaryLabs.Example.FPS
     }
 
     [System.Serializable]
-    public class OscillationEntityDirectorData
+    public class OscillationEntityDirectorData : CoreSequenceData
     {
         public Transform entityParent;
         public OscillationEntity oscillationEntity;

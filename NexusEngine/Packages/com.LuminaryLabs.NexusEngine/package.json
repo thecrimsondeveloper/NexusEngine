@@ -1,8 +1,8 @@
 {
   "name": "com.luminarylabs.nexusengine",
-  "version": "1.0.13",
+  "version": "1.0.15",
   "displayName": "Nexus Engine",
-  "description": "A powerful engine by LuminaryLabs. Now can right click to create a new MonoSequence Variant",
+  "description": "A powerful engine by LuminaryLabs. Patch Notes: \nRight Click to create a new MonoSequence Variant. \nUse the Luminary Labs Window. \n CoreSequence is a helper class for top level experiential sequences.",
   "unity": "2021.3",
   "dependencies": {
     "com.cysharp.unitask": "2.5.0"

@@ -14,9 +14,6 @@ namespace LuminaryLabs.Example.FPS
         protected override UniTask Initialize(object currentData = null)
         {
             oscillationMovementHandler = ScriptableObject.CreateInstance<OscillationMovementHandler>();
-
-            //set editor to pause
-            // UnityEditor.EditorApplication.isPaused = true;
             return UniTask.CompletedTask;
         }
         protected override void OnBegin()
