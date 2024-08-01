@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0af8e82a0bd4ee74893662b99fa5f76b, type: 3}
   m_Name: SequenceEditorSettings
   m_EditorClassIdentifier: 
-  sequenceTemplate: {fileID: 0}
+  sequenceTemplate: {fileID: 11500000, guid: 319d8cc110b59ee448c90e93c550055e, type: 3}
