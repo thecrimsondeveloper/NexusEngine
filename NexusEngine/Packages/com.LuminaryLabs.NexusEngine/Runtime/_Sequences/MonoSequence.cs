@@ -58,7 +58,6 @@ namespace LuminaryLabs.Sequences
         {
             if (currentData is T data)
             {
-                this.currentData = data;
                 return Initialize(data);
             }
             return UniTask.CompletedTask;

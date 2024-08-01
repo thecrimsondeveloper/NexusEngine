@@ -5,6 +5,7 @@ using System.Reflection;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor.ValueResolvers;
+using Sirenix.Reflection.Editor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -58,9 +59,10 @@ namespace LuminaryLabs.Sequences
         public static SequenceRunResult Run(ISequence sequence, SequenceRunData runData = null)
         {
             SequenceRunResult sequenceObject = new SequenceRunResult();
+            sequenceObject.sequence = sequence;
+
             if (IsRunning(sequence))
             {
-                sequenceObject.sequence = sequence;
                 if (sequenceEvents.TryGetValue(sequence.guid, out var runningEvents))
                     sequenceObject.events = runningEvents;
                 return sequenceObject;
@@ -77,7 +79,10 @@ namespace LuminaryLabs.Sequences
 
             sequence = HandleInstantiation(sequence, runData);
             SequenceEvents events = RegisterSequence(sequence, runData);
-            RunSequence(sequence, events, runData).Forget();
+            // Start the sequence and store the running task
+            UniTask runningTask = RunSequence(sequence, events, runData);
+            sequenceObject.SetTask(runningTask);
+            sequenceObject.events = events;
 
             return sequenceObject;
         }
@@ -229,6 +234,18 @@ namespace LuminaryLabs.Sequences
     {
         public ISequence sequence { get; set; }
         public SequenceEvents events { get; set; }
+        private UniTask task { get; set; } = default;
+
+        public void SetTask(UniTask task)
+        {
+            this.task = task;
+        }
+
+        public async UniTask Async()
+        {
+            if (task.Status == UniTaskStatus.Pending)
+                await task;
+        }
 
     }
 }

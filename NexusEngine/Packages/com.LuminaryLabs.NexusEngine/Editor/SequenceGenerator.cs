@@ -11,7 +11,7 @@ public class SequenceGenerator : EditorWindow
 
     public MonoScript templateScriptAsset;       // Drag and drop the MonoSequence template here
 
-    [MenuItem("LuminaryLabs/Generate Sequence")]
+    [MenuItem("Luminary Labs/Generate Sequence")]
     public static void ShowWindow()
     {
         GetWindow<SequenceGenerator>("Sequence Generator");
