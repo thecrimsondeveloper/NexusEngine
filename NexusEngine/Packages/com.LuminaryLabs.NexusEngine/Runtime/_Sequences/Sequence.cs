@@ -48,10 +48,18 @@ namespace LuminaryLabs.Sequences
 
         private static void UnregisterSequence(ISequence sequence)
         {
-            if (runningSequences.Remove(sequence.guid))
+            if (runningSequences.ContainsKey(sequence.guid))
+            {
                 runningSequences.Remove(sequence.guid);
-            else
-                Debug.LogWarning("Sequence not running");
+
+            }
+
+            if (sequenceEvents.ContainsKey(sequence.guid))
+            {
+                sequenceEvents.Remove(sequence.guid);
+            }
+
+
         }
 
         public static bool IsRunning(ISequence sequence) => runningSequences.ContainsKey(sequence.guid);
@@ -71,10 +79,7 @@ namespace LuminaryLabs.Sequences
             if (runData == null)
             {
                 runData = new SequenceRunData();
-            }
-            if (runData.sequenceData == null)
-            {
-                runData.sequenceData = new object();
+                runData.wasGenerated = true;
             }
 
             sequence = HandleInstantiation(sequence, runData);
@@ -98,7 +103,14 @@ namespace LuminaryLabs.Sequences
                 await Stop(runData.replace);
             }
             await UniTask.NextFrame();
-            sequence.currentData = runData.sequenceData;
+            Debug.Log("Sequence data: " + sequence.currentData == null);
+            Debug.Log("Current data Null: " + (runData.sequenceData == null));
+            if (runData.sequenceData != null)
+            {
+                sequence.currentData = runData.sequenceData;
+            }
+
+
             events = RegisterSequence(sequence, runData);
             await sequence.InitializeSequence(runData.sequenceData);
             if (sequence is MonoSequence monoSequence)
@@ -205,6 +217,7 @@ namespace LuminaryLabs.Sequences
         public Vector3 spawnPosition { get; set; }
         public Quaternion spawnRotation { get; set; }
         public Transform parent { get; set; }
+        public bool wasGenerated { get; set; } = false;
 
         public UnityAction onInitialize { get; set; }
         public UnityAction onBegin { get; set; }
