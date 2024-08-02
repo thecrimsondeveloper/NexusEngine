@@ -121,8 +121,13 @@ namespace LuminaryLabs.Sequences
                 }
 
 
-                monoSequence.transform.localPosition = runData.spawnPosition;
-                monoSequence.transform.localRotation = runData.spawnRotation;
+                if (runData.useLocalPosition)
+                    monoSequence.transform.localPosition = runData.spawnPosition;
+                else monoSequence.transform.position = runData.spawnPosition;
+
+                if (runData.useLocalRotation)
+                    monoSequence.transform.localRotation = runData.spawnRotation;
+                else monoSequence.transform.rotation = runData.spawnRotation;
             }
 
             if (events != null) events.InvokeEvent(SequenceEventType.OnInitialize); // OnBegin
@@ -218,6 +223,8 @@ namespace LuminaryLabs.Sequences
         public object sequenceData { get; set; }
         public Vector3 spawnPosition { get; set; }
         public Quaternion spawnRotation { get; set; }
+        public bool useLocalPosition { get; set; } = true;
+        public bool useLocalRotation { get; set; } = true;
         public Transform parent { get; set; }
         public bool wasGenerated { get; set; } = false;
 
