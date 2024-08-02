@@ -12,31 +12,43 @@ public class MonoSequenceContextMenu : MonoBehaviour
     {
         // Load the prefab from the specified path
         GameObject sourcePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(sourcePrefabPath);
-
         if (sourcePrefab == null)
         {
             Debug.LogWarning("The source prefab could not be found. Please check the path.");
             return;
         }
 
-        // Open a save file dialog to specify where to save the prefab variant
-        string fileName = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(sourcePrefab)) + " Variant.prefab";
-        string variantFilePath = EditorUtility.SaveFilePanelInProject("Save Prefab Variant", fileName, "prefab", "Please enter a file name to save the prefab variant to");
+        // Get the path of the selected object in the project window
+        Object selectedObject = Selection.activeObject;
+        string selectedPath = AssetDatabase.GetAssetPath(selectedObject);
 
-        if (string.IsNullOrEmpty(variantFilePath))
+        // If the selected path is a file, get its directory
+        if (!string.IsNullOrEmpty(selectedPath) && !AssetDatabase.IsValidFolder(selectedPath))
         {
-            Debug.LogWarning("Invalid file path specified. Prefab variant creation cancelled.");
-            return;
+            selectedPath = Path.GetDirectoryName(selectedPath);
         }
+
+        // If no valid path is selected, default to "Assets" folder
+        if (string.IsNullOrEmpty(selectedPath))
+        {
+            selectedPath = "Assets";
+        }
+
+        // Generate a unique name for the new prefab variant
+        string baseName = Path.GetFileNameWithoutExtension(sourcePrefabPath) + " Variant";
+        string uniqueName = AssetDatabase.GenerateUniqueAssetPath(Path.Combine(selectedPath, baseName + ".prefab"));
 
         // Create the prefab variant
         GameObject variant = PrefabUtility.InstantiatePrefab(sourcePrefab) as GameObject;
-        PrefabUtility.SaveAsPrefabAsset(variant, variantFilePath);
+        PrefabUtility.SaveAsPrefabAsset(variant, uniqueName);
 
         // Destroy the instantiated variant in the scene
         DestroyImmediate(variant);
 
-        Debug.Log("Prefab variant created at: " + variantFilePath);
+        Debug.Log("Prefab variant created at: " + uniqueName);
+
+        // Highlight the newly created prefab variant in the project window
+        Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameObject>(uniqueName);
     }
 
     [MenuItem("Assets/Create MonoSequence Variant", true)]
