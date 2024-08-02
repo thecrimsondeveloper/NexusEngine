@@ -20,6 +20,15 @@ namespace LuminaryLabs.NexusEngine
             set => _currentData = value;
         }
 
+        protected virtual void Start()
+        {
+            Sequence.Run(this, new SequenceRunData
+            {
+                sequenceData = currentData,
+                superSequence = this
+            });
+        }
+
         protected override UniTask Initialize(object currentData = null)
         {
             if (currentData is T data)

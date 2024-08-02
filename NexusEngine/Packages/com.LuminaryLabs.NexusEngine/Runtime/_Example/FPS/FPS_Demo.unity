@@ -260,57 +260,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &555176737
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 555176738}
-  - component: {fileID: 555176739}
-  m_Layer: 0
-  m_Name: SequenceController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &555176738
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 555176737}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &555176739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 555176737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca31c68915c2cd84e88693bc91e432b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  data: {fileID: 0}
-  _runMode: 0
-  _source: 0
-  _library: {fileID: 11400000, guid: ecc20fbb2100ec64ba5b5ea385cb0be3, type: 2}
-  sequenceName: FPSPlayer
-  _sequenceToRun: {fileID: 2019623433}
-  _instance: {fileID: 0}
 --- !u!1 &1386440623
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,18 +428,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69400099b3c995c46b1c5958ee48c44a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
+  _currentData:
+    name: 
+    audioDirector: {fileID: 0}
+    initializationDirector: {fileID: 0}
+    interactionHandler: {fileID: 0}
+    introDirector: {fileID: 0}
+    outroDirector: {fileID: 0}
+    uiDirector: {fileID: 0}
+    visualsDirector: {fileID: 0}
     entityParent: {fileID: 1699313490}
     oscillationEntity: {fileID: 4793495143603753616, guid: 555e433d6568cf245b974ae90465f7f8, type: 3}
     oscillationEntityData:
-      amplitude: 1
-      frequency: 2
+      amplitude: 0.9
+      frequency: 1.25
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1386440626}
   - {fileID: 375365284}
-  - {fileID: 555176738}
   - {fileID: 2019623432}
   - {fileID: 328853135}
