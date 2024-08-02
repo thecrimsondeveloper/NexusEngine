@@ -54,7 +54,7 @@ namespace LuminaryLabs.Sequences
 
     public abstract class ScriptableSequence<T> : ScriptableSequence
     {
-        public T data => (T)currentData;
+        public new T currentData { get; set; }
 
         protected override UniTask Initialize(object currentData)
         {
