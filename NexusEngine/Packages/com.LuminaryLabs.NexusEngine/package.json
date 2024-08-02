@@ -5,7 +5,7 @@
   "description": "A powerful engine by LuminaryLabs. Patch Notes: \nRight Click to create a new MonoSequence Variant. \nUse the Luminary Labs Window. \n CoreSequence is a helper class for top level experiential sequences.",
   "unity": "2021.3",
   "dependencies": {
-    "com.cysharp.unitask": "2.5.0"
+    "com.cysharp.unitask": ""
   },
   "author": {
     "name": "LuminaryLabs",
