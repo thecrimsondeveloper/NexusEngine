@@ -138,7 +138,8 @@ namespace LuminaryLabs.Sequences
             }
 
             await sequence.UnloadSequence();
-            sequenceEvents[sequence.guid].InvokeEvent(SequenceEventType.OnUnloaded); // OnUnloaded
+            if (sequenceEvents.TryGetValue(sequence.guid, out var events))
+                events.InvokeEvent(SequenceEventType.OnUnloaded); // OnUnloaded
             UnregisterSequence(sequence);
         }
 
@@ -150,7 +151,8 @@ namespace LuminaryLabs.Sequences
             }
 
             await sequence.FinishSequence();
-            sequenceEvents[sequence.guid].InvokeEvent(SequenceEventType.OnFinished); // OnFinished
+            if (sequenceEvents.TryGetValue(sequence.guid, out var events))
+                events.InvokeEvent(SequenceEventType.OnFinished); // OnFinished
             UnregisterSequence(sequence);
         }
 
