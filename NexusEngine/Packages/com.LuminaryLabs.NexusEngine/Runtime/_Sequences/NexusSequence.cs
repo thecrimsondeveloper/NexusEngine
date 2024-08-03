@@ -49,7 +49,11 @@ namespace LuminaryLabs.Sequences
 
     public abstract class NexusSequence<T> : NexusSequence
     {
-        public new T currentData { get; set; }
+        public new T currentData
+        {
+            get => (T)base.currentData;
+            set => base.currentData = value;
+        }
 
         protected override UniTask Initialize(object currentData)
         {

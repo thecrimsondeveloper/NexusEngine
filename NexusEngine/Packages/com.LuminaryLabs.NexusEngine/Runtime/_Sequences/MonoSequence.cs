@@ -52,7 +52,11 @@ namespace LuminaryLabs.Sequences
 
     public abstract class MonoSequence<T> : MonoSequence
     {
-        public new T currentData { get; set; }
+        public new T currentData
+        {
+            get => (T)base.currentData;
+            set => base.currentData = value;
+        }
 
         protected override UniTask Initialize(object currentData = null)
         {

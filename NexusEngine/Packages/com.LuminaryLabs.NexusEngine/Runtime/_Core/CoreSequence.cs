@@ -16,7 +16,7 @@ namespace LuminaryLabs.NexusEngine
 
         public new T currentData
         {
-            get => _currentData;
+            get => base.currentData != null ? (T)base.currentData : _currentData;
             set => _currentData = value;
         }
 
