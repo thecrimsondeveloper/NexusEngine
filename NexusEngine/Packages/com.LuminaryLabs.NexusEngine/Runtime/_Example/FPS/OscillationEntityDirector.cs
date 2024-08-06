@@ -28,9 +28,9 @@ namespace LuminaryLabs.Example.FPS
                     superSequence = this,
                     sequenceData = currentData.oscillationEntityData,
                     parent = currentData.entityParent,
-                    onInitialize = () => Debug.Log("OscillationEntity Initialized"),
-                    onBegin = () => Debug.Log("OscillationEntity Began"),
-                    onFinished = () => Debug.Log("OscillationEntity Finished"),
+                    onInitialize = (Sequence) => Debug.Log("OscillationEntity Initialized"),
+                    onBegin = (Sequence) => Debug.Log("OscillationEntity Began"),
+                    onFinished = (Sequence) => Debug.Log("OscillationEntity Finished"),
                 });
 
             }
