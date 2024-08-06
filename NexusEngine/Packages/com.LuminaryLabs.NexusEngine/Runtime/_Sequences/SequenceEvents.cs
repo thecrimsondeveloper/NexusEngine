@@ -8,26 +8,26 @@ namespace LuminaryLabs.Sequences
     public class SequenceEvents
     {
         [ShowInInspector]
-        public Dictionary<SequenceEventType, UnityEvent> events = new Dictionary<SequenceEventType, UnityEvent>
+        public Dictionary<SequenceEventType, UnityEvent<ISequence>> events = new Dictionary<SequenceEventType, UnityEvent<ISequence>>
         {
-            {SequenceEventType.OnInitialize, new UnityEvent()},
-            {SequenceEventType.OnBegin, new UnityEvent()},
-            {SequenceEventType.OnFinished, new UnityEvent()},
-            {SequenceEventType.OnUnloaded, new UnityEvent()}
+            {SequenceEventType.OnInitialize, new UnityEvent<ISequence>()},
+            {SequenceEventType.OnBegin, new UnityEvent<ISequence>()},
+            {SequenceEventType.OnFinished, new UnityEvent<ISequence>()},
+            {SequenceEventType.OnUnloaded, new UnityEvent<ISequence>()}
         };
-        public void RegisterEvent(UnityAction action, SequenceEventType eventType)
+        public void RegisterEvent(UnityAction<ISequence> action, SequenceEventType eventType)
         {
             if (events.TryGetValue(eventType, out var unityEvent))
                 unityEvent.AddListener(action);
             else
             {
-                UnityEvent newEvent = new UnityEvent();
+                UnityEvent<ISequence> newEvent = new UnityEvent<ISequence>();
                 newEvent.AddListener(action);
                 events.Add(eventType, newEvent);
             }
         }
 
-        public void UnRegisterEvent(UnityAction action, SequenceEventType eventType)
+        public void UnRegisterEvent(UnityAction<ISequence> action, SequenceEventType eventType)
         {
             if (events.TryGetValue(eventType, out var unityEvent))
             {
@@ -35,11 +35,11 @@ namespace LuminaryLabs.Sequences
             }
         }
 
-        public void InvokeEvent(SequenceEventType eventType)
+        public void InvokeEvent(SequenceEventType eventType, ISequence sequence)
         {
             if (events.TryGetValue(eventType, out var unityEvent))
             {
-                unityEvent.Invoke();
+                unityEvent.Invoke(sequence);
             }
         }
     }
