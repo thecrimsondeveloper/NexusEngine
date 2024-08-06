@@ -126,9 +126,9 @@ namespace LuminaryLabs.Sequences
                 else monoSequence.transform.rotation = runData.spawnRotation;
             }
 
-            if (events != null) events.InvokeEvent(SequenceEventType.OnInitialize); // OnBegin
+            if (events != null) events.InvokeEvent(SequenceEventType.OnInitialize, sequence); // OnBegin
             sequence.OnBeginSequence();
-            if (events != null) events.InvokeEvent(SequenceEventType.OnBegin); // OnBegin
+            if (events != null) events.InvokeEvent(SequenceEventType.OnBegin, sequence); // OnBegin
         }
 
         public static async UniTask Stop(ISequence sequence)
@@ -140,7 +140,7 @@ namespace LuminaryLabs.Sequences
 
             await sequence.UnloadSequence();
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
-                events.InvokeEvent(SequenceEventType.OnUnloaded); // OnUnloaded
+                events.InvokeEvent(SequenceEventType.OnUnloaded, sequence); // OnUnloaded
             UnregisterSequence(sequence);
         }
 
@@ -153,7 +153,7 @@ namespace LuminaryLabs.Sequences
 
             await sequence.FinishSequence();
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
-                events.InvokeEvent(SequenceEventType.OnFinished); // OnFinished
+                events.InvokeEvent(SequenceEventType.OnFinished, sequence); // OnFinished
             UnregisterSequence(sequence);
         }
 
@@ -224,27 +224,13 @@ namespace LuminaryLabs.Sequences
         public Transform parent { get; set; }
         public bool wasGenerated { get; set; } = false;
 
-        public UnityAction onInitialize { get; set; }
-        public UnityAction onBegin { get; set; }
-        public UnityAction onFinished { get; set; }
-        public UnityAction onUnloaded { get; set; }
+        public UnityAction<ISequence> onInitialize { get; set; }
+        public UnityAction<ISequence> onBegin { get; set; }
+        public UnityAction<ISequence> onFinished { get; set; }
+        public UnityAction<ISequence> onUnloaded { get; set; }
         public UnityAction<MonoBehaviour> onGenerated { get; set; }
 
         public override string ToString() => $"SequenceRunData: {sequenceData}\nSuperSequence: {superSequence}\nReplace: {replace}\nSpawnPosition: {spawnPosition}\nSpawnRotation: {spawnRotation}\nParent: {parent}";
-    }
-
-    [Serializable]
-    public class SequenceDetails
-    {
-        public string SequenceType { get; set; }
-
-    }
-
-    public class FieldDetails
-    {
-        public string FieldName { get; set; }
-        public string FieldType { get; set; }
-        public string FieldValue { get; set; }
     }
 
 
