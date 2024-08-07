@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using LuminaryLabs.Sequences;
 using UnityEditor;
 using UnityEngine;
+using LuminaryLabs.NexusEngine;
 
 public class SceneReferencesFinderWindow : EditorWindow
 {

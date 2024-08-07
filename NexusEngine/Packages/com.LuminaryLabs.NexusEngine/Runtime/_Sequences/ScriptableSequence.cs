@@ -5,7 +5,7 @@ using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace LuminaryLabs.Sequences
+namespace LuminaryLabs.NexusEngine
 {
     public abstract class ScriptableSequence : ScriptableObject, ISequence
     {

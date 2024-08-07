@@ -2,7 +2,6 @@ using System;
 using Cysharp.Threading.Tasks;
 using LuminaryLabs.Samples;
 using UnityEngine;
-using LuminaryLabs.Sequences;
 
 namespace LuminaryLabs.NexusEngine
 {

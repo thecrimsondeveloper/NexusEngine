@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LuminaryLabs.Sequences
+namespace LuminaryLabs.NexusEngine
 {
     [CreateAssetMenu(fileName = "SequenceLibrary", menuName = "Toolkit/Sequences/Sequence Library")]
     public class SequenceLibrary : ScriptableObject

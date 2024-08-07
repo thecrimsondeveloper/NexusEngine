@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using LuminaryLabs.Sequences;
+using LuminaryLabs.NexusEngine;
 
 public class SequencesWindow : EditorWindow
 {

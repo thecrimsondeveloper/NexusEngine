@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace LuminaryLabs.Sequences
+namespace LuminaryLabs.NexusEngine
 {
     public class SequenceEvents
     {

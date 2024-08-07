@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using LuminaryLabs.Sequences;
+using LuminaryLabs.NexusEngine;
 using LuminaryLabs.Samples;
 using UnityEngine;
 

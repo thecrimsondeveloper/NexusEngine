@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using LuminaryLabs.Sequences;
 using UnityEngine;
 
 namespace LuminaryLabs.NexusEngine

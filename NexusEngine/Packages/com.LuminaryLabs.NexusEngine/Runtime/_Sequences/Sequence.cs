@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace LuminaryLabs.Sequences
+namespace LuminaryLabs.NexusEngine
 {
     public class Sequence : MonoBehaviour
     {
@@ -106,8 +106,6 @@ namespace LuminaryLabs.Sequences
                 sequence.currentData = runData.sequenceData;
             }
 
-
-            events = RegisterSequence(sequence, runData);
             await sequence.InitializeSequence(runData.sequenceData);
             if (sequence is MonoSequence monoSequence)
             {
@@ -228,7 +226,7 @@ namespace LuminaryLabs.Sequences
         public UnityAction<ISequence> onBegin { get; set; }
         public UnityAction<ISequence> onFinished { get; set; }
         public UnityAction<ISequence> onUnloaded { get; set; }
-        public UnityAction<MonoBehaviour> onGenerated { get; set; }
+        public SequenceAction<MonoBehaviour> onGenerated { get; set; }
 
         public override string ToString() => $"SequenceRunData: {sequenceData}\nSuperSequence: {superSequence}\nReplace: {replace}\nSpawnPosition: {spawnPosition}\nSpawnRotation: {spawnRotation}\nParent: {parent}";
     }

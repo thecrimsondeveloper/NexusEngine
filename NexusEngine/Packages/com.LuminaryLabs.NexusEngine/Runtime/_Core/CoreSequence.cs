@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using LuminaryLabs.Sequences;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

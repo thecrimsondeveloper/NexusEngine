@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using LuminaryLabs.Sequences;
+using LuminaryLabs.NexusEngine;
 using UnityEngine;
 
 public abstract class TemplateBaseClass<T> : MonoSequence<T>

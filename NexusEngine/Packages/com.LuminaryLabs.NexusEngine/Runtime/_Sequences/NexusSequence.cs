@@ -1,7 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 
-namespace LuminaryLabs.Sequences
+namespace LuminaryLabs.NexusEngine
 {
     [System.Serializable]
     public abstract class NexusSequence : ISequence
