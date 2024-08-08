@@ -13,24 +13,13 @@ public class SequencesWindow : EditorWindow
     // Retrieve the list of all running sequences
     public List<ISequence> sequences = new List<ISequence>();
 
-    [MenuItem("LuminaryLabs/Sequence Viewer")]
+    [MenuItem("Luminary Labs/Sequence Viewer")]
     public static void ShowWindow()
     {
         GetWindow<SequencesWindow>("Sequences");
     }
 
-    private void OnEnable()
-    {
-        // Get all sequences in the scene
-
-        Debug.Log("SequencesWindow enabled");
-        // Get all sequences in the scene
-        sequences = Sequence.GetAll();
-        rootSequences = BuildSequenceHierarchy(sequences);
-    }
-
-
-
+    float timeLastRefresh = 0;
     private void OnGUI()
     {
 
@@ -38,15 +27,16 @@ public class SequencesWindow : EditorWindow
         {
             GUILayout.Label("Please enter play mode to view running sequences.", EditorStyles.label);
 
-            if (GUILayout.Button("Enter Player Mode"))
+            if (GUILayout.Button("Enter Play Mode"))
             {
                 EditorApplication.isPlaying = true;
             }
             return;
         }
 
-        if (GUILayout.Button("Refresh Sequences", GUILayout.Width(200)))
+        if (GUILayout.Button("Refresh Sequences", GUILayout.Width(200)) && Time.time - timeLastRefresh > 0.25f)
         {
+            timeLastRefresh = Time.time;
             // Get all sequences in the scene
             sequences = Sequence.GetAll();
             rootSequences = BuildSequenceHierarchy(sequences);
