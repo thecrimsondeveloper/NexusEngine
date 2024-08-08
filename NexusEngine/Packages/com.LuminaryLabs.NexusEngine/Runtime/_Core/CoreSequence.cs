@@ -24,7 +24,7 @@ namespace LuminaryLabs.NexusEngine
             Sequence.Run(this, new SequenceRunData
             {
                 sequenceData = currentData,
-                superSequence = this
+                superSequence = null,
             });
         }
 

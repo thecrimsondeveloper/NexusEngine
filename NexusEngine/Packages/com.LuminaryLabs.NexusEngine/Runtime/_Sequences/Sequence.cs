@@ -105,6 +105,10 @@ namespace LuminaryLabs.NexusEngine
             {
                 sequence.currentData = runData.sequenceData;
             }
+            if (runData.superSequence != null)
+            {
+                sequence.superSequence = runData.superSequence;
+            }
 
             await sequence.InitializeSequence(runData.sequenceData);
             if (sequence is MonoSequence monoSequence)
