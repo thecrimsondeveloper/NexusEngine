@@ -10,6 +10,8 @@ public class SequencesWindow : EditorWindow
     private Dictionary<Guid, bool> foldoutStates = new Dictionary<Guid, bool>();
     List<SerializableSequence> rootSequences = new List<SerializableSequence>();
 
+    string sequenceHeirarchyJSON = "";
+
     // Retrieve the list of all running sequences
     public List<ISequence> sequences = new List<ISequence>();
 
@@ -32,6 +34,12 @@ public class SequencesWindow : EditorWindow
                 EditorApplication.isPlaying = true;
             }
             return;
+        }
+
+
+        if (GUILayout.Button("Copy JSON"))
+        {
+            EditorGUIUtility.systemCopyBuffer = sequenceHeirarchyJSON;
         }
 
         RefreshSequences();
@@ -80,6 +88,13 @@ public class SequencesWindow : EditorWindow
         // Get all sequences in the scene
         sequences = Sequence.GetAll();
         rootSequences = BuildSequenceHierarchy(sequences);
+
+
+        SerializableSequence outputSequence = new SerializableSequence(null, foldoutStates);
+        outputSequence.children = rootSequences;
+        sequenceHeirarchyJSON = JsonUtility.ToJson(outputSequence, true);
+
+        Repaint();
     }
 
     private List<SerializableSequence> BuildSequenceHierarchy(List<ISequence> sequences)
@@ -119,6 +134,7 @@ public class SequencesWindow : EditorWindow
         return rootSequences;
     }
 
+    [Serializable]
     class SerializableSequence
     {
         public ISequence sequence;
@@ -129,6 +145,12 @@ public class SequencesWindow : EditorWindow
         public SerializableSequence(ISequence sequence, Dictionary<Guid, bool> foldoutStates)
         {
             this.sequence = sequence;
+
+            if (sequence != null)
+            {
+                label = GetSequenceLabel(sequence);
+            }
+
             this.foldoutStates = foldoutStates;
             children = new List<SerializableSequence>();
         }
@@ -234,7 +256,7 @@ public class SequencesWindow : EditorWindow
             EditorGUI.indentLevel++; // Increase indent level
 
             // Draw the super sequence label with indentation
-            GUILayout.Label($"Super Sequence: {(sequence.superSequence != null ? GetSequenceLabel(sequence.superSequence) : "None")}", EditorStyles.label);
+            GUILayout.Label($"Super Sequence: {(sequence.superSequence != null ? label : "None")}", EditorStyles.label);
 
             // Conditionally display whether the sequence has data
             if (sequence.currentData != null)
