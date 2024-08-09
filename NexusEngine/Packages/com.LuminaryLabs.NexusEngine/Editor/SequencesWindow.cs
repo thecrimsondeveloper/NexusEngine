@@ -40,8 +40,6 @@ public class SequencesWindow : EditorWindow
 
         // Build and display the sequence hierarchy
 
-
-
         foreach (var rootSequence in rootSequences)
         {
 
@@ -92,7 +90,7 @@ public class SequencesWindow : EditorWindow
         // Create SerializableSequence instances and store them in a dictionary
         foreach (var sequence in sequences)
         {
-            var serializableSequence = new SerializableSequence(sequence);
+            var serializableSequence = new SerializableSequence(sequence, foldoutStates);
             sequenceDict[sequence] = serializableSequence;
         }
 
@@ -124,12 +122,14 @@ public class SequencesWindow : EditorWindow
     class SerializableSequence
     {
         public ISequence sequence;
+        public string label;
         public List<SerializableSequence> children;
-        private Dictionary<Guid, bool> foldoutStates = new Dictionary<Guid, bool>();
+        private Dictionary<Guid, bool> foldoutStates;
 
-        public SerializableSequence(ISequence sequence)
+        public SerializableSequence(ISequence sequence, Dictionary<Guid, bool> foldoutStates)
         {
             this.sequence = sequence;
+            this.foldoutStates = foldoutStates;
             children = new List<SerializableSequence>();
         }
 
@@ -139,19 +139,34 @@ public class SequencesWindow : EditorWindow
             Error
         }
 
-        public DrawResult Draw()
+        public DrawResult Draw(int depth = 0)
         {
             if (sequence == null)
             {
                 return DrawResult.Error;
             }
 
-            // Handle the foldout for the sequence
             Guid key = sequence.guid;
             bool isExpanded = GetFoldoutState(key);
 
-            string label = GetSequenceLabel();
-            isExpanded = EditorGUILayout.Foldout(isExpanded, label, true);
+            // Start a vertical section with a help box style to include the button and label
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+            EditorGUILayout.BeginHorizontal();
+
+            // Create an empty label to create the indentation effect
+            GUILayout.Label("", GUILayout.Width(depth * 10));
+
+            // Draw the foldout button
+            if (GUILayout.Button(isExpanded ? "▼" : "▶", GUILayout.Width(20)))
+            {
+                isExpanded = !isExpanded;
+            }
+
+            // Draw the label
+            GUILayout.Label(GetSequenceLabel(sequence));
+
+            EditorGUILayout.EndHorizontal();
 
             SetFoldoutState(key, isExpanded);
 
@@ -159,8 +174,8 @@ public class SequencesWindow : EditorWindow
             {
                 EditorGUI.indentLevel++;
 
-                // Show the information of the current sequence
-                DrawSequenceInfo();
+                // Show the information of the current sequence inside the box
+                DrawSequenceBody();
 
                 GUILayout.Space(10);
 
@@ -169,22 +184,24 @@ public class SequencesWindow : EditorWindow
                 {
                     if (child != null)
                     {
-                        child.Draw();
-                    }
-                    else
-                    {
-
-                        return DrawResult.Error;
+                        DrawResult childResult = child.Draw(depth + 1); // Increase depth for children
+                        if (childResult == DrawResult.Error)
+                        {
+                            return DrawResult.Error;
+                        }
                     }
                 }
 
                 EditorGUI.indentLevel--;
             }
 
+            EditorGUILayout.EndVertical(); // End the vertical section with the box style
+
             return DrawResult.Success;
         }
 
-        private string GetSequenceLabel()
+
+        private static string GetSequenceLabel(ISequence sequence)
         {
             if (sequence is MonoBehaviour monoBehaviour)
             {
@@ -212,19 +229,34 @@ public class SequencesWindow : EditorWindow
             foldoutStates[superSequenceKey] = state;
         }
 
-        private void DrawSequenceInfo()
+        private void DrawSequenceBody()
         {
-            EditorGUI.indentLevel++;
+            EditorGUI.indentLevel++; // Increase indent level
 
-            GUILayout.BeginVertical(EditorStyles.helpBox);
+            // Draw the super sequence label with indentation
+            GUILayout.Label($"Super Sequence: {(sequence.superSequence != null ? GetSequenceLabel(sequence.superSequence) : "None")}", EditorStyles.label);
 
-            GUILayout.Label($"GUID: {sequence.guid}", EditorStyles.boldLabel);
-            GUILayout.Label($"Current Data: {sequence.currentData ?? "No Data"}", EditorStyles.label);
-            GUILayout.Label($"Super Sequence: {(sequence.superSequence != null ? sequence.superSequence.guid.ToString() : "None")}", EditorStyles.label);
+            // Conditionally display whether the sequence has data
+            if (sequence.currentData != null)
+            {
+                GUILayout.Label("HAS DATA", EditorStyles.label);
+            }
 
-            GUILayout.EndVertical();
+            //add a button to select the sequence
+            if (GUILayout.Button("Select Sequence"))
+            {
+                if (sequence is MonoBehaviour monoBehaviour)
+                {
+                    Selection.activeObject = monoBehaviour;
+                }
+                else if (sequence is ScriptableObject scriptableObject)
+                {
+                    Selection.activeObject = scriptableObject;
+                }
+            }
 
-            EditorGUI.indentLevel--;
+            EditorGUI.indentLevel--; // Restore the previous indent level
         }
+
     }
 }
