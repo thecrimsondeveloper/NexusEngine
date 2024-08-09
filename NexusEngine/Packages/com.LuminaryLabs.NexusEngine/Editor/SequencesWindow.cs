@@ -16,7 +16,7 @@ public class SequencesWindow : EditorWindow
     [MenuItem("Luminary Labs/Sequence Viewer")]
     public static void ShowWindow()
     {
-        GetWindow<SequencesWindow>("Sequences");
+        GetWindow<SequencesWindow>("Sequence Viewer");
     }
 
     float timeLastRefresh = 0;
