@@ -34,33 +34,54 @@ public class SequencesWindow : EditorWindow
             return;
         }
 
-        if (GUILayout.Button("Refresh Sequences", GUILayout.Width(200)) && Time.time - timeLastRefresh > 0.25f)
-        {
-            timeLastRefresh = Time.time;
-            // Get all sequences in the scene
-            sequences = Sequence.GetAll();
-            rootSequences = BuildSequenceHierarchy(sequences);
-        }
-
-        if (sequences == null || sequences.Count == 0)
-        {
-            GUILayout.Label("No sequences are currently running.", EditorStyles.label);
-            return;
-        }
-
-        GUILayout.Label("Running Sequences", EditorStyles.boldLabel);
-
+        RefreshSequences();
         // Start a scroll view
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, true);
 
         // Build and display the sequence hierarchy
 
+
+
         foreach (var rootSequence in rootSequences)
         {
-            rootSequence.Draw();
+
+            if (rootSequence != null)
+            {
+                SerializableSequence.DrawResult result = rootSequence.Draw();
+                if (result == SerializableSequence.DrawResult.Error)
+                {
+                    Debug.LogError("Error drawing sequence.");
+                    RefreshSequences();
+                    break;
+                }
+            }
+            else
+            {
+                RefreshSequences();
+                break;
+            }
         }
 
         EditorGUILayout.EndScrollView();
+    }
+
+    float refreshRate = 10;
+
+    //refresh rate is the amount per second that the window will refresh
+    //cooldown is the total time that must pass before the window will refresh again
+    float coolDown => refreshRate == 0 ? 0 : 1 / refreshRate;
+    void RefreshSequences()
+    {
+        bool hasLowEnoughRefreshRateToMatter = refreshRate < 20;
+        bool hasEnoughTimePassedSinceLastRefresh = Time.time - timeLastRefresh > coolDown;
+        if (hasLowEnoughRefreshRateToMatter && hasEnoughTimePassedSinceLastRefresh)
+        {
+            return;
+        }
+        timeLastRefresh = Time.time;
+        // Get all sequences in the scene
+        sequences = Sequence.GetAll();
+        rootSequences = BuildSequenceHierarchy(sequences);
     }
 
     private List<SerializableSequence> BuildSequenceHierarchy(List<ISequence> sequences)
@@ -74,6 +95,9 @@ public class SequencesWindow : EditorWindow
             var serializableSequence = new SerializableSequence(sequence);
             sequenceDict[sequence] = serializableSequence;
         }
+
+        Debug.Log($"Sequence dict count: {sequenceDict.Count}");
+        Debug.Log($"Sequences count: {sequences.Count}");
 
         // Build the hierarchy by assigning children to their respective parents
         foreach (var sequence in sequences)
@@ -109,11 +133,17 @@ public class SequencesWindow : EditorWindow
             children = new List<SerializableSequence>();
         }
 
-        public void Draw()
+        public enum DrawResult
+        {
+            Success,
+            Error
+        }
+
+        public DrawResult Draw()
         {
             if (sequence == null)
             {
-                return;
+                return DrawResult.Error;
             }
 
             // Handle the foldout for the sequence
@@ -137,17 +167,31 @@ public class SequencesWindow : EditorWindow
                 // Draw children
                 foreach (var child in children)
                 {
-                    child.Draw();
+                    if (child != null)
+                    {
+                        child.Draw();
+                    }
+                    else
+                    {
+
+                        return DrawResult.Error;
+                    }
                 }
 
                 EditorGUI.indentLevel--;
             }
+
+            return DrawResult.Success;
         }
 
         private string GetSequenceLabel()
         {
             if (sequence is MonoBehaviour monoBehaviour)
             {
+                if (monoBehaviour == null)
+                {
+                    return "MonoSequence: null";
+                }
                 return $"Sequence: {monoBehaviour.name}";
             }
             else

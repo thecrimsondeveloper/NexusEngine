@@ -6,7 +6,7 @@ using LuminaryLabs.NexusEngine;
 
 namespace LuminaryLabs.Samples.FlappyBird
 {
-    public class FlappyBirdSequence : MonoSequence<FlappyBirdSequenceData>
+    public class FlappyBirdSequence : CoreSequence<FlappyBirdSequenceData>
     {
         [SerializeField] FlappyBirdSequenceData data = null;
 
@@ -37,7 +37,7 @@ namespace LuminaryLabs.Samples.FlappyBird
     }
 
     [System.Serializable]
-    public class FlappyBirdSequenceData
+    public class FlappyBirdSequenceData : CoreSequenceData
     {
         public Flappy flappy;
         public FlappyData flappyData;
