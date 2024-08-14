@@ -14,7 +14,7 @@ namespace LuminaryLabs.NexusEngine
 
 
 #if ODIN_INSPECTOR 
-        [SerializeField, HideLabel, BoxGroup("CORE DATA")]
+        [SerializeField, HideLabel, BoxGroup("ENTITY DATA")]
 #endif
 
 
