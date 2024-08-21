@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace LuminaryLabs.Samples.FlappyBird
 {
-    public class PipeDirector : MonoSequence<PipeDirectorData>
+    public class PipeDirector : NexusSequence<PipeDirectorData>
     {
         [SerializeField] private Pipe pipePrefab = null;
         [SerializeField] Transform pipeSpawnPoint = null;
 
         protected override UniTask Initialize(PipeDirectorData currentData)
         {
-            if (currentData.pipe) pipePrefab = currentData.pipe;
+            if (currentData.pipeSequence) pipePrefab = currentData.pipeSequence;
             return UniTask.CompletedTask;
         }
 
@@ -43,7 +43,7 @@ namespace LuminaryLabs.Samples.FlappyBird
     [System.Serializable]
     public class PipeDirectorData
     {
-        public Pipe pipe = null;
+        public Pipe pipeSequence = null;
         public MoveHandler pipeMoveHandlerPrefab = null;
     }
 

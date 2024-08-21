@@ -45,11 +45,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f7d79003356c5741a04c05fa0d4e875, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _runType: 2
+  _currentData:
+    rid: 8142883535714254848
   movementHandler: {fileID: 0}
   movementHandlerData:
     speed: 1
     jumpForce: 1
     target: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 8142883535714254848
+      type: {class: PipeData, ns: LuminaryLabs.Samples.FlappyBird, asm: com.NexusEngine.Runtime}
+      data:
+        slide: {x: 0, y: 0, z: 0}
+        movementHandlerPrefab: {fileID: 0}
 --- !u!1 &8098055222718299749
 GameObject:
   m_ObjectHideFlags: 0

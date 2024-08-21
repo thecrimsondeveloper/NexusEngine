@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace LuminaryLabs.Samples.FlappyBird
 {
-    public class Pipe : MonoSequence<PipeData>
+    public class Pipe : EntitySequence<PipeData>
     {
         [SerializeField] MoveHandler movementHandler = null;
         [SerializeField] TransformMoveHandlerData movementHandlerData = null;
@@ -23,7 +23,11 @@ namespace LuminaryLabs.Samples.FlappyBird
             Sequence.Run(movementHandler, new SequenceRunData
             {
                 superSequence = this,
-                sequenceData = movementHandlerData
+                sequenceData = movementHandlerData,
+                onGenerated = (handler) =>
+                {
+                    movementHandler = handler as MoveHandler;
+                }
             });
         }
 
@@ -34,7 +38,7 @@ namespace LuminaryLabs.Samples.FlappyBird
     }
 
 
-    public class PipeData
+    public class PipeData : EntitySequenceData
     {
         public Vector3 slide;
         public MoveHandler movementHandlerPrefab;

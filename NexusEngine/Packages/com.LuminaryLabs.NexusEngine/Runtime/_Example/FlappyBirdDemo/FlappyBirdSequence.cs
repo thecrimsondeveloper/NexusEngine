@@ -8,8 +8,6 @@ namespace LuminaryLabs.Samples.FlappyBird
 {
     public class FlappyBirdSequence : CoreSequence<FlappyBirdSequenceData>
     {
-        [SerializeField] FlappyBirdSequenceData data = null;
-
         protected override UniTask Initialize(FlappyBirdSequenceData currentData)
         {
             return UniTask.CompletedTask;
@@ -17,16 +15,16 @@ namespace LuminaryLabs.Samples.FlappyBird
 
         protected override void OnBegin()
         {
-            Sequence.Run(data.flappy, new SequenceRunData
+            Sequence.Run(currentData.flappy, new SequenceRunData
             {
                 superSequence = this,
-                sequenceData = data.flappyData
+                sequenceData = currentData.flappyData
             });
 
-            Sequence.Run(data.pipeDirector, new SequenceRunData
+            Sequence.Run(currentData.pipeDirector, new SequenceRunData
             {
                 superSequence = this,
-                sequenceData = data.pipeDirectorData
+                sequenceData = currentData.pipeDirectorData
             });
         }
 
