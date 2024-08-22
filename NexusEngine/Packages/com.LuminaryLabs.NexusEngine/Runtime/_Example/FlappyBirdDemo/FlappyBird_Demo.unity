@@ -122,6 +122,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &490249024
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 490249025}
+  - component: {fileID: 490249026}
+  m_Layer: 0
+  m_Name: Sequence
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &490249025
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 490249024}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &490249026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 490249024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8e8a728643f6194f88bfd184b9c3225, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &646984675
 GameObject:
   m_ObjectHideFlags: 0
@@ -179,25 +223,8 @@ MonoBehaviour:
     flappy: {fileID: -1311262699452165922, guid: b2bcaec2399102742a518ba8128890d8, type: 3}
     flappyData:
       moveHandlerPrefab: {fileID: 6445989956318254303, guid: 85550726e0e43914caf8db2f9f62d077, type: 3}
-    pipeDirector: {fileID: -484454676441928601, guid: 2505992e934340744b589a490d1ac5a9, type: 3}
     pipeDirectorData:
-      pipe: {fileID: -6210446699356964361, guid: 061fdd40e917a1746a5d549105642de8, type: 3}
-      pipeMoveHandlerPrefab: {fileID: -2940666294000048828, guid: fa8b6ff61b4a84849bc2f6c8410308ef, type: 3}
-  data:
-    name: 
-    audioDirector: {fileID: 0}
-    initializationDirector: {fileID: 0}
-    interactionHandler: {fileID: 0}
-    introDirector: {fileID: 0}
-    outroDirector: {fileID: 0}
-    uiDirector: {fileID: 0}
-    visualsDirector: {fileID: 0}
-    flappy: {fileID: -1311262699452165922, guid: b2bcaec2399102742a518ba8128890d8, type: 3}
-    flappyData:
-      moveHandlerPrefab: {fileID: 6445989956318254303, guid: 85550726e0e43914caf8db2f9f62d077, type: 3}
-    pipeDirector: {fileID: -484454676441928601, guid: 2505992e934340744b589a490d1ac5a9, type: 3}
-    pipeDirectorData:
-      pipe: {fileID: -6210446699356964361, guid: 061fdd40e917a1746a5d549105642de8, type: 3}
+      pipeSequence: {fileID: 0}
       pipeMoveHandlerPrefab: {fileID: -2940666294000048828, guid: fa8b6ff61b4a84849bc2f6c8410308ef, type: 3}
 --- !u!114 &646984678
 MonoBehaviour:
@@ -404,3 +431,4 @@ SceneRoots:
   - {fileID: 1306239862}
   - {fileID: 2057336335}
   - {fileID: 646984676}
+  - {fileID: 490249025}
