@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LuminaryLabs.Samples.FlappyBird
 {
-    public class PipeDirector : NexusSequence<PipeDirectorData>
+    public class PipeDirector : BaseSequence<PipeDirectorData>
     {
         [SerializeField] private Pipe pipePrefab = null;
         [SerializeField] Transform pipeSpawnPoint = null;

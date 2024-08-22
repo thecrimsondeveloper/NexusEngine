@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 namespace LuminaryLabs.NexusEngine
 {
     [System.Serializable]
-    public abstract class NexusSequence : ISequence
+    public abstract class BaseSequence : ISequence
     {
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
@@ -47,7 +47,7 @@ namespace LuminaryLabs.NexusEngine
     }
 
 
-    public abstract class NexusSequence<T> : NexusSequence
+    public abstract class BaseSequence<T> : BaseSequence
     {
         public new T currentData
         {
@@ -66,5 +66,11 @@ namespace LuminaryLabs.NexusEngine
         }
 
         protected abstract UniTask Initialize(T currentData);
+    }
+
+    [System.Serializable]
+    public class BaseSequenceData
+    {
+
     }
 }
