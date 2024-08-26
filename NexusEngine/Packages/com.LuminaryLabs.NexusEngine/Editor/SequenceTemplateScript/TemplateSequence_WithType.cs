@@ -27,18 +27,7 @@ namespace YourNamespace
 
         protected override void OnBegin()
         {
-            #region Template Sequence Run
-            // Run a sequence
-            ISequence sequence = null;
-            object data = null;
-            Sequence.Run(sequence, new SequenceRunData
-            {
-                superSequence = this,
-                sequenceData = data,
-                onFinished = TemplateFinished
-            });
-            #endregion
-            // Logic to execute when the sequence begins
+
         }
 
         protected override UniTask Unload()
@@ -49,14 +38,6 @@ namespace YourNamespace
 
         #endregion
 
-
-
-        #region SequenceFinishFunctions 
-        void TemplateFinished(ISequence sequence)
-        {
-
-        }
-        #endregion
     }
 
     #region Data Class

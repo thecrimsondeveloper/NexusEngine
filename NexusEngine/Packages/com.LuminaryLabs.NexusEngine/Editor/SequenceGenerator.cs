@@ -178,7 +178,7 @@ public class SequenceGenerator : EditorWindow
             string subSequenceFields = GenerateSubSequenceFields(sequenceView);
             string subSequenceDataFields = GenerateSubSequenceDataFields(sequenceView);
             string dataFields = GenerateDataFields(sequenceView);
-            string sequenceRunLogic = GenerateSequenceRunLogic(sequenceView);
+            // string sequenceRunLogic = GenerateSequenceRunLogic(sequenceView);
 
             string modifiedContent = templateContent
                 .Replace("TemplateClass", className)
@@ -186,8 +186,8 @@ public class SequenceGenerator : EditorWindow
                 .Replace("YourNamespace", targetNamespace)
                 .Replace("#region SubSequences", "#region SubSequences\n" + subSequenceFields)
                 .Replace("#region SubSequenceData", "#region SubSequenceData\n" + subSequenceDataFields)
-                .Replace("#region Data Fields", "#region Data Fields\n" + dataFields)
-                .Replace("#region Template Sequence Run", sequenceRunLogic);
+                .Replace("#region Data Fields", "#region Data Fields\n" + dataFields);
+            // .Replace("#region Template Sequence Run", sequenceRunLogic);
 
             File.WriteAllText(scriptPath, modifiedContent);
             Debug.Log("Script created: " + scriptPath);
