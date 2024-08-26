@@ -12,7 +12,6 @@ public class SequenceGenerator : EditorWindow
     private string targetNamespace = "YourNamespace";
     private string selectedPath = "No folder selected";
 
-
     [MenuItem("Luminary Labs/Generate Sequence")]
     public static void ShowWindow()
     {
@@ -175,11 +174,20 @@ public class SequenceGenerator : EditorWindow
             string className = sequenceView.name.Replace(" ", "");
             string baseClass = GetBaseClassForSequenceType(sequenceView.sequenceType);
 
+            // Prepare sub-sequence and data fields content
+            string subSequenceFields = GenerateSubSequenceFields(sequenceView);
+            string subSequenceDataFields = GenerateSubSequenceDataFields(sequenceView);
+            string dataFields = GenerateDataFields(sequenceView);
+            // string sequenceRunLogic = GenerateSequenceRunLogic(sequenceView);
 
             string modifiedContent = templateContent
                 .Replace("TemplateClass", className)
                 .Replace("TemplateBaseClass", baseClass)
-                .Replace("YourNamespace", targetNamespace); // Replace with your own namespace
+                .Replace("YourNamespace", targetNamespace)
+                .Replace("#region SubSequences", "#region SubSequences\n" + subSequenceFields)
+                .Replace("#region SubSequenceData", "#region SubSequenceData\n" + subSequenceDataFields)
+                .Replace("#region Data Fields", "#region Data Fields\n" + dataFields);
+            // .Replace("#region Template Sequence Run", sequenceRunLogic);
 
             File.WriteAllText(scriptPath, modifiedContent);
             Debug.Log("Script created: " + scriptPath);
@@ -190,6 +198,69 @@ public class SequenceGenerator : EditorWindow
         }
     }
 
+    private string GenerateSubSequenceFields(SequenceView sequenceView)
+    {
+        string fields = "";
+
+        foreach (var subSequence in sequenceView.subSequences)
+        {
+            string fieldName = char.ToLowerInvariant(subSequence.name[0]) + subSequence.name.Substring(1);
+            fields += $"\t\tpublic {subSequence.name} {fieldName}Sequence;\n";
+        }
+
+        return fields;
+    }
+
+    private string GenerateSubSequenceDataFields(SequenceView sequenceView)
+    {
+        string fields = "";
+
+        foreach (var subSequence in sequenceView.subSequences)
+        {
+            string fieldName = char.ToLowerInvariant(subSequence.name[0]) + subSequence.name.Substring(1);
+            fields += $"\t\tpublic {subSequence.name}Data {fieldName}Data;\n";
+        }
+
+        return fields;
+    }
+
+    private string GenerateDataFields(SequenceView sequenceView)
+    {
+        string fields = "";
+
+        foreach (var subSequence in sequenceView.subSequences)
+        {
+            string fieldName = char.ToLowerInvariant(subSequence.name[0]) + subSequence.name.Substring(1);
+            fields += $"\t\tpublic {subSequence.name}Data {fieldName}Data;\n";
+        }
+
+        return fields;
+    }
+
+    private string GenerateSequenceRunLogic(SequenceView sequenceView)
+    {
+        string sequenceRunLogic = "";
+
+        foreach (var subSequence in sequenceView.subSequences)
+        {
+            string fieldName = char.ToLowerInvariant(subSequence.name[0]) + subSequence.name.Substring(1);
+            string sequenceRunTemplate = $@"
+            #region {subSequence.name} Sequence Run
+            // Run {subSequence.name}
+            Sequence.Run({fieldName}Sequence, new SequenceRunData
+            {{
+                superSequence = this,
+                sequenceData = currentData.{fieldName}Data,
+                onFinished = {fieldName}Finished
+            }});
+            #endregion";
+
+            sequenceRunLogic += sequenceRunTemplate + "\n";
+        }
+
+        return sequenceRunLogic;
+    }
+
     private string GetBaseClassForSequenceType(SequenceView.SequenceType sequenceType)
     {
         switch (sequenceType)
@@ -198,13 +269,12 @@ public class SequenceGenerator : EditorWindow
                 return "MonoSequence";
             case SequenceView.SequenceType.ScriptableSequence:
                 return "ScriptableSequence";
-            case SequenceView.SequenceType.NexusSequence:
-                return "NexusSequence";
+            case SequenceView.SequenceType.BaseSequence:
+                return "BaseSequence";
             default:
                 return "MonoSequence"; // Default fallback
         }
     }
-
 
     public class SequenceView
     {
@@ -212,7 +282,7 @@ public class SequenceGenerator : EditorWindow
         {
             MonoSequence,
             ScriptableSequence,
-            NexusSequence
+            BaseSequence
         }
 
         public string name;
