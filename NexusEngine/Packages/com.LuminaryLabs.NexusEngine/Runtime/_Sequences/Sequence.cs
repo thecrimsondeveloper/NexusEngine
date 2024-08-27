@@ -30,6 +30,7 @@ namespace LuminaryLabs.NexusEngine
                 if (runData.onInitialize != null) events.RegisterEvent(runData.onInitialize, SequenceEventType.OnInitialize);
                 if (runData.onBegin != null) events.RegisterEvent(runData.onBegin, SequenceEventType.OnBegin);
                 if (runData.onFinished != null) events.RegisterEvent(runData.onFinished, SequenceEventType.OnFinished);
+                if (runData.onUnload != null) events.RegisterEvent(runData.onUnload, SequenceEventType.OnUnload);
                 if (runData.onUnloaded != null) events.RegisterEvent(runData.onUnloaded, SequenceEventType.OnUnloaded);
                 return events;
             }
@@ -38,6 +39,7 @@ namespace LuminaryLabs.NexusEngine
                 if (runData.onInitialize != null) sequenceEvent.RegisterEvent(runData.onInitialize, SequenceEventType.OnInitialize);
                 if (runData.onBegin != null) sequenceEvent.RegisterEvent(runData.onBegin, SequenceEventType.OnBegin);
                 if (runData.onFinished != null) sequenceEvent.RegisterEvent(runData.onFinished, SequenceEventType.OnFinished);
+                if (runData.onUnload != null) sequenceEvent.RegisterEvent(runData.onUnload, SequenceEventType.OnUnload);
                 if (runData.onUnloaded != null) sequenceEvent.RegisterEvent(runData.onUnloaded, SequenceEventType.OnUnloaded);
                 return sequenceEvent;
             }
@@ -141,6 +143,8 @@ namespace LuminaryLabs.NexusEngine
             {
                 Debug.LogWarning("Sequence not running");
             }
+
+
 
             await sequence.UnloadSequence();
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
@@ -301,7 +305,13 @@ namespace LuminaryLabs.NexusEngine
         public UnityAction<ISequence> onFinished { get; set; }
 
         /// <summary>
-        /// EVENT: Called when a sequence is stopped by the Sequence class.
+        /// EVENT: Called when a sequence has started to be unloaded by the Sequence class.
+        /// </summary>
+        /// /// ///
+        public UnityAction<ISequence> onUnload { get; set; }
+
+        /// <summary>
+        /// EVENT: Called when a sequence is stopped by the Sequence class. The Sequence may be null.
         /// </summary>
         /// /// ///
         public UnityAction<ISequence> onUnloaded { get; set; }

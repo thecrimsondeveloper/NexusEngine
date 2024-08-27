@@ -49,6 +49,7 @@ namespace LuminaryLabs.NexusEngine
         OnInitialize,
         OnBegin,
         OnFinished,
+        OnUnload,
         OnUnloaded
     }
 }
