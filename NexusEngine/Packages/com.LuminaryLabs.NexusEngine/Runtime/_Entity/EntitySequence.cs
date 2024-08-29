@@ -22,7 +22,7 @@ namespace LuminaryLabs.NexusEngine
         private RunType _runType = RunType.Manual;
 
 #if ODIN_INSPECTOR 
-        [SerializeReference, BoxGroup("ENTITY DATA")]
+        [SerializeField, BoxGroup("ENTITY DATA")]
 #endif
 
 
