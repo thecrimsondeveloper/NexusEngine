@@ -17,12 +17,18 @@ namespace LuminaryLabs.NexusEngine
             Awake,
             Manual
         }
-
+#if ODIN_INSPECTOR
         [SerializeField, BoxGroup("ENTITY DATA")]
+#else
+        [SerializeField]
+#endif
+
         private RunType _runType = RunType.Manual;
 
 #if ODIN_INSPECTOR 
         [SerializeField, BoxGroup("ENTITY DATA")]
+#else
+        [SerializeField]
 #endif
 
 
