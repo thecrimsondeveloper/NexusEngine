@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Sirenix.OdinInspector;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 using System.Linq;
+
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
 public class DictionaryProfiler : MonoBehaviour
 {
