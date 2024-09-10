@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using UnityEditor;
 using UnityEngine;
 
-
 namespace LuminaryLabs.NexusEngine
 {
-
     [CreateAssetMenu(fileName = "SequenceEditorSettings", menuName = "LuminaryLabs/NexusEngine/SequenceEditorSettings")]
     public class SequenceEditorSettings : ScriptableObject
     {
-
+#if ODIN_INSPECTOR
         [ShowInInspector]
+#endif
         const string settingsPath = @"Packages\com.LuminaryLabs.NexusEngine\Editor\Settings\";
         static SequenceEditorSettings instance;
 
@@ -42,7 +43,5 @@ namespace LuminaryLabs.NexusEngine
 
             return settings.sequenceTemplate;
         }
-
-
     }
 }
