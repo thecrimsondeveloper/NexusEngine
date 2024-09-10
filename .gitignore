@@ -11,8 +11,9 @@
 [Uu]ser[Ss]ettings/
 TOYBOX_clone_*/
 # Ignore Odin Inspector files
-/Assets/Plugins/Sirenix/
-/Assets/Plugins/Sirenix.meta
+NexusEngine/Assets/Plugins/Sirenix/
+NexusEngine/Assets/Plugins/Sirenix.meta
+
 
 
 
