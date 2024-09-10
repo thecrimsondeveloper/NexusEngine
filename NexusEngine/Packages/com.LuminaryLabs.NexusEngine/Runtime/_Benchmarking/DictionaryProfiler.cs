@@ -20,6 +20,7 @@ public class DictionaryProfiler : MonoBehaviour
 
     void Start()
     {
+
     }
 
     [Button("Run Profile Test")]
