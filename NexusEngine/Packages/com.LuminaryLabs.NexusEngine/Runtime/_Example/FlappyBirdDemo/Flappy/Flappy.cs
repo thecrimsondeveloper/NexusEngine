@@ -50,7 +50,7 @@ namespace LuminaryLabs.Samples.FlappyBird
     }
 
     [System.Serializable]
-    public class FlappyData
+    public class FlappyData : SequenceData
     {
         public MoveHandler moveHandlerPrefab;
 

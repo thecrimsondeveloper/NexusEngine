@@ -38,7 +38,7 @@ namespace LuminaryLabs.Samples.FlappyBird
     }
 
 
-    public class PipeData : EntitySequenceData
+    public class PipeData : SequenceData
     {
         public Vector3 slide;
         public MoveHandler movementHandlerPrefab;

@@ -15,11 +15,7 @@ namespace LuminaryLabs.Samples.FlappyBird
 
         protected override void OnBegin()
         {
-            Sequence.Run(currentData.flappy, new SequenceRunData
-            {
-                superSequence = this,
-                sequenceData = currentData.flappyData
-            });
+
 
             Sequence.Run(currentData.pipeDirector, new SequenceRunData
             {
@@ -37,8 +33,7 @@ namespace LuminaryLabs.Samples.FlappyBird
     [System.Serializable]
     public class FlappyBirdSequenceData : CoreSequenceData
     {
-        public Flappy flappy;
-        public FlappyData flappyData;
+
 
         public PipeDirector pipeDirector;
         public PipeDirectorData pipeDirectorData;

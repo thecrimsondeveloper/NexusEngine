@@ -213,16 +213,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentData:
     name: 
-    audioDirector: {fileID: 0}
-    initializationDirector: {fileID: 0}
-    interactionHandler: {fileID: 0}
-    introDirector: {fileID: 0}
-    outroDirector: {fileID: 0}
-    uiDirector: {fileID: 0}
-    visualsDirector: {fileID: 0}
-    flappy: {fileID: -1311262699452165922, guid: b2bcaec2399102742a518ba8128890d8, type: 3}
-    flappyData:
-      moveHandlerPrefab: {fileID: 6445989956318254303, guid: 85550726e0e43914caf8db2f9f62d077, type: 3}
     pipeDirectorData:
       pipeSequence: {fileID: 0}
       pipeMoveHandlerPrefab: {fileID: -2940666294000048828, guid: fa8b6ff61b4a84849bc2f6c8410308ef, type: 3}

@@ -9,7 +9,7 @@ using Sirenix.OdinInspector;
 
 namespace LuminaryLabs.NexusEngine
 {
-    public abstract class EntitySequence<T> : MonoSequence where T : EntitySequenceData
+    public abstract class EntitySequence<T> : MonoSequence where T : SequenceData
     {
         public enum RunType
         {
@@ -78,12 +78,6 @@ namespace LuminaryLabs.NexusEngine
         }
 
         protected abstract UniTask Initialize(T currentData);
-    }
-
-    [System.Serializable]
-    public class EntitySequenceData
-    {
-
     }
 
 }

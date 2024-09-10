@@ -1,19 +1,34 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
 namespace LuminaryLabs.NexusEngine
 {
     public class Sequence : MonoBehaviour
     {
+#if ODIN_INSPECTOR  
         [Title("Sequence View")]
-        [ShowInInspector] List<SequenceStructure> sequenceStructures => SequenceStructure.BuildSequenceStructures(GetAll());
+        [ShowInInspector]
+#endif
+
+        List<SequenceStructure> sequenceStructures => SequenceStructure.BuildSequenceStructures(GetAll());
+#if ODIN_INSPECTOR  
         [Title("Sequence Data")]
-        [ShowInInspector] private static readonly Dictionary<Guid, ISequence> runningSequences = new Dictionary<Guid, ISequence>();
-        [ShowInInspector] private static readonly Dictionary<Guid, SequenceEvents> sequenceEvents = new Dictionary<Guid, SequenceEvents>();
+        [ShowInInspector]
+#endif
+        private static readonly Dictionary<Guid, ISequence> runningSequences = new Dictionary<Guid, ISequence>();
+
+#if ODIN_INSPECTOR
+        [ShowInInspector]
+#endif
+
+        private static readonly Dictionary<Guid, SequenceEvents> sequenceEvents = new Dictionary<Guid, SequenceEvents>();
 
         public static List<ISequence> GetAll() => new List<ISequence>(runningSequences.Values);
 
@@ -206,181 +221,5 @@ namespace LuminaryLabs.NexusEngine
 
     }
 
-    public interface ISequence
-    {
-        ISequence superSequence { get; set; }
-        Guid guid { get; set; }
-        object currentData { get; set; }
-
-        UniTask InitializeSequence(object currentData = null);
-        void OnBeginSequence();
-        UniTask FinishSequence();
-        UniTask UnloadSequence();
-
-        public Transform GetTransform()
-        {
-            return this is MonoBehaviour monoBehaviour ? monoBehaviour.transform : superSequence?.GetTransform();
-        }
-    }
-
-    public class SequenceRunData
-    {
-        /// <summary>
-        /// The sequence that is running this sequence.
-        /// If both the superSequence and the given sequence are MonoBehaviours, the given sequence will be parented to the superSequence.
-        /// </summary>
-        public ISequence superSequence { get; set; }
-
-        /// <summary>
-        /// This specificies a sequences that will be stopped before the new sequence is started.
-        /// </summary>
-        /// /// ///
-        public ISequence replace { get; set; }
-
-        /// <summary>
-        /// The data that is passed to the sequence when it is spawned.
-        /// This can be anything that needs to be passed into the sequence for it to run. 
-        /// May be a second data class.
-        /// </summary>
-        public object sequenceData { get; set; }
-
-        /// <summary>
-        /// The position of the sequence when it is spawned. Uses world space position by default.
-        /// </summary>
-        /// /// ///
-        public Vector3 spawnPosition { get; set; }
-
-        /// <summary>
-        /// The rotation of the sequence when it is spawned. Uses world space rotation by default.
-        /// </summary>
-        /// /// ///
-        public Quaternion spawnRotation { get; set; }
-
-        /// <summary>
-        /// Sets the position locally after it set's the parent.
-        /// </summary>
-        /// /// ///
-        public bool useLocalPosition { get; set; } = true;
-
-        /// <summary>
-        /// Sets the rotation locally after it set's the parent.
-        /// </summary>
-        /// /// ///
-        public bool useLocalRotation { get; set; } = true;
-
-        /// <summary>
-        /// Sets the parent of the sequence if it is associated with a MonoBehaviour. Overwrites the superSequence parent.
-        /// </summary>
-        /// /// ///
-        public Transform parent { get; set; }
-
-        /// <summary>
-        /// EVENT: Called when any Sequence is initialized by the Sequence class.\
-        /// This is called before the sequence is started. Use this to set any dependancies.
-        /// </summary>
-        /// /// ///
-        public UnityAction<ISequence> onInitialize { get; set; }
-
-        /// <summary>
-        /// EVENT: Called when the sequence is started by the Sequence class.
-        /// Called directly after the sequence is initialized.
-        /// This is where the sequence should start running any sub sequences and logic.
-        /// </summary>
-        /// /// ///
-        public UnityAction<ISequence> onBegin { get; set; }
-
-        /// <summary>
-        /// EVENT: Called when the sequence is finished by the Sequence class.
-        /// This should be reserved for the completion of the sequence. The sequence is still running when this is called.
-        /// </summary>
-        /// /// ///
-        public UnityAction<ISequence> onFinished { get; set; }
-
-        /// <summary>
-        /// EVENT: Called when a sequence has started to be unloaded by the Sequence class.
-        /// </summary>
-        /// /// ///
-        public UnityAction<ISequence> onUnload { get; set; }
-
-        /// <summary>
-        /// EVENT: Called when a sequence is stopped by the Sequence class. The Sequence may be null.
-        /// </summary>
-        /// /// ///
-        public UnityAction<ISequence> onUnloaded { get; set; }
-
-        /// <summary>
-        /// EVENT: Called when a MonoBehaviour is generated by the Sequence class.Gets called when a prefab sequence is ran.
-        /// </summary>
-        /// /// ///
-        public SequenceAction<MonoBehaviour> onGenerated { get; set; }
-
-        public override string ToString() => $"SequenceRunData: {sequenceData}\nSuperSequence: {superSequence}\nReplace: {replace}\nSpawnPosition: {spawnPosition}\nSpawnRotation: {spawnRotation}\nParent: {parent}";
-    }
-
-
-    public class SequenceRunResult
-    {
-        public ISequence sequence { get; set; }
-        public SequenceEvents events { get; set; }
-        private UniTask task { get; set; } = default;
-
-        public void SetTask(UniTask task)
-        {
-            this.task = task;
-        }
-
-        public async UniTask Async()
-        {
-            if (task.Status == UniTaskStatus.Pending)
-                await task;
-        }
-
-    }
-
-    [System.Serializable]
-    public class SequenceStructure
-    {
-        public ISequence sequence;
-        public UnityEngine.Object sequenceObject;
-        public string name;
-        public string parent;
-
-        public List<SequenceStructure> subSequences = new List<SequenceStructure>();
-
-        // public DebugSequence[] subSequences;
-        public SequenceStructure(ISequence sequence)
-        {
-            this.sequence = sequence;
-            this.sequenceObject = sequence is UnityEngine.Object ? sequence as UnityEngine.Object : null;
-            this.name = sequence.GetType().Name;
-            this.parent = sequence.superSequence?.GetType().Name;
-        }
-
-        public static List<SequenceStructure> BuildSequenceStructures(List<ISequence> sequences)
-        {
-            Dictionary<Guid, SequenceStructure> sequenceMap = new Dictionary<Guid, SequenceStructure>();
-            List<SequenceStructure> debugSequences = new List<SequenceStructure>();
-
-            foreach (var sequence in sequences)
-            {
-                SequenceStructure debugSequence = new SequenceStructure(sequence);
-                sequenceMap.Add(sequence.guid, debugSequence);
-            }
-
-            foreach (var sequence in sequences)
-            {
-                if (sequence.superSequence != null && sequenceMap.TryGetValue(sequence.superSequence.guid, out var parent))
-                {
-                    parent.subSequences.Add(sequenceMap[sequence.guid]);
-                }
-                else
-                {
-                    debugSequences.Add(sequenceMap[sequence.guid]);
-                }
-            }
-            return debugSequences;
-        }
-
-    }
 }
 
