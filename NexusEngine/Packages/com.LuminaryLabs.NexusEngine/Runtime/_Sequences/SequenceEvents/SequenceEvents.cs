@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,7 +9,9 @@ namespace LuminaryLabs.NexusEngine
 {
     public class SequenceEvents
     {
+#if ODIN_INSPECTOR
         [ShowInInspector]
+#endif
         public Dictionary<SequenceEventType, UnityEvent<ISequence>> events = new Dictionary<SequenceEventType, UnityEvent<ISequence>>
         {
             {SequenceEventType.OnInitialize, new UnityEvent<ISequence>()},
@@ -15,6 +19,7 @@ namespace LuminaryLabs.NexusEngine
             {SequenceEventType.OnFinished, new UnityEvent<ISequence>()},
             {SequenceEventType.OnUnloaded, new UnityEvent<ISequence>()}
         };
+
         public void RegisterEvent(UnityAction<ISequence> action, SequenceEventType eventType)
         {
             if (events.TryGetValue(eventType, out var unityEvent))

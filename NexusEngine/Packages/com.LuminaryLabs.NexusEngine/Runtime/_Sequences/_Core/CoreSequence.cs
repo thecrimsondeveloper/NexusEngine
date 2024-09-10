@@ -2,15 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using UnityEngine;
-
 
 namespace LuminaryLabs.NexusEngine
 {
     public abstract class CoreSequence<T> : MonoSequence where T : CoreSequenceData
     {
-        [SerializeField, HideLabel, BoxGroup("CORE DATA")]
+        [SerializeField]
+#if ODIN_INSPECTOR
+        [HideLabel, BoxGroup("CORE DATA")]
+#endif
         private T _currentData;
 
         public new T currentData
@@ -28,15 +32,10 @@ namespace LuminaryLabs.NexusEngine
             });
         }
 
-
-
         protected override UniTask Initialize(object currentData = null)
         {
             if (currentData is T data)
             {
-
-
-
                 return Initialize(data);
             }
             return UniTask.CompletedTask;
@@ -48,12 +47,9 @@ namespace LuminaryLabs.NexusEngine
     [System.Serializable]
     public class CoreSequenceData
     {
+#if ODIN_INSPECTOR
         [FoldoutGroup("Core")]
+#endif
         public string name;
-
-
-
     }
-
-
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using UnityEngine;
 
 namespace LuminaryLabs.NexusEngine
@@ -11,9 +13,11 @@ namespace LuminaryLabs.NexusEngine
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
 
-        // [ShowInInspector]
+        // Conditional attribute for Odin Inspector, but keeping it commented out as in the original code
+#if ODIN_INSPECTOR
+        [ShowInInspector]
+#endif
         public object currentData { get; set; }
-
 
         public UniTask InitializeSequence(object currentData = null)
         {

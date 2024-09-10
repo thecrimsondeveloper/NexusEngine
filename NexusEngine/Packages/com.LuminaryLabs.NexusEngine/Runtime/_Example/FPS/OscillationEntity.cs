@@ -2,20 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using LuminaryLabs.NexusEngine;
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using UnityEngine;
-
 
 namespace LuminaryLabs.Example.FPS
 {
     public class OscillationEntity : MonoSequence
     {
-        [SerializeField] OscillationMovementHandler oscillationMovementHandler;
+
+        [SerializeField]
+        OscillationMovementHandler oscillationMovementHandler;
+
         protected override UniTask Initialize(object currentData = null)
         {
             oscillationMovementHandler = ScriptableObject.CreateInstance<OscillationMovementHandler>();
             return UniTask.CompletedTask;
         }
+
         protected override void OnBegin()
         {
             if (currentData is OscillationEntityData data)
@@ -35,7 +40,8 @@ namespace LuminaryLabs.Example.FPS
 
         private void Update()
         {
-            if (oscillationMovementHandler != null) oscillationMovementHandler.RefreshPosition(Time.time);
+            if (oscillationMovementHandler != null)
+                oscillationMovementHandler.RefreshPosition(Time.time);
         }
 
         protected override UniTask Unload()

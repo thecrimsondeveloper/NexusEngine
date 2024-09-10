@@ -2,16 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using LuminaryLabs.NexusEngine;
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using UnityEngine;
-
 
 namespace LuminaryLabs.Example.FPS
 {
-
     public class OscillationEntityDirector : CoreSequence<OscillationEntityDirectorData>
     {
-
         protected override UniTask Initialize(OscillationEntityDirectorData currentData = null)
         {
             return UniTask.CompletedTask;
@@ -31,7 +30,6 @@ namespace LuminaryLabs.Example.FPS
                     onBegin = (Sequence) => Debug.Log("OscillationEntity Began"),
                     onFinished = (Sequence) => Debug.Log("OscillationEntity Finished"),
                 });
-
             }
         }
 
@@ -45,8 +43,9 @@ namespace LuminaryLabs.Example.FPS
     public class OscillationEntityDirectorData : CoreSequenceData
     {
         public Transform entityParent;
+
         public OscillationEntity oscillationEntity;
+
         public OscillationEntityData oscillationEntityData;
     }
-
 }
