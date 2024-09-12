@@ -82,6 +82,11 @@ namespace LuminaryLabs.NexusEngine
             SequenceRunResult sequenceObject = new SequenceRunResult();
             sequenceObject.sequence = sequence;
 
+            string name = sequence.GetType().Name;
+            Debug.Log("Running Sequence: " + name);
+            bool hasData = runData != null;
+            Debug.Log("Has Data: " + hasData);
+
             if (IsRunning(sequence))
             {
                 if (sequenceEvents.TryGetValue(sequence.guid, out var runningEvents))

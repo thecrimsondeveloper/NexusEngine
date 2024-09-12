@@ -13,10 +13,6 @@ namespace LuminaryLabs.NexusEngine
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
 
-        // Conditional attribute for Odin Inspector, but keeping it commented out as in the original code
-#if ODIN_INSPECTOR
-        [ShowInInspector]
-#endif
         public object currentData { get; set; }
 
         public UniTask InitializeSequence(object currentData = null)

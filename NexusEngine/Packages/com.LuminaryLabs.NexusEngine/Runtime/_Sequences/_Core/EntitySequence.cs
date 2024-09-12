@@ -18,20 +18,19 @@ namespace LuminaryLabs.NexusEngine
             Manual
         }
 #if ODIN_INSPECTOR
-        [SerializeField, BoxGroup("ENTITY DATA")]
+        [BoxGroup("ENTITY DATA"), SerializeField]
 #else
         [SerializeField]
 #endif
-
         private RunType _runType = RunType.Manual;
 
-#if ODIN_INSPECTOR 
-        [SerializeField, BoxGroup("ENTITY DATA")]
+
+
+#if ODIN_INSPECTOR
+        [BoxGroup("ENTITY DATA"), SerializeField]
 #else
         [SerializeField]
 #endif
-
-
         private T _currentData;
 
         public new T currentData
@@ -69,9 +68,6 @@ namespace LuminaryLabs.NexusEngine
         {
             if (currentData is T data)
             {
-
-
-
                 return Initialize(data);
             }
             return UniTask.CompletedTask;

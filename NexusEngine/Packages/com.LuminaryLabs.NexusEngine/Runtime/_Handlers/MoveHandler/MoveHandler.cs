@@ -36,13 +36,21 @@ namespace LuminaryLabs.Samples
             return UniTask.CompletedTask;
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Jump();
+            }
+        }
+
         public override void Jump()
         {
 
         }
     }
 
-    public class MoveHandlerData
+    public class MoveHandlerData : SequenceData
     {
         // Implement data here
         public float speed = 1.0f;
