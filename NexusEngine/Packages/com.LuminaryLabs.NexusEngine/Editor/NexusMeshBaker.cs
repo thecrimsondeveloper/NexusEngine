@@ -7,6 +7,8 @@ using UnityEngine;
 public class NexusMeshBaker : EditorWindow
 {
     private GameObject parentObject;
+    private Mesh meshToGenerateUVs;
+
     [MenuItem("Luminary Labs/Nexus Mesh Baker")]
     public static void ShowWindow()
     {
@@ -32,6 +34,21 @@ public class NexusMeshBaker : EditorWindow
                 Debug.LogWarning("No parent object assigned for mesh baking.");
             }
         }
+
+        // Field to assign a mesh to generate lightmap UVs
+        meshToGenerateUVs = (Mesh)EditorGUILayout.ObjectField("Mesh to Generate Lightmap UVs", meshToGenerateUVs, typeof(Mesh), true);
+        if (GUILayout.Button("Generate Lightmap UVs"))
+        {
+            if (meshToGenerateUVs != null)
+            {
+                GenerateLightmapUVs(meshToGenerateUVs);
+            }
+            else
+            {
+                Debug.LogWarning("No mesh assigned to generate lightmap UVs.");
+            }
+        }
+
     }
 
     // This method calls the NexusMeshUtility to combine meshes
@@ -51,6 +68,8 @@ public class NexusMeshBaker : EditorWindow
                                      $"Submeshes: {mf.sharedMesh.subMeshCount}, " +
                                      $"Cast Shadows: {mr.shadowCastingMode}, Receive Shadows: {mr.receiveShadows}, " +
                                      $"Material: {mr.sharedMaterial.name}, Shader: {mr.sharedMaterial.shader.name}");
+
+
             }
         }
 
@@ -72,6 +91,29 @@ public class NexusMeshBaker : EditorWindow
             logOutput.AppendLine("Error: Failed to bake meshes.");
             Debug.LogError(logOutput.ToString());
         }
+    }
+
+    private void GenerateLightmapUVs(Mesh mesh)
+    {
+        // Check if the mesh already has UV2 (lightmap UVs)
+        if (mesh.uv2 != null && mesh.uv2.Length > 0)
+        {
+            if (EditorUtility.DisplayDialog("Lightmap UVs", "The mesh already has UV2 (lightmap UVs). Do you want to regenerate them?", "Yes", "No"))
+            {
+                Unwrapping.GenerateSecondaryUVSet(mesh);
+                Debug.Log("Lightmap UVs regenerated.");
+            }
+        }
+        else
+        {
+            Unwrapping.GenerateSecondaryUVSet(mesh);
+            Debug.Log("Lightmap UVs generated.");
+        }
+
+        // Mark the asset dirty so the changes are saved
+        EditorUtility.SetDirty(mesh);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
     }
 
     // Save the entire GameObject as a prefab and save the baked mesh as a separate asset
@@ -110,7 +152,10 @@ public class NexusMeshBaker : EditorWindow
                 {
                     meshFilter.sharedMesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
                     EditorUtility.SetDirty(meshFilter); // Mark it dirty so the changes are saved
+                    GenerateLightmapUVs(meshFilter.sharedMesh);
                 }
+
+                // Generate lightmap UVs for each mesh
             }
             else
             {
