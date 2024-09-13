@@ -4,18 +4,17 @@ using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
-public class NexusMeshBaker : EditorWindow
+public class NexusMeshBaker : NexusFactoryPane
 {
     private GameObject parentObject;
     private Mesh meshToGenerateUVs;
 
-    [MenuItem("Luminary Labs/Nexus Mesh Baker")]
-    public static void ShowWindow()
+    public NexusMeshBaker()
     {
-        GetWindow<NexusMeshBaker>("Nexus Mesh Baker");
+        title = "Mesh Baker";
     }
 
-    void OnGUI()
+    protected override void OnDraw()
     {
         GUILayout.Label("Nexus Mesh Baker", EditorStyles.boldLabel);
 
