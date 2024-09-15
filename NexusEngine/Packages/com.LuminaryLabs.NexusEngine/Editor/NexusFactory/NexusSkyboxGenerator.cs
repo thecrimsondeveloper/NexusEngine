@@ -5,23 +5,41 @@ using UnityEngine;
 
 public class NexusSkyboxGenerator : NexusFactoryPane
 {
-
+    enum SkyboxResolution
+    {
+        _256 = 256,
+        _512 = 512,
+        _1024 = 1024,
+        _2048 = 2048,
+        _4096 = 4096
+    }
 
     public NexusSkyboxGenerator()
     {
         title = "Skybox Generator";
     }
 
+    SkyboxResolution resolution = SkyboxResolution._1024;
+
     protected override void OnDraw()
     {
+
+        //horizontal layout for the buttons
+        GUILayout.BeginHorizontal();
+        //add an enum selection for the skybox resolution
+        GUILayout.Label("Skybox Resolution");
+        resolution = (SkyboxResolution)EditorGUILayout.EnumPopup(resolution);
+
+        GUILayout.EndHorizontal();
+
+
         if (GUILayout.Button("Generate Skybox From Scene View Camera"))
         {
-            GenerateSkyboxFromSceneCamera();
+            GenerateSkyboxFromSceneCamera((int)resolution);
         }
     }
 
-    [MenuItem("Tools/Generate Skybox From Camera")]
-    public static void GenerateSkyboxFromSceneCamera()
+    public static void GenerateSkyboxFromSceneCamera(int resolution)
     {
         // Get the currently active scene camera
         Camera sceneCamera = SceneView.lastActiveSceneView.camera;
@@ -49,8 +67,8 @@ public class NexusSkyboxGenerator : NexusFactoryPane
         // Convert path to a relative path (from "Assets/" onward)
         path = "Assets" + path.Substring(Application.dataPath.Length);
 
-        // Create a cubemap for rendering the scene
-        Cubemap cubemap = new Cubemap(1024, TextureFormat.RGBA32, false);
+
+        Cubemap cubemap = new Cubemap(resolution, TextureFormat.RGBA32, false);
 
         // Render the scene from the camera to the cubemap
         sceneCamera.RenderToCubemap(cubemap);
