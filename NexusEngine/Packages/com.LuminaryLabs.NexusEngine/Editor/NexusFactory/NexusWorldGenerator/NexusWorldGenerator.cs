@@ -12,7 +12,7 @@ public class NexusWorldGenerator : NexusFactoryPane
     public NexusWorldGenerator()
     {
         title = "World Generator";
-
+        worldGenerationHandlers.Add(new NexusTerrainGenerationHandler());
         worldGenerationHandlers.Add(new NexusSphereGenerationHandler());
         worldGenerationHandlers.Add(new NexusGridGenerationHandler());
 
