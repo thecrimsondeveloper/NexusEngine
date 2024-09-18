@@ -123,15 +123,38 @@ namespace LuminaryLabs.NexusEngine
             {
                 sequence.transform.SetParent(runData.parent);
             }
+            else if (runData.superSequence != null)
+            {
+                sequence.transform.SetParent(runData.superSequence.GetTransform());
+            }
 
-            //set the position and rotation
-            if (runData.useLocalPosition)
-                sequence.transform.localPosition = runData.spawnPosition;
-            else sequence.transform.position = runData.spawnPosition;
+            if (runData.spawnPosition.HasValue == false)
+            {
+                runData.spawnPosition = sequence.transform.position;
+            }
+            else if (runData.useLocalPosition)
+            {
+                sequence.transform.localPosition = runData.spawnPosition.Value;
+            }
+            else
+            {
+                sequence.transform.position = runData.spawnPosition.Value;
+            }
 
-            if (runData.useLocalRotation)
-                sequence.transform.localRotation = runData.spawnRotation;
-            else sequence.transform.rotation = runData.spawnRotation;
+
+            if (runData.spawnRotation.HasValue == false)
+            {
+                runData.spawnRotation = sequence.transform.rotation;
+            }
+            else if (runData.useLocalRotation)
+            {
+                sequence.transform.localRotation = runData.spawnRotation.Value;
+            }
+            else
+            {
+                sequence.transform.rotation = runData.spawnRotation.Value;
+            }
+
         }
 
 
@@ -145,11 +168,15 @@ namespace LuminaryLabs.NexusEngine
                 await Stop(runData.replace);
             }
             await UniTask.NextFrame();
-            Debug.Log("Sequence data: " + sequence.currentData == null);
-            Debug.Log("Current data Null: " + (runData.sequenceData == null));
+
+            //if data is passed in, set it
             if (runData.sequenceData != null)
             {
                 sequence.currentData = runData.sequenceData;
+            }
+            else //if no data is passed in, set the current data to the sequence data
+            {
+                runData.sequenceData = sequence.currentData;
             }
 
             if (runData.superSequence != null)
@@ -197,30 +224,32 @@ namespace LuminaryLabs.NexusEngine
         }
         private static ISequence HandleInstantiation(ISequence sequence, SequenceRunData runData = null)
         {
-            if (sequence is ScriptableObject scriptableObject)
-            {
-                ScriptableObject scriptableInstance = Instantiate(scriptableObject);
-                runData.onGenerated?.Invoke(scriptableInstance);
-                return scriptableInstance as ISequence;
-            }
+            // if (sequence is ScriptableObject scriptableObject)
+            // {
+            //     ScriptableObject scriptableInstance = Instantiate(scriptableObject);
+            //     runData.onGenerated?.Invoke(scriptableInstance);
+            //     return scriptableInstance as ISequence;
+            // }
 
-            if (sequence is MonoBehaviour monoBehaviour && monoBehaviour.gameObject.scene.name == null)
+
+
+            if (sequence is MonoBehaviour monoBehaviour)
             {
+
+                bool isPrefab = monoBehaviour.gameObject.scene.name == null;
+                if (isPrefab == false) { return sequence; }
+                else
+                {
+                    Debug.Log("Is Prefab: " + isPrefab);
+                }
+
                 MonoBehaviour monoInstance = Instantiate(monoBehaviour);
-
                 if (runData != null)
                 {
-                    bool hasTargetParent = runData.parent != null;
-                    bool hasSuperSequence = runData.superSequence != null;
-                    if (hasTargetParent == false && hasSuperSequence)
-                        monoInstance.transform.SetParent(runData.superSequence.GetTransform());
                     runData.onGenerated?.Invoke(monoInstance);
                 }
 
-                if (monoInstance is ISequence sequenceInstance)
-                {
-                    return sequenceInstance;
-                }
+                return monoInstance as ISequence;
             }
             return sequence;
         }

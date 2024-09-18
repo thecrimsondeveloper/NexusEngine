@@ -9,39 +9,25 @@ using UnityEngine;
 
 namespace LuminaryLabs.Example.FPS
 {
-    public class OscillationEntity : MonoSequence
+    public class OscillationEntity : EntitySequence<OscillationEntityData>
     {
-
-        [SerializeField]
         OscillationMovementHandler oscillationMovementHandler;
+        OscillationMovementHandlerData oscillationMovementHandlerData;
 
-        protected override UniTask Initialize(object currentData = null)
+        protected override UniTask Initialize(OscillationEntityData currentData = null)
         {
-            oscillationMovementHandler = ScriptableObject.CreateInstance<OscillationMovementHandler>();
+            oscillationMovementHandler = currentData.movementHandler;
+            oscillationMovementHandlerData = currentData.movementHandlerData;
             return UniTask.CompletedTask;
         }
 
         protected override void OnBegin()
         {
-            if (currentData is OscillationEntityData data)
+            Sequence.Run(oscillationMovementHandler, new SequenceRunData
             {
-                Sequence.Run(oscillationMovementHandler, new SequenceRunData
-                {
-                    superSequence = this,
-                    sequenceData = new OscillationMovementHandlerData
-                    {
-                        target = transform,
-                        amplitude = data.amplitude,
-                        frequency = data.frequency
-                    }
-                });
-            }
-        }
-
-        private void Update()
-        {
-            if (oscillationMovementHandler != null)
-                oscillationMovementHandler.RefreshPosition(Time.time);
+                superSequence = this,
+                sequenceData = oscillationMovementHandlerData
+            });
         }
 
         protected override UniTask Unload()
@@ -51,9 +37,9 @@ namespace LuminaryLabs.Example.FPS
     }
 
     [System.Serializable]
-    public class OscillationEntityData
+    public class OscillationEntityData : SequenceData
     {
-        public float amplitude;
-        public float frequency;
+        public OscillationMovementHandler movementHandler;
+        public OscillationMovementHandlerData movementHandlerData;
     }
 }

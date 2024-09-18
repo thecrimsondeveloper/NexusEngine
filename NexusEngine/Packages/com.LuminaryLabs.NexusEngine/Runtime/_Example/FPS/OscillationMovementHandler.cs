@@ -8,30 +8,26 @@ using UnityEngine;
 
 namespace LuminaryLabs.Example.FPS
 {
-    public class OscillationMovementHandler : ScriptableSequence
+    public class OscillationMovementHandler : MonoSequence<OscillationMovementHandlerData>
     {
         [SerializeField] Transform target;
         [SerializeField] float amplitude;
         [SerializeField] float frequency;
+
         [SerializeField] Vector3 initialPosition;
-        protected override UniTask Initialize(object currentData = null)
+        protected override UniTask Initialize(OscillationMovementHandlerData currentData = null)
         {
-            if (currentData is OscillationMovementHandlerData data)
-            {
-                if (data.target != null)
-                    target = data.target;
-                amplitude = data.amplitude;
-                frequency = data.frequency;
-
-            }
-
-
+            if (currentData.target != null)
+                target = currentData.target;
+            amplitude = currentData.amplitude;
+            frequency = currentData.frequency;
             initialPosition = target == null ? Vector3.zero : target.position;
             return UniTask.CompletedTask;
         }
 
         protected override void OnBegin()
         {
+
         }
 
         protected override UniTask Unload()
@@ -39,12 +35,13 @@ namespace LuminaryLabs.Example.FPS
             return UniTask.CompletedTask;
         }
 
-        public void RefreshPosition(float time)
+        public void Update()
         {
             if (target == null)
                 return;
 
-            target.position = initialPosition + Vector3.up * Mathf.Sin(time * frequency) * amplitude;
+            float time = Time.time;
+            // target.position = initialPosition + Vector3.up * Mathf.Sin(time * frequency) * amplitude;
         }
     }
 

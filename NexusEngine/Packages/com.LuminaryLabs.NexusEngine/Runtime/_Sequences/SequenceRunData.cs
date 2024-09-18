@@ -28,13 +28,13 @@ namespace LuminaryLabs.NexusEngine
         /// The position of the sequence when it is spawned. Uses world space position by default.
         /// </summary>
         /// /// ///
-        public Vector3 spawnPosition { get; set; }
+        public Vector3? spawnPosition { get; set; }
 
         /// <summary>
         /// The rotation of the sequence when it is spawned. Uses world space rotation by default.
         /// </summary>
         /// /// ///
-        public Quaternion spawnRotation { get; set; }
+        public Quaternion? spawnRotation { get; set; }
 
         /// <summary>
         /// Sets the position locally after it set's the parent.
