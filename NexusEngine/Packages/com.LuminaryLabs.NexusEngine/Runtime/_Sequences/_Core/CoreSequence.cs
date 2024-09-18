@@ -11,11 +11,19 @@ namespace LuminaryLabs.NexusEngine
 {
     public abstract class CoreSequence<T> : MonoSequence where T : CoreSequenceData
     {
+
+        [SerializeField]
+#if ODIN_INSPECTOR
+        [BoxGroup("CORE DATA")]
+#endif
+        bool runOnStart = true;
+
         [SerializeField]
 #if ODIN_INSPECTOR
         [HideLabel, BoxGroup("CORE DATA")]
 #endif
         private T _currentData;
+
 
         public new T currentData
         {
@@ -25,11 +33,14 @@ namespace LuminaryLabs.NexusEngine
 
         protected virtual void Start()
         {
-            Sequence.Run(this, new SequenceRunData
+            if (runOnStart)
             {
-                sequenceData = currentData,
-                superSequence = null,
-            });
+                Sequence.Run(this, new SequenceRunData
+                {
+                    sequenceData = currentData,
+                    superSequence = null,
+                });
+            }
         }
 
         protected override UniTask Initialize(object currentData = null)
@@ -51,5 +62,6 @@ namespace LuminaryLabs.NexusEngine
         [FoldoutGroup("Core")]
 #endif
         public string name;
+        public bool runOnStart = true;
     }
 }
