@@ -100,6 +100,14 @@ namespace LuminaryLabs.NexusEngine
             }
 
             sequence = HandleInstantiation(sequence, runData);
+
+            //handle anything to do with Unity Objects
+            if (sequence is MonoBehaviour monoBehaviour)
+            {
+                HandleMonoBehaviour(monoBehaviour, runData);
+            }
+
+
             SequenceEvents events = RegisterSequence(sequence, runData);
             // Start the sequence and store the running task
             UniTask runningTask = RunSequence(sequence, events, runData);
@@ -107,6 +115,23 @@ namespace LuminaryLabs.NexusEngine
             sequenceObject.events = events;
 
             return sequenceObject;
+        }
+
+        static void HandleMonoBehaviour(MonoBehaviour sequence, SequenceRunData runData = null)
+        {
+            if (runData.parent != null)
+            {
+                sequence.transform.SetParent(runData.parent);
+            }
+
+            //set the position and rotation
+            if (runData.useLocalPosition)
+                sequence.transform.localPosition = runData.spawnPosition;
+            else sequence.transform.position = runData.spawnPosition;
+
+            if (runData.useLocalRotation)
+                sequence.transform.localRotation = runData.spawnRotation;
+            else sequence.transform.rotation = runData.spawnRotation;
         }
 
 
@@ -131,24 +156,8 @@ namespace LuminaryLabs.NexusEngine
             {
                 sequence.superSequence = runData.superSequence;
             }
-
             await sequence.InitializeSequence(runData.sequenceData);
-            if (sequence is MonoSequence monoSequence)
-            {
-                if (runData.parent != null)
-                {
-                    monoSequence.transform.SetParent(runData.parent);
-                }
 
-
-                if (runData.useLocalPosition)
-                    monoSequence.transform.localPosition = runData.spawnPosition;
-                else monoSequence.transform.position = runData.spawnPosition;
-
-                if (runData.useLocalRotation)
-                    monoSequence.transform.localRotation = runData.spawnRotation;
-                else monoSequence.transform.rotation = runData.spawnRotation;
-            }
 
             if (events != null) events.InvokeEvent(SequenceEventType.OnInitialize, sequence); // OnBegin
             sequence.OnBeginSequence();
@@ -161,8 +170,6 @@ namespace LuminaryLabs.NexusEngine
             {
                 Debug.LogWarning("Sequence not running");
             }
-
-
 
             await sequence.UnloadSequence();
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
@@ -190,11 +197,12 @@ namespace LuminaryLabs.NexusEngine
         }
         private static ISequence HandleInstantiation(ISequence sequence, SequenceRunData runData = null)
         {
-            // if (sequence is ScriptableObject scriptableObject)
-            // {
-            //     ISequence scriptableInstance = Instantiate(scriptableObject) as ISequence;
-            //     return scriptableInstance;
-            // }
+            if (sequence is ScriptableObject scriptableObject)
+            {
+                ScriptableObject scriptableInstance = Instantiate(scriptableObject);
+                runData.onGenerated?.Invoke(scriptableInstance);
+                return scriptableInstance as ISequence;
+            }
 
             if (sequence is MonoBehaviour monoBehaviour && monoBehaviour.gameObject.scene.name == null)
             {
