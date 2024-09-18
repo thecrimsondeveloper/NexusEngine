@@ -62,6 +62,5 @@ namespace LuminaryLabs.NexusEngine
         [FoldoutGroup("Core")]
 #endif
         public string name;
-        public bool runOnStart = true;
     }
 }
