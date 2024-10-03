@@ -24,19 +24,19 @@ namespace LuminaryLabs.NexusEngine
             OnBegin();
         }
 
-        public UniTask UnloadSequence()
+        public virtual UniTask UnloadSequence()
         {
             return Unload();
         }
-        public UniTask FinishSequence()
+        public virtual UniTask FinishSequence()
         {
             return Finish();
         }
-        public void OnFinishedSequence()
+        public virtual void OnFinishedSequence()
         {
             OnFinished();
         }
-        public void OnUnloadedSequence()
+        public virtual void OnUnloadedSequence()
         {
             OnUnloaded();
         }

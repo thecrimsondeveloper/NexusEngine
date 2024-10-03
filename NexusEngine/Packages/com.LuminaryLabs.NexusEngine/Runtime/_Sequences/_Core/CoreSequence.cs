@@ -25,7 +25,7 @@ namespace LuminaryLabs.NexusEngine
         private T _currentData;
         
 
-
+        private List<ISequence> beginSequences = new List<ISequence>();
 
         public new T currentData
         {
@@ -66,9 +66,28 @@ namespace LuminaryLabs.NexusEngine
                 Sequence.Run(monoSequence, new SequenceRunData()
                 {
                     superSequence = this,
+                    onBegin = OnBeginSequenceBegin
                 });
             }
         }
+
+        public override UniTask UnloadSequence()
+        {
+            foreach(ISequence beginSequence in beginSequences)
+            {
+                Sequence.Stop(beginSequence);
+            }
+            return base.UnloadSequence();
+        }
+
+        void OnBeginSequenceBegin(ISequence sequence)
+        {
+            if(beginSequences.Contains(sequence) == false)
+            {
+                beginSequences.Add(sequence);
+            }   
+        }
+
 
         protected abstract UniTask Initialize(T currentData);
     }
