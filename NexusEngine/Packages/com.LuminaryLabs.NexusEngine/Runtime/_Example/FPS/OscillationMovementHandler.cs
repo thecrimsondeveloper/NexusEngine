@@ -41,7 +41,7 @@ namespace LuminaryLabs.Example.FPSGame
                 return;
 
             float time = Time.time;
-            // target.position = initialPosition + Vector3.up * Mathf.Sin(time * frequency) * amplitude;
+            target.position = initialPosition + Vector3.up * Mathf.Sin(time * frequency) * amplitude;
         }
     }
 

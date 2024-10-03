@@ -50,6 +50,9 @@ namespace LuminaryLabs.NexusEngine
             if (currentData is T data)
             {
                 return Initialize(data);
+            } if(this.currentData is T)
+            {
+                return Initialize(this.currentData);
             }
             return UniTask.CompletedTask;
         }

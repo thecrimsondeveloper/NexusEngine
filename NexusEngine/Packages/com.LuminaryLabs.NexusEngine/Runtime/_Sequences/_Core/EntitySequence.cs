@@ -70,6 +70,11 @@ namespace LuminaryLabs.NexusEngine
             {
                 return Initialize(data);
             }
+            else if(this.currentData is T)
+            {
+                return Initialize(this.currentData);
+            }
+
             return UniTask.CompletedTask;
         }
 
