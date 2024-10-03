@@ -8,6 +8,7 @@ public class NexusFactory : EditorWindow
 {
     // List of panes to display
     private List<NexusFactoryPane> factoryPanes = new List<NexusFactoryPane>();
+    private Vector2 scrollPosition = Vector2.zero;
 
     [MenuItem("Luminary Labs/Factory")]
     public static void ShowWindow()
@@ -24,23 +25,26 @@ public class NexusFactory : EditorWindow
     }
 
     // OnGUI method of the EditorWindow
-    private void OnGUI()
+     private void OnGUI()
     {
-        //Draw the title
+        // Draw the title
         GUILayout.Label("Nexus Factory", EditorStyles.boldLabel);
 
-        //draw a line
+        // Draw a horizontal line
         GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
 
-
+        // Begin the scroll view
+        scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
 
         // Draw each pane
         foreach (var pane in factoryPanes)
         {
-            BeginContentArea();
             pane.Draw();
-            EndContentArea();
+            GUILayout.Space(10); // Add some spacing between panes
         }
+
+        // End the scroll view
+        GUILayout.EndScrollView();
     }
 
     public static void BeginContentArea()
