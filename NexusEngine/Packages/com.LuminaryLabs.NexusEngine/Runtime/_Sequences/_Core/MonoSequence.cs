@@ -19,7 +19,7 @@ namespace LuminaryLabs.NexusEngine
         {
             return Initialize(currentData);
         }
-        public void OnBeginSequence()
+        public virtual void OnBeginSequence()
         {
             OnBegin();
         }

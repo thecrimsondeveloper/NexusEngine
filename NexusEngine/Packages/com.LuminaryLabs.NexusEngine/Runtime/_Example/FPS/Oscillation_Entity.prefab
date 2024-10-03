@@ -185,7 +185,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 428a1a61a6ebadd42a88bf95b68280b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  oscillationMovementHandler: {fileID: 0}
+  _runType: 0
+  _currentData:
+    movementHandler: {fileID: 867727466051832245, guid: c024e67c872bf1347afc1be7114e75fb, type: 3}
+    movementHandlerData:
+      target: {fileID: 6170614186303332370}
+      amplitude: 1
+      frequency: 0.5
 --- !u!4 &6170614186303332370 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3605592986322802490, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}

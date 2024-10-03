@@ -7,7 +7,7 @@ using Sirenix.OdinInspector;
 #endif
 using UnityEngine;
 
-namespace LuminaryLabs.Example.FPS
+namespace LuminaryLabs.Example.FPSGame
 {
     public class OscillationEntity : EntitySequence<OscillationEntityData>
     {

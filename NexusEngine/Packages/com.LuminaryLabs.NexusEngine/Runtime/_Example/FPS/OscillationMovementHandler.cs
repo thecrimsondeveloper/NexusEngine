@@ -6,7 +6,7 @@ using UnityEngine;
 
 
 
-namespace LuminaryLabs.Example.FPS
+namespace LuminaryLabs.Example.FPSGame
 {
     public class OscillationMovementHandler : MonoSequence<OscillationMovementHandlerData>
     {

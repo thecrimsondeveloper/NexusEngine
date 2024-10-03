@@ -23,6 +23,8 @@ namespace LuminaryLabs.NexusEngine
         [HideLabel, BoxGroup("CORE DATA")]
 #endif
         private T _currentData;
+        
+
 
 
         public new T currentData
@@ -52,6 +54,19 @@ namespace LuminaryLabs.NexusEngine
             return UniTask.CompletedTask;
         }
 
+        public override void OnBeginSequence()
+        {
+            base.OnBeginSequence();
+
+            foreach(var monoSequence in currentData.monoSequencesToRun)
+            {
+                Sequence.Run(monoSequence, new SequenceRunData()
+                {
+                    superSequence = this,
+                });
+            }
+        }
+
         protected abstract UniTask Initialize(T currentData);
     }
 
@@ -62,5 +77,10 @@ namespace LuminaryLabs.NexusEngine
         [FoldoutGroup("Core")]
 #endif
         public string name;
+
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Core")]
+#endif
+        public List<MonoSequence> monoSequencesToRun = new List<MonoSequence>();
     }
 }
