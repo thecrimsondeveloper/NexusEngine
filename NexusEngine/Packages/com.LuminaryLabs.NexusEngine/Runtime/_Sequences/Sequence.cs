@@ -77,6 +77,15 @@ namespace LuminaryLabs.NexusEngine
 
         public static bool IsRunning(ISequence sequence) => runningSequences.ContainsKey(sequence.guid);
 
+
+        public static SequenceRunResult Run<T>(SequenceRunData runData = null) where T : UnityEngine.MonoBehaviour, ISequence
+        {
+            GameObject gameObject = new GameObject();
+            T monoSequence = gameObject.AddComponent<T>();
+            gameObject.name = monoSequence.GetType().ToString();
+            return Run(monoSequence, runData); 
+        }
+
         public static SequenceRunResult Run(ISequence sequence, SequenceRunData runData = null)
         {
             SequenceRunResult sequenceObject = new SequenceRunResult();

@@ -11,19 +11,17 @@ namespace LuminaryLabs.Example.FPSGame
 {
     public class OscillationEntity : EntitySequence<OscillationEntityData>
     {
-        OscillationMovementHandler oscillationMovementHandler;
         OscillationMovementHandlerData oscillationMovementHandlerData;
 
         protected override UniTask Initialize(OscillationEntityData currentData = null)
         {
-            oscillationMovementHandler = currentData.movementHandler;
             oscillationMovementHandlerData = currentData.movementHandlerData;
             return UniTask.CompletedTask;
         }
 
         protected override void OnBegin()
         {
-            Sequence.Run(oscillationMovementHandler, new SequenceRunData
+            Sequence.Run<OscillationMovementHandler>(new SequenceRunData
             {
                 superSequence = this,
                 sequenceData = oscillationMovementHandlerData
@@ -39,7 +37,6 @@ namespace LuminaryLabs.Example.FPSGame
     [System.Serializable]
     public class OscillationEntityData : SequenceData
     {
-        public OscillationMovementHandler movementHandler;
         public OscillationMovementHandlerData movementHandlerData;
     }
 }
