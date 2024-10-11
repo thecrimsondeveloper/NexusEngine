@@ -186,12 +186,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _runType: 2
+  nexusData:
+    nexusSequence:
+      rid: -2
+    beginWith: []
+    waitFor: []
   _currentData:
-    movementHandler: {fileID: 867727466051832245, guid: c024e67c872bf1347afc1be7114e75fb, type: 3}
     movementHandlerData:
       target: {fileID: 6170614186303332370}
       amplitude: 1
-      frequency: 0.5
+      frequency: 2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!4 &6170614186303332370 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3605592986322802490, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}

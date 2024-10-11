@@ -38,7 +38,7 @@ namespace LuminaryLabs.NexusEngine
                 sequence.guid = Guid.NewGuid();
             if (!runningSequences.ContainsKey(sequence.guid))
             {
-                SequenceEvents events = new SequenceEvents();
+                SequenceEvents events = new SequenceEvents(sequence);
                 runningSequences.Add(sequence.guid, sequence);
                 sequenceEvents.Add(sequence.guid, events);
 
@@ -92,9 +92,14 @@ namespace LuminaryLabs.NexusEngine
             sequenceObject.sequence = sequence;
 
             string name = sequence.GetType().Name;
-            Debug.Log("Running Sequence: " + name);
-            bool hasData = runData != null;
-            Debug.Log("Has Data: " + hasData);
+            bool hasRunData = runData != null;
+            bool hasSequenceData = hasRunData ? runData.sequenceData != null : false;
+
+            if(runData.onFinished != null)
+            {
+                Debug.Log("METHOD: " + runData.onFinished.Method);
+                
+            }
 
             if (IsRunning(sequence))
             {
@@ -178,20 +183,23 @@ namespace LuminaryLabs.NexusEngine
             }
             await UniTask.NextFrame();
 
+            //setup sequence heirarchy
+            if (runData.superSequence != null)
+            {
+                sequence.superSequence = runData.superSequence;
+            }
+
+            //set data
             //if data is passed in, set it
             if (runData.sequenceData != null)
             {
                 sequence.currentData = runData.sequenceData;
             }
-            else //if no data is passed in, set the current data to the sequence data
+            else //if no data is passed in, set the current data to the sequence's data
             {
                 runData.sequenceData = sequence.currentData;
             }
 
-            if (runData.superSequence != null)
-            {
-                sequence.superSequence = runData.superSequence;
-            }
             await sequence.InitializeSequence(runData.sequenceData);
 
 
@@ -204,7 +212,7 @@ namespace LuminaryLabs.NexusEngine
         {
             if (!IsRunning(sequence))
             {
-                Debug.LogWarning("Sequence not running");
+                Debug.LogWarning("Stop-Sequence: "+sequence.GetType()+" is not running with GUID: "+ sequence.guid);
             }
 
             await sequence.UnloadSequence();
@@ -217,13 +225,24 @@ namespace LuminaryLabs.NexusEngine
         {
             if (!IsRunning(sequence))
             {
+                string mustRunError = sequence.GetType() + " is not currently running. You must Run a Sequence in order for it to Finish";
+
+                if(sequence is UnityEngine.Object obj)
+                Debug.LogError(mustRunError, obj);
+                else
+                Debug.LogError(mustRunError);
+
                 return;
             }
 
+
             await sequence.FinishSequence();
+            Debug.Log("Sequence Finished: " + sequence.GetType());
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
+            {
+                Debug.Log("Invoking Sequence Events for OnFinished");
                 events.InvokeEvent(SequenceEventType.OnFinished, sequence); // OnFinished
-            UnregisterSequence(sequence);
+            }
         }
 
         public static void ForEach(Action<ISequence> action)

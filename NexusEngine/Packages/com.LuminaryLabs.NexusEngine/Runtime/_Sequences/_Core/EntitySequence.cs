@@ -25,6 +25,15 @@ namespace LuminaryLabs.NexusEngine
         private RunType _runType = RunType.Manual;
 
 
+// #if ODIN_INSPECTOR
+//         [BoxGroup("ENTITY DATA"), SerializeField]
+// #else
+//         [SerializeField]
+// #endif
+//         // private NexusSequenceData nexusData;
+
+
+
 
 #if ODIN_INSPECTOR
         [BoxGroup("ENTITY DATA"), SerializeField]
@@ -61,7 +70,18 @@ namespace LuminaryLabs.NexusEngine
             {
                 sequenceData = currentData,
                 superSequence = null,
+                onBegin = OnEntitySequenceBegin
             });
+        }
+
+        void OnEntitySequenceBegin(ISequence sequence)
+        {
+            // Debug.Log("NexusData: " + nexusData.GetSequence().GetType());
+
+            // Sequence.Run(new NexusSequence(), new SequenceRunData{
+            //     superSequence = this,
+            //     sequenceData = nexusData
+            // });     
         }
 
         protected override UniTask Initialize(object currentData = null)
@@ -75,10 +95,35 @@ namespace LuminaryLabs.NexusEngine
                 return Initialize(this.currentData);
             }
 
-            return UniTask.CompletedTask;
+            return Initialize(new SequenceData() as T);
         }
 
         protected abstract UniTask Initialize(T currentData);
+    }
+
+    public sealed class EntitySequence : EntitySequence<EntitySequenceData>
+    {
+        protected override UniTask Initialize(EntitySequenceData currentData)
+        {
+            Debug.Log("INIT ENTITY");
+            return UniTask.CompletedTask;
+        }
+
+        protected override void OnBegin()
+        {
+
+        }
+
+        protected override UniTask Unload()
+        {
+            return UniTask.CompletedTask;
+        }
+    }
+
+    [System.Serializable]
+    public class EntitySequenceData : SequenceData
+    {
+
     }
 
 }

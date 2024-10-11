@@ -13,24 +13,39 @@ namespace LuminaryLabs.Example.FPSGame
     {
         OscillationMovementHandlerData oscillationMovementHandlerData;
 
+        MonoSequence movementHandler = null;
+
         protected override UniTask Initialize(OscillationEntityData currentData = null)
         {
+            Debug.Log(currentData);
             oscillationMovementHandlerData = currentData.movementHandlerData;
             return UniTask.CompletedTask;
         }
 
         protected override void OnBegin()
         {
+            Debug.Log("Oscillation Entity Begin");
             Sequence.Run<OscillationMovementHandler>(new SequenceRunData
             {
                 superSequence = this,
-                sequenceData = oscillationMovementHandlerData
+                sequenceData = oscillationMovementHandlerData,
+                onBegin = OnMovementHandlerBegin
             });
         }
 
-        protected override UniTask Unload()
+        void OnMovementHandlerBegin(ISequence sequence)
         {
-            return UniTask.CompletedTask;
+            movementHandler = sequence as MonoSequence;
+        }
+
+        protected override async UniTask Unload()
+        {
+
+            if(movementHandler)
+            {
+                await Sequence.Stop(movementHandler);
+            }
+            Destroy(gameObject);
         }
     }
 

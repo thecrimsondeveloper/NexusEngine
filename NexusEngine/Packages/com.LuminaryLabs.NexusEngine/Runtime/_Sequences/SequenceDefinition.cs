@@ -1,5 +1,6 @@
 
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace LuminaryLabs.NexusEngine
@@ -8,18 +9,36 @@ namespace LuminaryLabs.NexusEngine
     public class SequenceDefinition
     {
         public virtual ISequence GetSequence() { return null; }
-        public virtual object GetData() { return null; }
+        public virtual SequenceRunData UpdateData(SequenceRunData inputData) { return inputData; }
     }
 
     public class MonoSequenceDefinition : SequenceDefinition
     {
+        #if ODIN_INSPECTOR
+        [Required]
+        [Title("Required")]
+        #endif
         public MonoSequence monoSequence;
+
+         #if ODIN_INSPECTOR
+        [Title("Optional")]
+        #endif
+        public Transform spawnParent;
+
         [SerializeReference]
         public SequenceData sequenceData;
 
-        public override object GetData()
+
+        public override SequenceRunData UpdateData(SequenceRunData inputData)
         {
-            return sequenceData;
+            inputData.parent = spawnParent;
+            inputData.spawnPosition = Vector3.zero;
+            inputData.spawnRotation = Quaternion.identity;
+            inputData.useLocalPosition = true;
+            inputData.useLocalRotation = true;
+            inputData.sequenceData = this.sequenceData;
+
+            return base.UpdateData(inputData);
         }
 
         public override ISequence GetSequence()
@@ -34,9 +53,10 @@ namespace LuminaryLabs.NexusEngine
         [SerializeReference]
         public SequenceData sequenceData;
 
-        public override object GetData()
+        public override SequenceRunData UpdateData(SequenceRunData inputData)
         {
-            return sequenceData;
+            inputData.sequenceData = this.sequenceData;
+            return base.UpdateData(inputData);
         }
 
         public override ISequence GetSequence()
@@ -51,9 +71,10 @@ namespace LuminaryLabs.NexusEngine
         [SerializeReference]
         public SequenceData sequenceData;
 
-        public override object GetData()
+        public override SequenceRunData UpdateData(SequenceRunData inputData)
         {
-            return sequenceData;
+            inputData.sequenceData = this.sequenceData;
+            return base.UpdateData(inputData);
         }
 
         public override ISequence GetSequence()
