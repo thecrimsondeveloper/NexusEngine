@@ -6,83 +6,84 @@ using UnityEngine;
 
 namespace LuminaryLabs.NexusEngine
 {
-    public class NexusSequence : EntitySequence<NexusSequenceData>
+    public class NexusSequence : BaseSequence<NexusSequenceData>
     {
-        private List<NexusSequenceDefinition> _sequenceDefinitions = new List<NexusSequenceDefinition>();
+        // private List<NexusSequenceDefinition> _sequenceDefinitions = new List<NexusSequenceDefinition>();
 
-        private ISequence _currentSequence;
-        private int _currentSequenceIndex = 0;
+        [SerializeReference]
+        public SequenceDefinition nexusSequence;
+        public List<NexusSequenceData> beginWith = new List<NexusSequenceData>();
+        public List<NexusSequenceData> waitFor = new List<NexusSequenceData>();
+
+
+        ISequence runningSequence;
+        List<ISequence> runningBeginningSequences = new List<ISequence>();
+        List<ISequence> runningWaitForSequences = new List<ISequence>();
+
         protected override UniTask Initialize(NexusSequenceData currentData)
         {
-            _sequenceDefinitions = currentData._sequenceDefinitions;
+            nexusSequence = currentData.nexusSequence;
+            beginWith = currentData.beginWith;
+            waitFor = currentData.waitFor;
+
             return UniTask.CompletedTask;
         }
 
         protected override void OnBegin()
         {
-            if (_sequenceDefinitions.Count > 0)
-            {
-                RunRootSequence(_currentSequenceIndex);
-            }
-            else
-            {
-                Sequence.Finish(this);
-            }
-        }
-
-
-
-        void RunSubDefinition(NexusSequenceDefinition definition, ISequence super = null)
-        {
-            ISequence sequence = definition.GetSequence();
-            object data = definition.GetData();
-
-            Sequence.Run(sequence, new SequenceRunData
-            {
-                superSequence = super,
-                sequenceData = data,
+            ISequence mainSequence = nexusSequence.GetSequence();
+            SequenceRunData mainSequenceRunData = nexusSequence.UpdateData(new SequenceRunData{
+                superSequence = this,
+                onFinished = OnMainSequenceFinished
             });
-        }
-        void RunSubSequences(List<NexusSequenceDefinition> definitions, ISequence super)
-        {
-            foreach (var definition in definitions)
+            Sequence.Run(mainSequence, mainSequenceRunData);
+
+
+
+            foreach(NexusSequenceData sequencBeginWithData in beginWith)
             {
-                RunSubDefinition(definition, super);
-            }
-        }
-
-        void RunRootSequence(int i)
-        {
-            NexusSequenceDefinition sequenceDefinition = _sequenceDefinitions[i];
-
-            if (sequenceDefinition != null)
-            {
-                ISequence sequence = sequenceDefinition.GetSequence();
-                object data = sequenceDefinition.GetData();
-
-                Sequence.Run(sequenceDefinition.GetSequence(), new SequenceRunData
-                {
+                NexusSequence nexusSequence = new NexusSequence();
+                Sequence.Run(nexusSequence, new SequenceRunData{
                     superSequence = this,
-                    sequenceData = data,
-                    onFinished = OnRootSequenceFinished,
-                    onBegin = (currentSequence) =>
-                    {
-                        RunSubSequences(sequenceDefinition.subSequences, currentSequence);
-                    }
+                    sequenceData = sequencBeginWithData
                 });
             }
+
+            foreach(NexusSequenceData sequencewaitForData in waitFor)
+            {
+                Debug.Log("RUNNING SEQUENCE: " + sequencewaitForData.GetSequence().GetType());
+                NexusSequence nexusSequence = new NexusSequence();
+                SequenceRunResult runResult = Sequence.Run(nexusSequence, new SequenceRunData{
+                    superSequence = this,
+                    sequenceData = sequencewaitForData,
+                    onFinished = OnWaitForSequenceFinished
+                });
+
+                runResult.events.RegisterEvent(OnWaitForSequenceFinished, SequenceEventType.OnFinished);
+            }
         }
 
-        void OnRootSequenceFinished(ISequence sequence)
+        void OnMainSequenceFinished(ISequence sequence)
         {
-            _currentSequenceIndex++;
-            if (_currentSequenceIndex < _sequenceDefinitions.Count)
+            runningSequence = sequence;
+
+        }
+
+        async void OnWaitForSequenceFinished(ISequence sequence)
+        {
+            Debug.Log("SEQUENCE FINISHED FROM NEXUS SEQUENCE");
+            if(runningWaitForSequences.Contains(sequence))
             {
-                RunRootSequence(_currentSequenceIndex);
+                runningWaitForSequences.Remove(sequence);
             }
-            else
+
+
+            if(runningWaitForSequences.Count == 0)
             {
-                Sequence.Finish(this);
+                Debug.Log("Wait For Sequence Finished");
+                await Sequence.Stop(runningSequence);
+                await Sequence.Finish(this);
+                await Sequence.Stop(this);
             }
         }
 
@@ -95,27 +96,16 @@ namespace LuminaryLabs.NexusEngine
     [System.Serializable]
     public class NexusSequenceData : SequenceData
     {
-        [SerializeReference, HideReferenceObjectPicker]
-        public List<NexusSequenceDefinition> _sequenceDefinitions = new List<NexusSequenceDefinition>();
-    }
-
-    [System.Serializable]
-    public class NexusSequenceDefinition
-    {
         [SerializeReference]
         public SequenceDefinition nexusSequence;
+        public List<NexusSequenceData> beginWith = new List<NexusSequenceData>();
+        public List<NexusSequenceData> waitFor = new List<NexusSequenceData>();
 
         public ISequence GetSequence()
         {
             return nexusSequence.GetSequence();
         }
 
-        public object GetData()
-        {
-            return nexusSequence.GetData();
-        }
-
-        public List<NexusSequenceDefinition> subSequences = new List<NexusSequenceDefinition>();
 
     }
 
