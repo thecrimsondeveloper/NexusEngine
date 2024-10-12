@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using Cysharp.Threading.Tasks;
 using LuminaryLabs.NexusEngine;
 using Sirenix.OdinInspector;
@@ -9,8 +8,10 @@ namespace LuminaryLabs.NexusEngine
 {
     public class RunnerSequence : EntitySequence<RunnerSequenceData>
     {
+        private bool destroyOnUnload = false;
         private List<MonoSequence> beginWith = new List<MonoSequence>();
         private List<MonoSequence> waitFor = new List<MonoSequence>();
+        private List<MonoSequence> continueWith = new List<MonoSequence>();
 
         [ShowInInspector]
         private List<ISequence> waitForSequences = new List<ISequence>();
@@ -18,10 +19,15 @@ namespace LuminaryLabs.NexusEngine
         [ShowInInspector]
         private List<ISequence> beginSequences = new List<ISequence>();
 
+        [ShowInInspector]
+        private List<ISequence> continueSequences = new List<ISequence>();
+
         protected override UniTask Initialize(RunnerSequenceData currentData)
         {
+            destroyOnUnload = currentData.destroyOnUnload;
             beginWith = currentData.beginWith;
             waitFor = currentData.waitFor;
+            continueWith = currentData.continueWith; // Initialize the new continueWith list
             return UniTask.CompletedTask;
         }
 
@@ -49,7 +55,10 @@ namespace LuminaryLabs.NexusEngine
                 });
             }
 
+            // Check if all waitFor sequences are already complete
+            CheckIfWaitForComplete();
         }
+
         private void OnBeginSequenceBegin(ISequence sequence)
         {
             beginSequences.Add(sequence);
@@ -59,36 +68,79 @@ namespace LuminaryLabs.NexusEngine
         {
             waitForSequences.Add(sequence);
         }
+
         private void OnWaitSequenceFinished(ISequence sequence)
         {
             Debug.Log("WaitFor sequence finished: " + sequence.GetType());
             waitForSequences.Remove(sequence);
 
             // Check if all waitFor sequences are finished
-            CheckIfComplete();
+            CheckIfWaitForComplete();
         }
 
-        private void CheckIfComplete()
+        private void CheckIfWaitForComplete()
         {
             if (waitForSequences.Count == 0)
             {
-                Debug.Log("Completing Runner Sequence." + this.name, gameObject);
+                // Start continueWith sequences
+                StartContinueWithSequences();
+            }
+        }
+
+        private void StartContinueWithSequences()
+        {
+            continueSequences.Clear();
+            foreach (MonoSequence sequence in continueWith)
+            {
+                Sequence.Run(sequence, new SequenceRunData
+                {
+                    superSequence = this,
+                    onBegin = OnContinueSequenceBegin,
+                    onFinished = OnContinueSequenceFinished
+                });
+            }
+
+            // If there are no continueWith sequences, complete immediately
+            if (continueSequences.Count == 0)
+            {
+                Complete();
+            }
+        }
+
+        private void OnContinueSequenceBegin(ISequence sequence)
+        {
+            continueSequences.Add(sequence);
+        }
+
+        private void OnContinueSequenceFinished(ISequence sequence)
+        {
+            Debug.Log("ContinueWith sequence finished: " + sequence.GetType());
+            continueSequences.Remove(sequence);
+
+            // Check if all continueWith sequences are finished
+            if (continueSequences.Count == 0)
+            {
                 Complete();
             }
         }
 
         private async void Complete()
         {
-            foreach(ISequence sequence in beginSequences)
+            // Stop any remaining sequences
+            foreach (ISequence sequence in beginSequences)
             {
                 await Sequence.Stop(sequence);
             }
 
-            foreach(ISequence sequence in waitForSequences)
+            foreach (ISequence sequence in waitForSequences)
             {
                 await Sequence.Stop(sequence);
             }
 
+            foreach (ISequence sequence in continueSequences)
+            {
+                await Sequence.Stop(sequence);
+            }
 
             await Sequence.Finish(this);
             await Sequence.Stop(this);
@@ -96,8 +148,10 @@ namespace LuminaryLabs.NexusEngine
 
         protected override UniTask Unload()
         {
-            Destroy(gameObject);
-            // Perform any necessary cleanup here
+            if(destroyOnUnload)
+            {
+                Destroy(gameObject);
+            }
             return UniTask.CompletedTask;
         }
     }
@@ -105,7 +159,9 @@ namespace LuminaryLabs.NexusEngine
     [System.Serializable]
     public class RunnerSequenceData : SequenceData
     {
+        public bool destroyOnUnload = false;
         public List<MonoSequence> beginWith = new List<MonoSequence>();
         public List<MonoSequence> waitFor = new List<MonoSequence>();
+        public List<MonoSequence> continueWith = new List<MonoSequence>(); // Added the continueWith list
     }
 }
