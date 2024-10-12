@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_Name
-      value: RunOScillationUntilPressA
+      value: RunOscillationAfterSpace
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -82,4 +82,6 @@ MonoBehaviour:
     beginWith:
     - {fileID: 4793495143603753616, guid: 555e433d6568cf245b974ae90465f7f8, type: 3}
     waitFor:
-    - {fileID: 556317931783422893, guid: fd98d8d0a39feec49bf33a9dce03ecf5, type: 3}
+    - {fileID: 556317931783422893, guid: fdc4168f717fa914890ce86403791074, type: 3}
+    continueWith:
+    - {fileID: 4793495143603753616, guid: 555e433d6568cf245b974ae90465f7f8, type: 3}
