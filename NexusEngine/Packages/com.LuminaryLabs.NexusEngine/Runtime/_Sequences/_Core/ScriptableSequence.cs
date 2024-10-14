@@ -39,12 +39,12 @@ namespace LuminaryLabs.NexusEngine
             return Finish();
         }
 
-        public void OnFinishedSequence()
+        public void OnFinishSequence()
         {
             OnFinished();
         }
 
-        public void OnUnloadedSequence()
+        public void OnUnloadSequence()
         {
             OnUnloaded();
         }

@@ -13,6 +13,9 @@ public interface ISequence
     UniTask FinishSequence();
     UniTask UnloadSequence();
 
+    void OnFinishSequence();
+    void OnUnloadSequence();
+
     public Transform GetTransform()
     {
         return this is MonoBehaviour monoBehaviour ? monoBehaviour.transform : superSequence?.GetTransform();

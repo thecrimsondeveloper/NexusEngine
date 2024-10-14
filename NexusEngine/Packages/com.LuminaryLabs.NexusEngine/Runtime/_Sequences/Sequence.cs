@@ -88,21 +88,22 @@ namespace LuminaryLabs.NexusEngine
 
         public static SequenceRunResult Run(ISequence sequence, SequenceRunData runData = null)
         {
+
             SequenceRunResult sequenceObject = new SequenceRunResult();
             sequenceObject.sequence = sequence;
 
             string name = sequence.GetType().Name;
             bool hasRunData = runData != null;
             bool hasSequenceData = hasRunData ? runData.sequenceData != null : false;
-
-            if(runData.onFinished != null)
-            {
-                Debug.Log("METHOD: " + runData.onFinished.Method);
-                
-            }
+            Nexus.Log("Running:" + name);
 
             if (IsRunning(sequence))
             {
+                if(sequence is MonoBehaviour mono)
+                {
+                    name = mono.name;
+                }
+                Nexus.Log(name + " is already running, will instead subscribe the events again and return the current run result");
                 if (sequenceEvents.TryGetValue(sequence.guid, out var runningEvents))
                     sequenceObject.events = runningEvents;
                 return sequenceObject;
@@ -212,13 +213,15 @@ namespace LuminaryLabs.NexusEngine
         {
             if (!IsRunning(sequence))
             {
-                Debug.LogWarning("Stop-Sequence: "+sequence.GetType()+" is not running with GUID: "+ sequence.guid);
+                Nexus.LogWarning("Stop-Sequence: "+sequence.GetType()+" is not running with GUID: "+ sequence.guid);
             }
 
             await sequence.UnloadSequence();
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
                 events.InvokeEvent(SequenceEventType.OnUnloaded, sequence); // OnUnloaded
             UnregisterSequence(sequence);
+
+            sequence.OnUnloadSequence();
         }
 
         public static async UniTask Finish(ISequence sequence)
@@ -228,9 +231,9 @@ namespace LuminaryLabs.NexusEngine
                 string mustRunError = sequence.GetType() + " is not currently running. You must Run a Sequence in order for it to Finish";
 
                 if(sequence is UnityEngine.Object obj)
-                Debug.LogError(mustRunError, obj);
+                Nexus.LogError(obj.name + ": " + mustRunError, obj);
                 else
-                Debug.LogError(mustRunError);
+                Nexus.LogError(mustRunError);
 
                 return;
             }
@@ -243,6 +246,8 @@ namespace LuminaryLabs.NexusEngine
                 Debug.Log("Invoking Sequence Events for OnFinished");
                 events.InvokeEvent(SequenceEventType.OnFinished, sequence); // OnFinished
             }
+
+            sequence.OnFinishSequence();
         }
 
         public static void ForEach(Action<ISequence> action)
@@ -263,12 +268,12 @@ namespace LuminaryLabs.NexusEngine
 
             if (sequence is MonoBehaviour monoBehaviour)
             {
-
+                Nexus.Log("(NEXUS) Handling GameObject: " + monoBehaviour.gameObject.name);
                 bool isPrefab = monoBehaviour.gameObject.scene.name == null;
                 if (isPrefab == false) { return sequence; }
                 else
                 {
-                    Debug.Log("Is Prefab: " + isPrefab);
+                    Nexus.Log("Is Prefab: " + isPrefab);
                 }
 
                 MonoBehaviour monoInstance = Instantiate(monoBehaviour);

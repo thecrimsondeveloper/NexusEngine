@@ -28,11 +28,11 @@ namespace LuminaryLabs.NexusEngine
         {
             return Finish();
         }
-        public void OnFinishedSequence()
+        public void OnFinishSequence()
         {
             OnFinished();
         }
-        public void OnUnloadedSequence()
+        public void OnUnloadSequence()
         {
             OnUnloaded();
         }
@@ -44,6 +44,7 @@ namespace LuminaryLabs.NexusEngine
         protected virtual UniTask Finish() { return UniTask.CompletedTask; }
         protected virtual void OnFinished() { }
         protected virtual void OnUnloaded() { }
+
     }
 
 

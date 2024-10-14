@@ -32,14 +32,15 @@ namespace LuminaryLabs.NexusEngine
         {
             return Finish();
         }
-        public virtual void OnFinishedSequence()
+        public virtual void OnFinishSequence()
         {
             OnFinished();
         }
-        public virtual void OnUnloadedSequence()
+        public virtual void OnUnloadSequence()
         {
             OnUnloaded();
         }
+
 
         protected abstract UniTask Initialize(object currentData);
         protected abstract void OnBegin();
@@ -48,6 +49,8 @@ namespace LuminaryLabs.NexusEngine
         protected virtual UniTask Finish() { return UniTask.CompletedTask; }
         protected virtual void OnFinished() { }
         protected virtual void OnUnloaded() { }
+
+      
     }
 
     public abstract class MonoSequence<T> : MonoSequence
