@@ -50,24 +50,16 @@ namespace LuminaryLabs.NexusEngine
 
         public void RegisterEvent(UnityAction<ISequence> action, SequenceEventType eventType)
         {
-            Debug.Log("Registering Event: " + action.Method + " for " + eventType);
             if (events.TryGetValue(eventType, out UnityEvent<ISequence> unityEvent))
             {
-                Debug.Log("Event: " + unityEvent == null);
                 unityEvent.AddListener(action);
-                Debug.Log("Actions: " + action.Method);
-                Debug.Log("New Listener Count: " + unityEvent.GetPersistentMethodName(0));
             }
             else
             {
                 UnityEvent<ISequence> newEvent = new UnityEvent<ISequence>();
                 newEvent.AddListener(action);
                 events.Add(eventType, newEvent);
-                Debug.Log("Unable to Find Event: " + eventType + " in the event Dictionary, creating a new event with " + newEvent.GetPersistentEventCount());
             }
-
-
-
         }
 
         public void UnRegisterEvent(UnityAction<ISequence> action, SequenceEventType eventType)
@@ -82,7 +74,7 @@ namespace LuminaryLabs.NexusEngine
         {
             if (events.TryGetValue(eventType, out var unityEvent))
             {
-                Debug.Log("Invoking Event: " + eventType + " on " + sequence.GetType() + " with " + unityEvent.GetPersistentEventCount() + " listeners");
+                Nexus.Log("Invoking Event: " + eventType + " on " + sequence.GetType() + " with " + unityEvent.GetPersistentEventCount() + " listeners");
                 unityEvent.Invoke(sequence);
             }
         }

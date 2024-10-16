@@ -1,16 +1,18 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using LuminaryLabs.NexusEngine;
 
 public class MonoSequenceContextMenu : MonoBehaviour
 {
-    // Specify the path to the source prefab
+    // Specify the path to the source prefab for MonoSequence_Base
     private static string sourcePrefabPath = "Packages/com.LuminaryLabs.NexusEngine/Runtime/_Sequences/MonoSequence_Base.prefab";
 
+    // MonoSequence Variant Menu
     [MenuItem("Assets/Create MonoSequence Variant", false, 0)]
-    private static void CreatePrefabVariant()
+    private static void CreateMonoSequenceVariant()
     {
-        // Load the prefab from the specified path
+        // Load the MonoSequence_Base prefab
         GameObject sourcePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(sourcePrefabPath);
         if (sourcePrefab == null)
         {
@@ -18,41 +20,95 @@ public class MonoSequenceContextMenu : MonoBehaviour
             return;
         }
 
-        // Get the path of the selected object in the project window
-        Object selectedObject = Selection.activeObject;
-        string selectedPath = AssetDatabase.GetAssetPath(selectedObject);
-
-        // If the selected path is a file, get its directory
-        if (!string.IsNullOrEmpty(selectedPath) && !AssetDatabase.IsValidFolder(selectedPath))
+        // Ask the user for the name of the new MonoSequence variant
+        string prefabName = EditorUtility.SaveFilePanel("Save MonoSequence Variant As", "Assets", "NewMonoSequenceVariant", "prefab");
+        if (string.IsNullOrEmpty(prefabName))
         {
-            selectedPath = Path.GetDirectoryName(selectedPath);
+            Debug.LogWarning("Prefab creation cancelled.");
+            return;
         }
 
-        // If no valid path is selected, default to "Assets" folder
-        if (string.IsNullOrEmpty(selectedPath))
+        // Ensure the prefab name is within the project's Assets directory
+        if (!prefabName.StartsWith(Application.dataPath))
         {
-            selectedPath = "Assets";
+            Debug.LogError("Prefab must be saved within the Assets folder.");
+            return;
         }
 
-        // Generate a unique name for the new prefab variant
-        string baseName = Path.GetFileNameWithoutExtension(sourcePrefabPath) + " Variant";
-        string uniqueName = AssetDatabase.GenerateUniqueAssetPath(Path.Combine(selectedPath, baseName + ".prefab"));
+        // Convert the system path to a relative path
+        string relativePath = "Assets" + prefabName.Substring(Application.dataPath.Length);
 
         // Create the prefab variant
         GameObject variant = PrefabUtility.InstantiatePrefab(sourcePrefab) as GameObject;
-        PrefabUtility.SaveAsPrefabAsset(variant, uniqueName);
+        PrefabUtility.SaveAsPrefabAsset(variant, relativePath);
 
         // Destroy the instantiated variant in the scene
         DestroyImmediate(variant);
 
-        Debug.Log("Prefab variant created at: " + uniqueName);
+        Debug.Log("Prefab variant created at: " + relativePath);
 
         // Highlight the newly created prefab variant in the project window
-        Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameObject>(uniqueName);
+        Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameObject>(relativePath);
     }
 
     [MenuItem("Assets/Create MonoSequence Variant", true)]
-    private static bool ValidateCreatePrefabVariant()
+    private static bool ValidateCreateMonoSequenceVariant()
+    {
+        // Validate if the source prefab exists
+        GameObject sourcePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(sourcePrefabPath);
+        return sourcePrefab != null;
+    }
+
+    // RunnerSequence Menu
+    [MenuItem("Assets/Create Runner Sequence", false, 1)]
+    private static void CreateRunnerSequence()
+    {
+        // Load the MonoSequence_Base prefab
+        GameObject sourcePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(sourcePrefabPath);
+        if (sourcePrefab == null)
+        {
+            Debug.LogWarning("The source prefab could not be found. Please check the path.");
+            return;
+        }
+
+        // Ask for a name for the RunnerSequence prefab
+        string prefabName = EditorUtility.SaveFilePanel("Save Runner Sequence As", "Assets", "NewRunnerSequence", "prefab");
+        if (string.IsNullOrEmpty(prefabName))
+        {
+            Debug.LogWarning("Runner Sequence creation cancelled.");
+            return;
+        }
+
+        // Ensure the prefab name is within the project's Assets directory
+        if (!prefabName.StartsWith(Application.dataPath))
+        {
+            Debug.LogError("Runner Sequence must be saved within the Assets folder.");
+            return;
+        }
+
+        // Convert the system path to a relative path
+        string relativePath = "Assets" + prefabName.Substring(Application.dataPath.Length);
+
+        // Instantiate the MonoSequence_Base prefab
+        GameObject runnerSequenceInstance = PrefabUtility.InstantiatePrefab(sourcePrefab) as GameObject;
+
+        // Add the RunnerSequence component to the instantiated prefab
+        runnerSequenceInstance.AddComponent<RunnerSequence>();
+
+        // Save the new prefab with the RunnerSequence component
+        PrefabUtility.SaveAsPrefabAsset(runnerSequenceInstance, relativePath);
+
+        // Destroy the instantiated object in the scene after saving
+        DestroyImmediate(runnerSequenceInstance);
+
+        Debug.Log("Runner Sequence created and saved at: " + relativePath);
+
+        // Highlight the newly created prefab in the project window
+        Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameObject>(relativePath);
+    }
+
+    [MenuItem("Assets/Create Runner Sequence", true)]
+    private static bool ValidateCreateRunnerSequence()
     {
         // Validate if the source prefab exists
         GameObject sourcePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(sourcePrefabPath);

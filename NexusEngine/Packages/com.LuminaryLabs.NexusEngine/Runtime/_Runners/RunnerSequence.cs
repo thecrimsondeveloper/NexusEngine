@@ -9,24 +9,28 @@ namespace LuminaryLabs.NexusEngine
     public class RunnerSequence : EntitySequence<RunnerSequenceData>
     {
         private bool destroyOnUnload = false;
-        private List<MonoSequence> beginWith = new List<MonoSequence>();
-        private List<MonoSequence> waitFor = new List<MonoSequence>();
-        private List<MonoSequence> finishWith = new List<MonoSequence>();
-        private List<MonoSequence> continueWith = new List<MonoSequence>();
+        
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Data"), ShowInInspector, HideInEditorMode]
+        #endif
+        private List<MonoSequence> beginWith,waitFor,finishWith,continueWith;
 
-        private List<ISequence> waitForSequences = new List<ISequence>();
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Logic"), ShowInInspector, HideInEditorMode]
+        #endif
+        private List<ISequence> beginSequences = new(),waitForSequences = new();
 
-        private List<ISequence> beginSequences = new List<ISequence>();
-
-        private List<ISequence> continueSequences = new List<ISequence>();
+        // private List<ISequence> beginSequences = new List<ISequence>();
 
         protected override UniTask Initialize(RunnerSequenceData currentData)
         {
             destroyOnUnload = currentData.destroyOnUnload;
-            beginWith = currentData.beginWith;
-            finishWith = currentData.finishWith;
-            waitFor = currentData.waitFor;
-            continueWith = currentData.continueWith; // Initialize the new continueWith list
+                        
+
+            beginWith = new List<MonoSequence>(currentData.beginWith);
+            finishWith = new List<MonoSequence>(currentData.finishWith);
+            waitFor = new List<MonoSequence>(currentData.waitFor);
+            continueWith = new List<MonoSequence>(currentData.continueWith); // Initialize the new continueWith list
             return UniTask.CompletedTask;
         }
 
@@ -38,7 +42,8 @@ namespace LuminaryLabs.NexusEngine
                 Sequence.Run(sequence, new SequenceRunData
                 {
                     superSequence = this,
-                    onBegin = OnBeginSequenceBegin
+                    onBegin = OnBeginSequenceBegin,
+                    onUnload = OnWaitSequenceUnload,
                 });
             }
 
@@ -50,7 +55,8 @@ namespace LuminaryLabs.NexusEngine
                 {
                     superSequence = this,
                     onBegin = OnWaitSequenceBegin,
-                    onFinished = OnWaitSequenceFinished
+                    onFinished = OnWaitSequenceFinished,
+                    onUnload = OnWaitSequenceUnload,
                 });
             }
         }
@@ -64,10 +70,13 @@ namespace LuminaryLabs.NexusEngine
         {
             waitForSequences.Add(sequence);
         }
+        private void OnWaitSequenceUnload(ISequence sequence)
+        {
+            waitForSequences.Remove(sequence);
+        }
 
         private void OnWaitSequenceFinished(ISequence sequence)
-        {
-            Debug.Log("WaitFor sequence finished: " + sequence.GetType());
+        {   
             waitForSequences.Remove(sequence);
 
             // Check if all waitFor sequences are finished
@@ -81,6 +90,10 @@ namespace LuminaryLabs.NexusEngine
                 // Start continueWith sequences
                 Complete();
             }
+            else
+            {
+                Debug.Log("Wait For Sequences Left (" + waitForSequences.Count + ")");
+            }
         }
 
         private void StartContinueWithSequences()
@@ -90,6 +103,7 @@ namespace LuminaryLabs.NexusEngine
                 Debug.Log("Continueing With " + sequence.name);
                 Sequence.Run(sequence, new SequenceRunData
                 {
+
                 });
             }
         }

@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks; // Assuming you are using UniTask for async operations
-using LuminaryLabs.NexusEngine; // Replace with your actual namespace if different
+using LuminaryLabs.NexusEngine;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug; // Replace with your actual namespace if different
 
 namespace LuminaryLabs.Example
 {
@@ -22,10 +24,19 @@ namespace LuminaryLabs.Example
     
         void OnMouseDown()
         {
-            Debug.Log("Mouse clicked on " + gameObject.name);
-            Complete(); // Complete the sequence
+            Stopwatch stopwatch = new Stopwatch(); // Create a stopwatch instance
+            stopwatch.Start(); // Start the timer
+            
+            if (Sequence.IsRunning(this))
+            {
+                stopwatch.Stop(); // Stop the timer
+                long elapsedMilliseconds = stopwatch.ElapsedMilliseconds; // Get the elapsed time in milliseconds
+                
+                Debug.Log("Time taken for Sequence.IsRunning: " + elapsedMilliseconds + " ms");
+                
+                Complete(); // Complete the sequence
+            }
         }
-
         private async void Complete()
         {
             await Sequence.Finish(this); // Signal that the sequence is finished
