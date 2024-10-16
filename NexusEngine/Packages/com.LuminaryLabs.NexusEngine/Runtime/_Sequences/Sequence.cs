@@ -132,8 +132,14 @@ namespace LuminaryLabs.NexusEngine
             return sequenceObject;
         }
 
-        static void HandleMonoBehaviour(MonoBehaviour sequence, SequenceRunData runData = null)
+       public static void HandleMonoBehaviour(MonoBehaviour sequence, SequenceRunData runData)
         {
+            if (sequence == null || runData == null)
+            {
+                Debug.LogError("Sequence or runData is null.");
+                return;
+            }
+
             if (runData.parent != null)
             {
                 sequence.transform.SetParent(runData.parent);
@@ -143,34 +149,38 @@ namespace LuminaryLabs.NexusEngine
                 sequence.transform.SetParent(runData.superSequence.GetTransform());
             }
 
-            if (runData.spawnPosition.HasValue == false)
+
+            if (runData.spawnPosition.HasValue)
             {
-                runData.spawnPosition = sequence.transform.position;
-            }
-            else if (runData.useLocalPosition)
-            {
-                sequence.transform.localPosition = runData.spawnPosition.Value;
-            }
-            else
-            {
-                sequence.transform.position = runData.spawnPosition.Value;
+                if (runData.spawnSpace == Space.Self)
+                {
+                    // Set local position if specified
+                    sequence.transform.localPosition = runData.spawnPosition.Value;
+                }
+                else
+                {
+                    // Otherwise, set world position
+                    sequence.transform.position = runData.spawnPosition.Value;
+                }
             }
 
 
-            if (runData.spawnRotation.HasValue == false)
+            if (runData.spawnRotation.HasValue)
             {
-                runData.spawnRotation = sequence.transform.rotation;
+                // If no rotation was specified, use the current rotation
+                if (runData.spawnSpace == Space.Self)
+                {
+                    // Set local rotation if specified
+                    sequence.transform.localRotation = runData.spawnRotation.Value;
+                }
+                else
+                {
+                    // Otherwise, set world rotation
+                    sequence.transform.rotation = runData.spawnRotation.Value;
+                }
             }
-            else if (runData.useLocalRotation)
-            {
-                sequence.transform.localRotation = runData.spawnRotation.Value;
-            }
-            else
-            {
-                sequence.transform.rotation = runData.spawnRotation.Value;
-            }
-
         }
+
 
 
 

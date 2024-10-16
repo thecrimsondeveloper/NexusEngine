@@ -19,7 +19,7 @@ public class MonoSequenceContextMenu : MonoBehaviour
             Debug.LogWarning("The source prefab could not be found. Please check the path.");
             return;
         }
-
+        
         // Ask the user for the name of the new MonoSequence variant
         string prefabName = EditorUtility.SaveFilePanel("Save MonoSequence Variant As", "Assets", "NewMonoSequenceVariant", "prefab");
         if (string.IsNullOrEmpty(prefabName))

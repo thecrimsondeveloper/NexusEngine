@@ -37,16 +37,10 @@ namespace LuminaryLabs.NexusEngine
         public Quaternion? spawnRotation { get; set; }
 
         /// <summary>
-        /// Sets the position locally after it set's the parent.
+        /// Chooses the Spawn Space when setting the position of Running Sequences, Defauls to Self.
         /// </summary>
         /// /// ///
-        public bool useLocalPosition { get; set; } = true;
-
-        /// <summary>
-        /// Sets the rotation locally after it set's the parent.
-        /// </summary>
-        /// /// ///
-        public bool useLocalRotation { get; set; } = true;
+        public Space spawnSpace {get; set;} = Space.Self;
 
         /// <summary>
         /// Sets the parent of the sequence if it is associated with a MonoBehaviour. Overwrites the superSequence parent.

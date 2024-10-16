@@ -34,8 +34,7 @@ namespace LuminaryLabs.NexusEngine
             inputData.parent = spawnParent;
             inputData.spawnPosition = Vector3.zero;
             inputData.spawnRotation = Quaternion.identity;
-            inputData.useLocalPosition = true;
-            inputData.useLocalRotation = true;
+            inputData.spawnSpace = Space.Self;
             inputData.sequenceData = this.sequenceData;
 
             return base.UpdateData(inputData);
