@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-
 #if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
@@ -13,69 +10,105 @@ namespace LuminaryLabs.NexusEngine
     public class SequenceEvents
     {
         public ISequence sequence;
+        
         public SequenceEvents(ISequence sequence)
         {
             this.sequence = sequence;
         }
 
-#if UNITY_EDITOR && ODIN_INSPECTOR 
-        [Serializable] 
-        class EventInfo
-        { 
-            public string eventType; 
-            public int listenerCount;
-            public EventInfo(string name, int listenerCount)
-            {
-                this.eventType =name;
-                this.listenerCount = listenerCount;
-            }
-        }
+        // UnityEvents for each event type
+        public UnityEvent<ISequence> OnInitializeEvent = new UnityEvent<ISequence>();
+        public UnityEvent<ISequence> OnBeginEvent = new UnityEvent<ISequence>();
+        public UnityEvent<ISequence> OnFinishedEvent = new UnityEvent<ISequence>();
+        public UnityEvent<ISequence> OnUnloadEvent = new UnityEvent<ISequence>();
+        public UnityEvent<ISequence> OnUnloadedEvent = new UnityEvent<ISequence>();
 
-        // bool isUnityObject => sequence is UnityEngine.Object;
-        // [ShowInInspector,ShowIf(nameof(sequenceReference))]
-        // UnityEngine.Object sequenceReference => isUnityObject ? sequence as UnityEngine.Object : null;
-
-        [ShowInInspector]
-        List<EventInfo> eventInfos => events.Select(e => new EventInfo(e.Key.ToString(), e.Value.GetPersistentEventCount())).ToList();
-#endif
-
-        public Dictionary<SequenceEventType, UnityEvent<ISequence>> events = new Dictionary<SequenceEventType, UnityEvent<ISequence>>();
-        //  = new Dictionary<SequenceEventType, UnityEvent<ISequence>>
-        // {
-        //     {SequenceEventType.OnInitialize, new UnityEvent<ISequence>()},
-        //     {SequenceEventType.OnBegin, new UnityEvent<ISequence>()},
-        //     {SequenceEventType.OnFinished, new UnityEvent<ISequence>()},
-        //     {SequenceEventType.OnUnloaded, new UnityEvent<ISequence>()}
-        // };
-
+        // Register listeners using a switch case
         public void RegisterEvent(UnityAction<ISequence> action, SequenceEventType eventType)
         {
-            if (events.TryGetValue(eventType, out UnityEvent<ISequence> unityEvent))
+            switch (eventType)
             {
-                unityEvent.AddListener(action);
-            }
-            else
-            {
-                UnityEvent<ISequence> newEvent = new UnityEvent<ISequence>();
-                newEvent.AddListener(action);
-                events.Add(eventType, newEvent);
+                case SequenceEventType.OnInitialize:
+                    OnInitializeEvent.AddListener(action);
+                    Nexus.Log("Listener added to OnInitializeEvent");
+                    break;
+                case SequenceEventType.OnBegin:
+                    OnBeginEvent.AddListener(action);
+                    Nexus.Log("Listener added to OnBeginEvent");
+                    break;
+                case SequenceEventType.OnFinished:
+                    OnFinishedEvent.AddListener(action);
+                    Nexus.Log("Listener added to OnFinishedEvent");
+                    break;
+                case SequenceEventType.OnUnload:
+                    OnUnloadEvent.AddListener(action);
+                    Nexus.Log("Listener added to OnUnloadEvent");
+                    break;
+                case SequenceEventType.OnUnloaded:
+                    OnUnloadedEvent.AddListener(action);
+                    Nexus.Log("Listener added to OnUnloadedEvent");
+                    break;
+                default:
+                    Nexus.LogError("Unknown event type: " + eventType);
+                    break;
             }
         }
 
+        // Unregister listeners using a switch case
         public void UnRegisterEvent(UnityAction<ISequence> action, SequenceEventType eventType)
         {
-            if (events.TryGetValue(eventType, out var unityEvent))
+            switch (eventType)
             {
-                unityEvent.RemoveListener(action);
+                case SequenceEventType.OnInitialize:
+                    OnInitializeEvent.RemoveListener(action);
+                    Nexus.Log("Listener removed from OnInitializeEvent");
+                    break;
+                case SequenceEventType.OnBegin:
+                    OnBeginEvent.RemoveListener(action);
+                    Nexus.Log("Listener removed from OnBeginEvent");
+                    break;
+                case SequenceEventType.OnFinished:
+                    OnFinishedEvent.RemoveListener(action);
+                    Nexus.Log("Listener removed from OnFinishedEvent");
+                    break;
+                case SequenceEventType.OnUnload:
+                    OnUnloadEvent.RemoveListener(action);
+                    Nexus.Log("Listener removed from OnUnloadEvent");
+                    break;
+                case SequenceEventType.OnUnloaded:
+                    OnUnloadedEvent.RemoveListener(action);
+                    Nexus.Log("Listener removed from OnUnloadedEvent");
+                    break;
+                default:
+                    Nexus.LogError("Unknown event type: " + eventType);
+                    break;
             }
         }
 
+        // Invoke events using a switch case
         public void InvokeEvent(SequenceEventType eventType, ISequence sequence)
         {
-            if (events.TryGetValue(eventType, out var unityEvent))
+            Nexus.Log("Invoking Event: " + eventType + " on " + sequence.GetType());
+            switch (eventType)
             {
-                Nexus.Log("Invoking Event: " + eventType + " on " + sequence.GetType() + " with " + unityEvent.GetPersistentEventCount() + " listeners");
-                unityEvent.Invoke(sequence);
+                case SequenceEventType.OnInitialize:
+                    OnInitializeEvent.Invoke(sequence);
+                    break;
+                case SequenceEventType.OnBegin:
+                    OnBeginEvent.Invoke(sequence);
+                    break;
+                case SequenceEventType.OnFinished:
+                    OnFinishedEvent.Invoke(sequence);
+                    break;
+                case SequenceEventType.OnUnload:
+                    OnUnloadEvent.Invoke(sequence);
+                    break;
+                case SequenceEventType.OnUnloaded:
+                    OnUnloadedEvent.Invoke(sequence);
+                    break;
+                default:
+                    Debug.LogError("Unknown event type: " + eventType);
+                    break;
             }
         }
     }

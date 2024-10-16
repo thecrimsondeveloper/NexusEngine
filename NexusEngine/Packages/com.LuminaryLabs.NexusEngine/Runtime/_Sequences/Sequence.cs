@@ -215,13 +215,20 @@ namespace LuminaryLabs.NexusEngine
             {
                 Nexus.LogWarning("Stop-Sequence: "+sequence.GetType()+" is not running with GUID: "+ sequence.guid);
             }
-
+            SequenceEvents evts = sequenceEvents[sequence.guid];
+            if (evts != null)
+            {
+                evts.InvokeEvent(SequenceEventType.OnUnload, sequence); // OnUnloaded
+            }
             await sequence.UnloadSequence();
-            if (sequenceEvents.TryGetValue(sequence.guid, out var events))
-                events.InvokeEvent(SequenceEventType.OnUnloaded, sequence); // OnUnloaded
-            UnregisterSequence(sequence);
 
-            sequence.OnUnloadSequence();
+            if (evts != null)
+            {
+                evts.InvokeEvent(SequenceEventType.OnUnloaded, sequence); // OnUnloaded
+            }
+            
+            UnregisterSequence(sequence);
+            sequence.OnUnloadedSequence();
         }
 
         public static async UniTask Finish(ISequence sequence)
@@ -240,14 +247,14 @@ namespace LuminaryLabs.NexusEngine
 
 
             await sequence.FinishSequence();
-            Debug.Log("Sequence Finished: " + sequence.GetType());
+            Nexus.Log("Sequence Finished: " + sequence.GetType());
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
             {
-                Debug.Log("Invoking Sequence Events for OnFinished");
+                Nexus.Log("Invoking Sequence Events for OnFinished");
                 events.InvokeEvent(SequenceEventType.OnFinished, sequence); // OnFinished
             }
 
-            sequence.OnFinishSequence();
+            sequence.OnFinishedSequence();
         }
 
         public static void ForEach(Action<ISequence> action)

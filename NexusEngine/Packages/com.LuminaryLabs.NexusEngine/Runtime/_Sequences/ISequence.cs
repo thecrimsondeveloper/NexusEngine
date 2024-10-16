@@ -13,8 +13,8 @@ public interface ISequence
     UniTask FinishSequence();
     UniTask UnloadSequence();
 
-    void OnFinishSequence();
-    void OnUnloadSequence();
+    void OnFinishedSequence();
+    void OnUnloadedSequence();
 
     public Transform GetTransform()
     {

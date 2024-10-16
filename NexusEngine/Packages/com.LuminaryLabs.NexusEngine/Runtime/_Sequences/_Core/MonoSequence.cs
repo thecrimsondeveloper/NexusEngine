@@ -32,11 +32,11 @@ namespace LuminaryLabs.NexusEngine
         {
             return Finish();
         }
-        public virtual void OnFinishSequence()
+        public virtual void OnFinishedSequence()
         {
             OnFinished();
         }
-        public virtual void OnUnloadSequence()
+        public virtual void OnUnloadedSequence()
         {
             OnUnloaded();
         }
