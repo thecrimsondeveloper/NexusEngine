@@ -24,13 +24,13 @@ namespace LuminaryLabs.Example.FPSGame
 
         protected override void OnBegin()
         {
-            Debug.Log("Oscillation Entity Begin");
-            Sequence.Run<OscillationMovementHandler>(new SequenceRunData
-            {
-                superSequence = this,
-                sequenceData = oscillationMovementHandlerData,
-                onBegin = OnMovementHandlerBegin
-            });
+            // Debug.Log("Oscillation Entity Begin");
+            // Sequence.Run<OscillationMovementHandler>(new SequenceRunData
+            // {
+            //     superSequence = this,
+            //     sequenceData = oscillationMovementHandlerData,
+            //     onBegin = OnMovementHandlerBegin
+            // });
         }
 
         void OnMovementHandlerBegin(ISequence sequence)

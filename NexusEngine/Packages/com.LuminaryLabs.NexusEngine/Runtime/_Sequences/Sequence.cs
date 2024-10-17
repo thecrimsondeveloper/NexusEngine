@@ -285,8 +285,19 @@ namespace LuminaryLabs.NexusEngine
 
             if (sequence is MonoBehaviour monoBehaviour)
             {
-                Nexus.Log("(NEXUS) Handling GameObject: " + monoBehaviour.gameObject.name);
+                Nexus.Log("Handling GameObject: " + monoBehaviour.gameObject.name);
                 bool isPrefab = monoBehaviour.gameObject.scene.name == null;
+
+                //if there is no spawnPosition and this is a prefab, set the spawn position to the current local position
+                if(runData.spawnPosition.HasValue == false && isPrefab)
+                {
+                    runData.spawnPosition = monoBehaviour.transform.localPosition;
+                }
+                if(runData.spawnRotation.HasValue == false && isPrefab)
+                {
+                    runData.spawnPosition = monoBehaviour.transform.position;
+                }
+
                 if (isPrefab == false) { return sequence; }
                 else
                 {
