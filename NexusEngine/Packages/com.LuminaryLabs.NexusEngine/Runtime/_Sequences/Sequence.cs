@@ -88,7 +88,6 @@ namespace LuminaryLabs.NexusEngine
 
         public static SequenceRunResult Run(ISequence sequence, SequenceRunData runData = null)
         {
-
             SequenceRunResult sequenceObject = new SequenceRunResult();
             sequenceObject.sequence = sequence;
 
@@ -128,6 +127,9 @@ namespace LuminaryLabs.NexusEngine
             UniTask runningTask = RunSequence(sequence, events, runData);
             sequenceObject.SetTask(runningTask);
             sequenceObject.events = events;
+
+            Nexus.Log(sequence);
+
 
             return sequenceObject;
         }
@@ -257,7 +259,7 @@ namespace LuminaryLabs.NexusEngine
 
 
             await sequence.FinishSequence();
-            Nexus.Log("Sequence Finished: " + sequence.GetType());
+            Nexus.Log("Sequence Finished: " + sequence is UnityEngine.Object ? (sequence as UnityEngine.Object).name : sequence.GetType());
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
             {
                 Nexus.Log("Invoking Sequence Events for OnFinished");
