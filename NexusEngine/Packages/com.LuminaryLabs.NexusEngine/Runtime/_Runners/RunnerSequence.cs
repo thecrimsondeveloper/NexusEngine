@@ -118,7 +118,10 @@ namespace LuminaryLabs.NexusEngine
             foreach (MonoSequence sequence in continueWith)
             {
                 Debug.Log("Continuing With " + sequence.name);
-                Sequence.Run(sequence, new SequenceRunData {});
+                Sequence.Run(sequence, new SequenceRunData 
+                {
+                    superSequence = sequence.superSequence
+                });
             }
         }
 

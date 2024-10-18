@@ -50,12 +50,15 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/LLGD_Samples/_XR/OVRSceneManager_Additive.unity
     guid: 565a56318ba0af64396bd29497b01089
-  - enabled: 1
+  - enabled: 0
     path: Assets/_TOYBOX/01_MiniGames/OpenWorldSession/_OpenWorldGame/00_Scenes/Home.unity
     guid: 3defbcba2a59e214bbcbe9441846f1db
-  - enabled: 1
+  - enabled: 0
     path: Assets/_TOYBOX/02_XR/VR_Player_Additive.unity
     guid: 9c1304df4bf474746ae45f29fdab7b9a
+  - enabled: 1
+    path: Packages/com.luminarylabs.nexusengine/Runtime/_Example/FPS/FPS_Demo.unity
+    guid: 711c0a7b9690f5a42b95aa2af1c67108
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 0d7dba342b77f0f4e87a94da157df7a9, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 11e96cbdcc3f2344082d4d5dd90eb1b0, type: 2}

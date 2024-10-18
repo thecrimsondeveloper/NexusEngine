@@ -66,7 +66,6 @@ namespace LuminaryLabs.NexusEngine
             if (runningSequences.ContainsKey(sequence.guid))
             {
                 runningSequences.Remove(sequence.guid);
-
             }
 
             if (sequenceEvents.ContainsKey(sequence.guid))
