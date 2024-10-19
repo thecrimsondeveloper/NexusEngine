@@ -2,22 +2,36 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public interface ISequence
+namespace LuminaryLabs.NexusEngine
 {
-    ISequence superSequence { get; set; }
-    Guid guid { get; set; }
-    object currentData { get; set; }
-
-    UniTask InitializeSequence(object currentData = null);
-    void OnBeginSequence();
-    UniTask FinishSequence();
-    UniTask UnloadSequence();
-
-    void OnFinishedSequence();
-    void OnUnloadedSequence();
-
-    public Transform GetTransform()
+    public interface ISequence
     {
-        return this is MonoBehaviour monoBehaviour ? monoBehaviour.transform : superSequence?.GetTransform();
+        
+        ISequence superSequence { get; set; }
+        Guid guid { get; set; }
+        object currentData { get; set; }
+        public Phase phase {get; set;}
+
+        UniTask InitializeSequence(object currentData = null);
+        void OnBeginSequence();
+        UniTask FinishSequence();
+        UniTask UnloadSequence();
+
+        void OnFinishedSequence();
+        void OnUnloadedSequence();
+
+        public Transform GetTransform()
+        {
+            return this is MonoBehaviour monoBehaviour ? monoBehaviour.transform : superSequence?.GetTransform();
+        }
     }
+        public enum Phase 
+        {
+            Idle,
+            Initialization,
+            Begin,
+            Run,
+            Finished,
+            Unloading,
+        }
 }

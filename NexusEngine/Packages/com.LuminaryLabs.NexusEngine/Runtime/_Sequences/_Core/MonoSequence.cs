@@ -14,6 +14,7 @@ namespace LuminaryLabs.NexusEngine
         public Guid guid { get; set; }
 
         public object currentData { get; set; }
+        public Phase phase { get; set; }
 
         public UniTask InitializeSequence(object currentData = null)
         {

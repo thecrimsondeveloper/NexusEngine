@@ -13,6 +13,7 @@ namespace LuminaryLabs.NexusEngine
     {
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
+        public Phase phase { get; set; }
 
 #if ODIN_INSPECTOR
         [ShowInInspector]

@@ -104,6 +104,7 @@ namespace LuminaryLabs.NexusEngine
                 Nexus.Log(name + " is already running, will instead subscribe the events again and return the current run result");
                 if (sequenceEvents.TryGetValue(sequence.guid, out var runningEvents))
                     sequenceObject.events = runningEvents;
+
                 return sequenceObject;
             }
 
@@ -212,16 +213,20 @@ namespace LuminaryLabs.NexusEngine
                 runData.sequenceData = sequence.currentData;
             }
 
+            sequence.phase = Phase.Initialization;
             await sequence.InitializeSequence(runData.sequenceData);
-
-
             if (events != null) events.InvokeEvent(SequenceEventType.OnInitialize, sequence); // OnBegin
+
+            sequence.phase = Phase.Begin;
             sequence.OnBeginSequence();
             if (events != null) events.InvokeEvent(SequenceEventType.OnBegin, sequence); // OnBegin
+            sequence.phase = Phase.Run;
         }
 
         public static async UniTask Stop(ISequence sequence)
         {
+            sequence.phase = Phase.Unloading;
+
             if (!IsRunning(sequence))
             {
                 Nexus.LogWarning("Stop-Sequence: "+sequence.GetType()+" is not running with GUID: "+ sequence.guid);
@@ -240,6 +245,8 @@ namespace LuminaryLabs.NexusEngine
             
             UnregisterSequence(sequence);
             sequence.OnUnloadedSequence();
+
+            sequence.phase = Phase.Idle;
         }
 
         public static async UniTask Finish(ISequence sequence)
@@ -257,6 +264,7 @@ namespace LuminaryLabs.NexusEngine
             }
 
 
+
             await sequence.FinishSequence();
             Nexus.Log("Sequence Finished: " + sequence is UnityEngine.Object ? (sequence as UnityEngine.Object).name : sequence.GetType());
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
@@ -264,7 +272,7 @@ namespace LuminaryLabs.NexusEngine
                 Nexus.Log("Invoking Sequence Events for OnFinished");
                 events.InvokeEvent(SequenceEventType.OnFinished, sequence); // OnFinished
             }
-
+            sequence.phase = Phase.Finished;
             sequence.OnFinishedSequence();
         }
 
