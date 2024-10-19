@@ -1,18 +1,17 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using LuminaryLabs.NexusEngine;
-using System;
+using Cysharp.Threading.Tasks;
 
 public class SequencesWindow : EditorWindow
 {
     private Vector2 scrollPos;
-    private Dictionary<Guid, bool> foldoutStates = new Dictionary<Guid, bool>();
-    List<SerializableSequence> rootSequences = new List<SerializableSequence>();
+    private Dictionary<ISequence, bool> foldoutStates = new Dictionary<ISequence, bool>();
 
-    string sequenceHeirarchyJSON = "";
-
-    // Retrieve the list of all running sequences
+    // List of all running sequences
     public List<ISequence> sequences = new List<ISequence>();
 
     [MenuItem("Luminary Labs/Sequence Viewer")]
@@ -21,11 +20,10 @@ public class SequencesWindow : EditorWindow
         GetWindow<SequencesWindow>("Sequence Viewer");
     }
 
-    float timeLastRefresh = 0;
     private void OnGUI()
     {
-
-        if (Application.isPlaying == false)
+        // Display a message when not in play mode
+        if (!Application.isPlaying)
         {
             GUILayout.Label("Please enter play mode to view running sequences.", EditorStyles.label);
 
@@ -36,249 +34,158 @@ public class SequencesWindow : EditorWindow
             return;
         }
 
-
-        if (GUILayout.Button("Copy JSON"))
-        {
-            EditorGUIUtility.systemCopyBuffer = sequenceHeirarchyJSON;
-        }
-
+        // Refresh sequences on every GUI update
         RefreshSequences();
-        // Start a scroll view
+
+        // Start a scroll view to list all sequences
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, true);
 
-        // Build and display the sequence hierarchy
-
-        foreach (var rootSequence in rootSequences)
+        // Iterate through the list of sequences and draw each one
+        foreach (var sequence in sequences)
         {
-
-            if (rootSequence != null)
+            if (sequence != null)
             {
-                SerializableSequence.DrawResult result = rootSequence.Draw();
-                if (result == SerializableSequence.DrawResult.Error)
-                {
-                    Debug.LogError("Error drawing sequence.");
-                    RefreshSequences();
-                    break;
-                }
-            }
-            else
-            {
-                RefreshSequences();
-                break;
+                DrawSequence(sequence);
             }
         }
 
         EditorGUILayout.EndScrollView();
     }
 
-    float refreshRate = 10;
-
-    //refresh rate is the amount per second that the window will refresh
-    //cooldown is the total time that must pass before the window will refresh again
-    float coolDown => refreshRate == 0 ? 0 : 1 / refreshRate;
+    // Refreshes the list of running sequences
     void RefreshSequences()
     {
-        bool hasLowEnoughRefreshRateToMatter = refreshRate < 20;
-        bool hasEnoughTimePassedSinceLastRefresh = Time.time - timeLastRefresh > coolDown;
-        if (hasLowEnoughRefreshRateToMatter && hasEnoughTimePassedSinceLastRefresh)
-        {
-            return;
-        }
-        timeLastRefresh = Time.time;
-        // Get all sequences in the scene
         sequences = Sequence.GetAll();
-        rootSequences = BuildSequenceHierarchy(sequences);
-
-
-        SerializableSequence outputSequence = new SerializableSequence(null, foldoutStates);
-        outputSequence.children = rootSequences;
-        sequenceHeirarchyJSON = JsonUtility.ToJson(outputSequence, true);
-
-        Repaint();
+        Repaint(); // Ensure the window repaints
     }
 
-    private List<SerializableSequence> BuildSequenceHierarchy(List<ISequence> sequences)
+    // Draws a single sequence in the list
+    private void DrawSequence(ISequence sequence)
     {
-        var sequenceDict = new Dictionary<ISequence, SerializableSequence>();
-        var rootSequences = new List<SerializableSequence>();
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-        // Create SerializableSequence instances and store them in a dictionary
-        foreach (var sequence in sequences)
+        GUILayout.Label(GetSequenceLabel(sequence), EditorStyles.boldLabel);
+
+        if (sequence.superSequence != null)
         {
-            var serializableSequence = new SerializableSequence(sequence, foldoutStates);
-            sequenceDict[sequence] = serializableSequence;
+            GUILayout.Label($"Super Sequence: {GetSequenceLabel(sequence.superSequence)}");
+        }
+        else
+        {
+            GUILayout.Label("Super Sequence: None");
         }
 
-        Debug.Log($"Sequence dict count: {sequenceDict.Count}");
-        Debug.Log($"Sequences count: {sequences.Count}");
+        GUILayout.Label(sequence.currentData != null ? "Has Data" : "No Data");
 
-        // Build the hierarchy by assigning children to their respective parents
-        foreach (var sequence in sequences)
+        // Add Finish and Stop buttons for the sequence
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Finish"))
         {
-            var serializableSequence = sequenceDict[sequence];
-            bool isRootSequence = sequence.superSequence == null;
-            bool isChildSequence = !isRootSequence && sequenceDict.ContainsKey(sequence.superSequence);
-
-            if (isRootSequence)
-            {
-                rootSequences.Add(serializableSequence);
-            }
-            else if (isChildSequence)
-            {
-                var parentSequence = sequenceDict[sequence.superSequence];
-                parentSequence.children.Add(serializableSequence);
-            }
+            FinishSequence(sequence).Forget();
         }
 
-        Debug.Log($"Root sequences count: {rootSequences.Count}");
-        return rootSequences;
-    }
-
-    [Serializable]
-    class SerializableSequence
-    {
-        public ISequence sequence;
-        public string label;
-        public List<SerializableSequence> children;
-        private Dictionary<Guid, bool> foldoutStates;
-
-        public SerializableSequence(ISequence sequence, Dictionary<Guid, bool> foldoutStates)
+        if (GUILayout.Button("Stop"))
         {
-            this.sequence = sequence;
+            StopSequence(sequence).Forget();
+        }
+        EditorGUILayout.EndHorizontal();
 
-            if (sequence != null)
-            {
-                label = GetSequenceLabel(sequence);
-            }
+        // Add a foldout for properties and fields of the sequence
+        bool foldout = foldoutStates.ContainsKey(sequence) && foldoutStates[sequence];
+        foldout = EditorGUILayout.Foldout(foldout, "Sequence Details");
 
-            this.foldoutStates = foldoutStates;
-            children = new List<SerializableSequence>();
+        if (!foldoutStates.ContainsKey(sequence))
+        {
+            foldoutStates[sequence] = false;
+        }
+        foldoutStates[sequence] = foldout;
+
+        if (foldout)
+        {
+            DrawSequenceValues(sequence);
         }
 
-        public enum DrawResult
-        {
-            Success,
-            Error
-        }
-
-        public DrawResult Draw(int depth = 0)
-        {
-            if (sequence == null)
-            {
-                return DrawResult.Error;
-            }
-
-            Guid key = sequence.guid;
-            bool isExpanded = GetFoldoutState(key);
-
-            // Start a vertical section with a help box style to include the button and label
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-            EditorGUILayout.BeginHorizontal();
-
-            // Create an empty label to create the indentation effect
-            GUILayout.Label("", GUILayout.Width(depth * 10));
-
-            // Draw the foldout button
-            if (GUILayout.Button(isExpanded ? "▼" : "▶", GUILayout.Width(20)))
-            {
-                isExpanded = !isExpanded;
-            }
-
-            // Draw the label
-            GUILayout.Label(GetSequenceLabel(sequence));
-
-            EditorGUILayout.EndHorizontal();
-
-            SetFoldoutState(key, isExpanded);
-
-            if (isExpanded)
-            {
-                EditorGUI.indentLevel++;
-
-                // Show the information of the current sequence inside the box
-                DrawSequenceBody();
-
-                GUILayout.Space(10);
-
-                // Draw children
-                foreach (var child in children)
-                {
-                    if (child != null)
-                    {
-                        DrawResult childResult = child.Draw(depth + 1); // Increase depth for children
-                        if (childResult == DrawResult.Error)
-                        {
-                            return DrawResult.Error;
-                        }
-                    }
-                }
-
-                EditorGUI.indentLevel--;
-            }
-
-            EditorGUILayout.EndVertical(); // End the vertical section with the box style
-
-            return DrawResult.Success;
-        }
-
-
-        private static string GetSequenceLabel(ISequence sequence)
+        // Add a button to select the sequence object in the inspector (if applicable)
+        if (GUILayout.Button("Select Sequence"))
         {
             if (sequence is MonoBehaviour monoBehaviour)
             {
-                if (monoBehaviour == null)
-                {
-                    return "MonoSequence: null";
-                }
-                return $"Sequence: {monoBehaviour.name}";
+                Selection.activeObject = monoBehaviour;
             }
-            else
+            else if (sequence is ScriptableObject scriptableObject)
             {
-                return $"Sequence: {sequence.GetType().Name}";
+                Selection.activeObject = scriptableObject;
             }
         }
 
-        private bool GetFoldoutState(Guid superSequenceKey)
+        EditorGUILayout.EndVertical();
+    }
+
+    // Uses reflection to display the properties and fields of the sequence
+    private void DrawSequenceValues(ISequence sequence)
+    {
+        EditorGUI.indentLevel++;
+
+        // Retrieve and display all public properties
+        PropertyInfo[] properties = sequence.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        foreach (var property in properties)
         {
-            if (!foldoutStates.ContainsKey(superSequenceKey))
-                foldoutStates[superSequenceKey] = true;
-            return foldoutStates[superSequenceKey];
-        }
-
-        private void SetFoldoutState(Guid superSequenceKey, bool state)
-        {
-            foldoutStates[superSequenceKey] = state;
-        }
-
-        private void DrawSequenceBody()
-        {
-            EditorGUI.indentLevel++; // Increase indent level
-
-            // Draw the super sequence label with indentation
-            GUILayout.Label($"Super Sequence: {(sequence.superSequence != null ? label : "None")}", EditorStyles.label);
-
-            // Conditionally display whether the sequence has data
-            if (sequence.currentData != null)
+            try
             {
-                GUILayout.Label("HAS DATA", EditorStyles.label);
+                object value = property.GetValue(sequence);
+                GUILayout.Label($"{property.Name}: {value}");
             }
-
-            //add a button to select the sequence
-            if (GUILayout.Button("Select Sequence"))
+            catch (Exception e)
             {
-                if (sequence is MonoBehaviour monoBehaviour)
-                {
-                    Selection.activeObject = monoBehaviour;
-                }
-                else if (sequence is ScriptableObject scriptableObject)
-                {
-                    Selection.activeObject = scriptableObject;
-                }
+                GUILayout.Label($"{property.Name}: (Error retrieving value: {e.Message})");
             }
-
-            EditorGUI.indentLevel--; // Restore the previous indent level
         }
 
+        // Retrieve and display all public fields
+        FieldInfo[] fields = sequence.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+        foreach (var field in fields)
+        {
+            try
+            {
+                object value = field.GetValue(sequence);
+                GUILayout.Label($"{field.Name}: {value}");
+            }
+            catch (Exception e)
+            {
+                GUILayout.Label($"{field.Name}: (Error retrieving value: {e.Message})");
+            }
+        }
+
+        EditorGUI.indentLevel--;
+    }
+
+    // Returns a formatted label for the sequence
+    private static string GetSequenceLabel(ISequence sequence)
+    {
+        if (sequence is MonoBehaviour monoBehaviour)
+        {
+            return $"Sequence: {monoBehaviour.name}";
+        }
+        return $"Sequence: {sequence.GetType().Name}";
+    }
+
+    // Async method to finish the sequence
+    private async UniTaskVoid FinishSequence(ISequence sequence)
+    {
+        if (sequence != null)
+        {
+            await Sequence.Finish(sequence);
+            Debug.Log($"Sequence {sequence.GetType().Name} finished.");
+        }
+    }
+
+    // Async method to stop the sequence
+    private async UniTaskVoid StopSequence(ISequence sequence)
+    {
+        if (sequence != null)
+        {
+            await Sequence.Stop(sequence);
+            Debug.Log($"Sequence {sequence.GetType().Name} stopped.");
+        }
     }
 }
