@@ -31,6 +31,28 @@ namespace LuminaryLabs.NexusEngine
         }
 
         [SerializeField] MonoScript sequenceTemplate;
+        [SerializeField] GameObject monoSequencePrefab;
+        [SerializeField] MonoSequence runnerSequencePrefab;
+
+        public static MonoSequence RunnerSequencePrefab
+        {
+            get
+            {
+                var settings = Instance;
+                return settings ? settings.runnerSequencePrefab : null;
+            }
+        }
+
+        public static GameObject MonoSequencePrefab
+        {
+            get
+            {
+                var settings = Instance;
+                return settings ? settings.monoSequencePrefab : null;
+            }
+        }
+
+
 
         public static MonoScript GetSequenceTemplate()
         {

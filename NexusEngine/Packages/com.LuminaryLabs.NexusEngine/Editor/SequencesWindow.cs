@@ -79,14 +79,18 @@ public class SequencesWindow : EditorWindow
 
         // Add Finish and Stop buttons for the sequence
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Finish"))
-        {
-            FinishSequence(sequence).Forget();
-        }
+        // if (GUILayout.Button("Finish"))
+        // {
+        //     FinishSequence(sequence);
+        // }
 
-        if (GUILayout.Button("Stop"))
+        // if (GUILayout.Button("Stop"))
+        // {
+        //     StopSequence(sequence);
+        // }
+        if (GUILayout.Button("Complete"))
         {
-            StopSequence(sequence).Forget();
+            CompleteSequence(sequence);
         }
         EditorGUILayout.EndHorizontal();
 
@@ -170,7 +174,7 @@ public class SequencesWindow : EditorWindow
     }
 
     // Async method to finish the sequence
-    private async UniTaskVoid FinishSequence(ISequence sequence)
+    private async void FinishSequence(ISequence sequence)
     {
         if (sequence != null)
         {
@@ -180,12 +184,23 @@ public class SequencesWindow : EditorWindow
     }
 
     // Async method to stop the sequence
-    private async UniTaskVoid StopSequence(ISequence sequence)
+    private async void StopSequence(ISequence sequence)
     {
         if (sequence != null)
         {
             await Sequence.Stop(sequence);
             Debug.Log($"Sequence {sequence.GetType().Name} stopped.");
+        }
+    }
+
+    // Async method to stop the sequence
+    private async void CompleteSequence(ISequence sequence)
+    {
+        if (sequence != null)
+        {
+            await Sequence.Finish(sequence);
+            await Sequence.Stop(sequence);
+            Debug.Log($"Sequence {sequence.GetType().Name} Completed.");
         }
     }
 }
