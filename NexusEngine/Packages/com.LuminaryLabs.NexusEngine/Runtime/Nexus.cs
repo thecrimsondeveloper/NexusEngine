@@ -64,6 +64,8 @@ namespace LuminaryLabs.NexusEngine
             // Log the entire message in one Debug.Log call
             Nexus.Log(logMessage);
         }
+
+        
     }
 
 

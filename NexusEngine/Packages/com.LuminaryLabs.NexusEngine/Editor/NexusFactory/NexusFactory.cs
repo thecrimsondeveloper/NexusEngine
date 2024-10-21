@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System;
+using System.Reflection;
 
 // NexusFactory Editor Window
 public class NexusFactory : EditorWindow
@@ -69,6 +71,48 @@ public class NexusFactory : EditorWindow
     public static void EndContentArea()
     {
         GUILayout.EndVertical(); // -3 (Content Group)
+    }
+
+    public static string GetCurrentFolderPath()
+    {
+        string folderPath = "Assets"; // Default path is the root of the Assets folder
+
+        try
+        {
+            // Get the Project Browser window type
+            Type projectBrowserType = Type.GetType("UnityEditor.ProjectBrowser, UnityEditor");
+
+            // Get all open instances of the Project Browser
+            EditorWindow[] projectBrowsers = Resources.FindObjectsOfTypeAll(projectBrowserType) as EditorWindow[];
+
+            if (projectBrowsers != null && projectBrowsers.Length > 0)
+            {
+                // Get the first instance (there could be multiple Project Browsers)
+                var projectBrowser = projectBrowsers[0];
+
+                // Use reflection to access the internal field m_ViewMode
+                FieldInfo viewModeField = projectBrowserType.GetField("m_ViewMode", BindingFlags.Instance | BindingFlags.NonPublic);
+                int viewMode = (int)viewModeField.GetValue(projectBrowser);
+
+                if (viewMode == 1) // 1 means 'TwoColumns' mode
+                {
+                    // Get the selected folder paths in the project browser
+                    MethodInfo getSelectedFoldersMethod = projectBrowserType.GetMethod("GetSelectedFolders", BindingFlags.Instance | BindingFlags.NonPublic);
+                    string[] selectedFolders = (string[])getSelectedFoldersMethod.Invoke(projectBrowser, null);
+
+                    if (selectedFolders != null && selectedFolders.Length > 0)
+                    {
+                        folderPath = selectedFolders[0];
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Error getting current folder path: " + ex.Message);
+        }
+
+        return folderPath;
     }
 }
 

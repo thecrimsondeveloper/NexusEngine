@@ -7,7 +7,7 @@ public class MonoSequenceContextMenu : MonoBehaviour
 {
     // Specify the path to the source prefab for MonoSequence_Base
     private static string sourcePrefabPath = "Packages/com.LuminaryLabs.NexusEngine/Runtime/_Sequences/MonoSequence_Base.prefab";
-
+    
     // MonoSequence Variant Menu
     [MenuItem("Assets/Create MonoSequence Variant", false, 0)]
     private static void CreateMonoSequenceVariant()
@@ -20,23 +20,23 @@ public class MonoSequenceContextMenu : MonoBehaviour
             return;
         }
         
-        // Ask the user for the name of the new MonoSequence variant
-        string prefabName = EditorUtility.SaveFilePanel("Save MonoSequence Variant As", "Assets", "NewMonoSequenceVariant", "prefab");
-        if (string.IsNullOrEmpty(prefabName))
+        // Get the current folder path
+        string prefabFolderPath = NexusFactory.GetCurrentFolderPath();
+        if (string.IsNullOrEmpty(prefabFolderPath))
         {
             Debug.LogWarning("Prefab creation cancelled.");
             return;
         }
 
         // Ensure the prefab name is within the project's Assets directory
-        if (!prefabName.StartsWith(Application.dataPath))
+        if (!prefabFolderPath.StartsWith("Assets"))
         {
             Debug.LogError("Prefab must be saved within the Assets folder.");
             return;
         }
 
-        // Convert the system path to a relative path
-        string relativePath = "Assets" + prefabName.Substring(Application.dataPath.Length);
+        // Set the path for the new prefab variant
+        string relativePath = AssetDatabase.GenerateUniqueAssetPath(Path.Combine(prefabFolderPath, "NewMonoSequenceVariant.prefab"));
 
         // Create the prefab variant
         GameObject variant = PrefabUtility.InstantiatePrefab(sourcePrefab) as GameObject;
@@ -49,6 +49,16 @@ public class MonoSequenceContextMenu : MonoBehaviour
 
         // Highlight the newly created prefab variant in the project window
         Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameObject>(relativePath);
+
+        // Trigger rename prompt in the Project window
+        EditorApplication.delayCall += () =>
+        {
+            if (Selection.activeObject != null)
+            {
+                // Trigger the rename operation using the built-in rename function
+                EditorApplication.ExecuteMenuItem("Assets/Rename");
+            }
+        };
     }
 
     [MenuItem("Assets/Create MonoSequence", true)]
@@ -71,23 +81,23 @@ public class MonoSequenceContextMenu : MonoBehaviour
             return;
         }
 
-        // Ask for a name for the RunnerSequence prefab
-        string prefabName = EditorUtility.SaveFilePanel("Save Runner Sequence As", "Assets", "NewRunnerSequence", "prefab");
-        if (string.IsNullOrEmpty(prefabName))
+        // Get the current folder path
+        string prefabFolderPath = NexusFactory.GetCurrentFolderPath();
+        if (string.IsNullOrEmpty(prefabFolderPath))
         {
             Debug.LogWarning("Runner Sequence creation cancelled.");
             return;
         }
 
         // Ensure the prefab name is within the project's Assets directory
-        if (!prefabName.StartsWith(Application.dataPath))
+        if (!prefabFolderPath.StartsWith("Assets"))
         {
             Debug.LogError("Runner Sequence must be saved within the Assets folder.");
             return;
         }
 
-        // Convert the system path to a relative path
-        string relativePath = "Assets" + prefabName.Substring(Application.dataPath.Length);
+        // Set the path for the new RunnerSequence prefab
+        string relativePath = AssetDatabase.GenerateUniqueAssetPath(Path.Combine(prefabFolderPath, "NewRunnerSequence.prefab"));
 
         // Instantiate the MonoSequence_Base prefab
         GameObject runnerSequenceInstance = PrefabUtility.InstantiatePrefab(sourcePrefab) as GameObject;
@@ -105,6 +115,15 @@ public class MonoSequenceContextMenu : MonoBehaviour
 
         // Highlight the newly created prefab in the project window
         Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameObject>(relativePath);
+
+        EditorApplication.delayCall += () =>
+        {
+            if (Selection.activeObject != null)
+            {
+                // Trigger the rename operation using the built-in rename function
+                EditorApplication.ExecuteMenuItem("Assets/Rename");
+            }
+        };
     }
 
     [MenuItem("Assets/Create Runner Sequence", true)]
