@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
     public class SplineHandler : EntitySequence<SplineHandlerData>
     {
         public Transform[] controlPoints;
-        private Vector3[] _gizmoPoints;
+        private List<Vector3> _gizmoPoints;
 
         protected override UniTask Initialize(SplineHandlerData currentData)
         {
@@ -16,24 +17,46 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         protected override void OnBegin()
         {
-            // Calculate gizmo points for visualization
-            _gizmoPoints = CalculateBezierPoints(controlPoints, currentData.resolution);
+            _gizmoPoints = CalculateBezierPoints(controlPoints, currentData.resolution, currentData.closedLoop);
             Sequence.Finish(this);
         }
 
-        protected override UniTask Unload()
+        // Get total number of segments in the spline
+        public int GetSegmentCount()
         {
-            return UniTask.CompletedTask;
+            return (controlPoints.Length - 1) / 3;
         }
 
-        private Vector3[] CalculateBezierPoints(Transform[] points, int resolution)
+        // Get the point at a specific segment and t value
+        public Vector3 GetPointAtSegment(int segmentIndex, float t)
         {
-            Vector3[] bezierPoints = new Vector3[resolution + 1];
-            for (int i = 0; i <= resolution; i++)
+            int i = segmentIndex * 3;
+            if (i + 3 >= controlPoints.Length)
+                return controlPoints[controlPoints.Length - 1].position;
+
+            return GetBezierPoint(controlPoints[i].position, controlPoints[i + 1].position, controlPoints[i + 2].position, controlPoints[i + 3].position, t);
+        }
+
+        private List<Vector3> CalculateBezierPoints(Transform[] points, int resolution, bool closedLoop)
+        {
+            List<Vector3> bezierPoints = new List<Vector3>();
+            int segmentCount = (closedLoop) ? points.Length : points.Length - 3;
+
+            for (int i = 0; i < segmentCount; i++)
             {
-                float t = i / (float)resolution;
-                bezierPoints[i] = GetBezierPoint(points[0].position, points[1].position, points[2].position, points[3].position, t);
+                Transform p0 = points[i];
+                Transform p1 = points[(i + 1) % points.Length];
+                Transform p2 = points[(i + 2) % points.Length];
+                Transform p3 = points[(i + 3) % points.Length];
+
+                for (int j = 0; j <= resolution; j++)
+                {
+                    float t = j / (float)resolution;
+                    Vector3 bezierPoint = GetBezierPoint(p0.position, p1.position, p2.position, p3.position, t);
+                    bezierPoints.Add(bezierPoint);
+                }
             }
+
             return bezierPoints;
         }
 
@@ -53,31 +76,18 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             return p;
         }
 
-        private void OnDrawGizmos()
+        protected override UniTask Unload()
         {
-            if (controlPoints == null || controlPoints.Length != 4)
-                return;
-
-            if (_gizmoPoints != null)
-            {
-                Gizmos.color = Color.green;
-                for (int i = 0; i < _gizmoPoints.Length - 1; i++)
-                {
-                    Gizmos.DrawLine(_gizmoPoints[i], _gizmoPoints[i + 1]);
-                }
-            }
-        }
-
-        public Vector3 GetPointAt(float t)
-        {
-            return GetBezierPoint(controlPoints[0].position, controlPoints[1].position, controlPoints[2].position, controlPoints[3].position, t);
+            return UniTask.CompletedTask;
         }
     }
+
 
     [System.Serializable]
     public class SplineHandlerData : SequenceData
     {
         public Transform[] controlPoints;
         public int resolution = 20; // Number of points to calculate for smoothness
+        public bool closedLoop = false; // Option to create a closed loop
     }
 }
