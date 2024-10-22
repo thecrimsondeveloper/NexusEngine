@@ -1,18 +1,54 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using LuminaryLabs.NexusEngine;
 using UnityEngine;
 
-public class GameObjectHandler : MonoBehaviour
+public class GameObjectHandler : EntitySequence<GameObjectHandlerData>
 {
-    // Start is called before the first frame update
-    void Start()
+    public enum UseCase
     {
-        
+        Enable,
+        Disable
+    }
+    private UseCase _useCase;
+    public List<GameObject> gameObjects;
+    
+    protected override UniTask Initialize(GameObjectHandlerData currentData)
+    {
+        return UniTask.CompletedTask;
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void OnBegin()
     {
-        
+        switch (_useCase)
+        {
+            case UseCase.Enable:
+                foreach (var go in gameObjects)
+                {
+                    go.SetActive(true);
+                }
+                break;
+            case UseCase.Disable:
+                foreach (var go in gameObjects)
+                {
+                    go.SetActive(false);
+                }
+                break;
+        }
+
+        Sequence.Finish(this);
+        Sequence.Stop(this);
     }
+
+    protected override UniTask Unload()
+    {
+        return UniTask.CompletedTask;
+    }
+}
+
+public class GameObjectHandlerData : SequenceData
+{
+    public List<GameObject> gameObjects;
+    public GameObjectHandler.UseCase useCase;
 }
