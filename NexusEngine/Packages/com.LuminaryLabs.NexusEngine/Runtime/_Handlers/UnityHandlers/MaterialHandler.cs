@@ -24,13 +24,17 @@ public class MaterialHandler : EntitySequence<MaterialHandlerData>
 
     protected override async UniTask Initialize(MaterialHandlerData currentData)
     {
-        // Set private fields based on data
-        targetRenderers = currentData.targetRenderers;
+        if(currentData.targetRenderers != null)
+            targetRenderers = currentData.targetRenderers;
         changeMode = currentData.changeMode;
-        newMaterial = currentData.newMaterial;
-        propertyToChange = currentData.propertyToChange;
+        if(currentData.newMaterial != null)
+            newMaterial = currentData.newMaterial;
+        if(currentData.propertyToChange != null)
+            propertyToChange = currentData.propertyToChange;
         targetColor = currentData.targetColor;
         lerpDuration = currentData.lerpDuration;
+        if(currentData.targetRenderers != null)
+            targetRenderers = currentData.targetRenderers;
 
         await UniTask.CompletedTask;
     }

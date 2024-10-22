@@ -23,7 +23,8 @@ public class TransformModify_Handler : EntitySequence<TransformModifyData>
     protected override UniTask Initialize(TransformModifyData currentData)
     {
         _action = currentData.modifyAction;
-        transforms = currentData.transforms;
+        if(currentData.transforms != null)
+            transforms = currentData.transforms;
         return UniTask.CompletedTask;
     }
 

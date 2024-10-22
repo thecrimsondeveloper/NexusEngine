@@ -16,6 +16,10 @@ public class GameObjectHandler : EntitySequence<GameObjectHandlerData>
     
     protected override UniTask Initialize(GameObjectHandlerData currentData)
     {
+        _useCase = currentData.useCase;
+        if(currentData.gameObjects != null)
+            gameObjects = currentData.gameObjects;
+
         return UniTask.CompletedTask;
     }
 
