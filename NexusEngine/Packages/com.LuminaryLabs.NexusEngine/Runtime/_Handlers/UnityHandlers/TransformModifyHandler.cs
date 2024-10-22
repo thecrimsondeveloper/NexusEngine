@@ -5,7 +5,7 @@ using LuminaryLabs.NexusEngine;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TransformModify_Handler : EntitySequence<TransformModifyData>
+public class TransformModifyHandler : EntitySequence<TransformModifyData>
 {
     public enum ModifyAction
     {
@@ -116,7 +116,7 @@ public class TransformModify_Handler : EntitySequence<TransformModifyData>
 [System.Serializable]
 public class TransformModifyData : SequenceData
 {
-    public TransformModify_Handler.ModifyAction modifyAction;
+    public TransformModifyHandler.ModifyAction modifyAction;
     public List<Transform> transforms;
     public Vector3 targetPosition;
     public Vector3 targetRotation;
