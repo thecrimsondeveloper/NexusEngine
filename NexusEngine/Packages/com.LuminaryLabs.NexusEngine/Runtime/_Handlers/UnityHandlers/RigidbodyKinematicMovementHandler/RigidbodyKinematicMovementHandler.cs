@@ -112,14 +112,19 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                 return;
             }
 
+            // Ensure the spline handler is running to generate points
+            Sequence.Run(_splineHandler);
+
             foreach (var rb in kinematicRigidbodies)
             {
                 float t = 0f; // Time factor for traveling along the path
+                float totalDuration = 1f / currentData.pathFollowSpeed; // Adjust total duration based on speed
+
                 while (t <= 1f)
                 {
                     Vector3 targetPosition = _splineHandler.GetPointAt(t);
                     rb.MovePosition(targetPosition);
-                    t += Time.deltaTime * currentData.pathFollowSpeed; // Adjust the speed of path following
+                    t += Time.deltaTime / totalDuration; // Use a normalized step size based on the follow speed
                     await UniTask.Yield();
                 }
             }
@@ -127,6 +132,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             Sequence.Finish(this);
             Sequence.Stop(this);
         }
+
 
         protected override UniTask Unload()
         {
