@@ -47,6 +47,7 @@ public class GameObjectHandler : EntitySequence<GameObjectHandlerData>
     }
 }
 
+[System.Serializable]
 public class GameObjectHandlerData : SequenceData
 {
     public List<GameObject> gameObjects;

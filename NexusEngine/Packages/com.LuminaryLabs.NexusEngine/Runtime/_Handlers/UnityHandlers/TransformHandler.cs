@@ -112,6 +112,7 @@ public class TransformModify_Handler : EntitySequence<TransformModifyData>
     }
 }
 
+[System.Serializable]
 public class TransformModifyData : SequenceData
 {
     public TransformModify_Handler.ModifyAction modifyAction;
