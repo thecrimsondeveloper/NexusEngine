@@ -1,62 +1,63 @@
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using LuminaryLabs.NexusEngine;
 using UnityEngine;
 
-public class RigidbodyKinematicModifierHandler : EntitySequence<RigidbodyKinematicModifierData>
+namespace LuminaryLabs.NexusEngine.UnityHandlers
 {
-    public enum ModifyAction
+    public class RigidbodyKinematicModifierHandler : EntitySequence<RigidbodyKinematicModifierData>
     {
-        SetPosition,
-        SetRotation
-    }
-
-    private ModifyAction _action;
-    public List<Rigidbody> kinematicRigidbodies;
-
-    protected override UniTask Initialize(RigidbodyKinematicModifierData currentData)
-    {
-        _action = currentData.modifyAction;
-        if (currentData.kinematicRigidbodies != null)
-            kinematicRigidbodies = currentData.kinematicRigidbodies;
-
-        return UniTask.CompletedTask;
-    }
-
-    protected override void OnBegin()
-    {
-        switch (_action)
+        public enum ModifyAction
         {
-            case ModifyAction.SetPosition:
-                foreach (var rb in kinematicRigidbodies)
-                {
-                    rb.position = currentData.targetPosition;
-                }
-                break;
-            case ModifyAction.SetRotation:
-                foreach (var rb in kinematicRigidbodies)
-                {
-                    rb.rotation = Quaternion.Euler(currentData.targetRotation);
-                }
-                break;
+            SetPosition,
+            SetRotation
         }
 
-        Sequence.Finish(this);
-        Sequence.Stop(this);
+        private ModifyAction _action;
+        public List<Rigidbody> kinematicRigidbodies;
+
+        protected override UniTask Initialize(RigidbodyKinematicModifierData currentData)
+        {
+            _action = currentData.modifyAction;
+            if (currentData.kinematicRigidbodies != null)
+                kinematicRigidbodies = currentData.kinematicRigidbodies;
+
+            return UniTask.CompletedTask;
+        }
+
+        protected override void OnBegin()
+        {
+            switch (_action)
+            {
+                case ModifyAction.SetPosition:
+                    foreach (var rb in kinematicRigidbodies)
+                    {
+                        rb.position = currentData.targetPosition;
+                    }
+                    break;
+                case ModifyAction.SetRotation:
+                    foreach (var rb in kinematicRigidbodies)
+                    {
+                        rb.rotation = Quaternion.Euler(currentData.targetRotation);
+                    }
+                    break;
+            }
+
+            Sequence.Finish(this);
+            Sequence.Stop(this);
+        }
+
+        protected override UniTask Unload()
+        {
+            return UniTask.CompletedTask;
+        }
     }
 
-    protected override UniTask Unload()
+    [System.Serializable]
+    public class RigidbodyKinematicModifierData : SequenceData
     {
-        return UniTask.CompletedTask;
+        public RigidbodyKinematicModifierHandler.ModifyAction modifyAction;
+        public List<Rigidbody> kinematicRigidbodies;
+        public Vector3 targetPosition;
+        public Vector3 targetRotation;
     }
-}
-
-[System.Serializable]
-public class RigidbodyKinematicModifierData : SequenceData
-{
-    public RigidbodyKinematicModifierHandler.ModifyAction modifyAction;
-    public List<Rigidbody> kinematicRigidbodies;
-    public Vector3 targetPosition;
-    public Vector3 targetRotation;
 }

@@ -1,59 +1,61 @@
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using LuminaryLabs.NexusEngine;
 using UnityEngine;
 
-public class GameObjectHandler : EntitySequence<GameObjectHandlerData>
+namespace LuminaryLabs.NexusEngine.UnityHandlers
 {
-    public enum UseCase
+    public class GameObjectHandler : EntitySequence<GameObjectHandlerData>
     {
-        Enable,
-        Disable
-    }
-    private UseCase _useCase;
-    public List<GameObject> gameObjects;
-    
-    protected override UniTask Initialize(GameObjectHandlerData currentData)
-    {
-        _useCase = currentData.useCase;
-        if(currentData.gameObjects != null)
-            gameObjects = currentData.gameObjects;
-
-        return UniTask.CompletedTask;
-    }
-
-    protected override void OnBegin()
-    {
-        switch (_useCase)
+        public enum UseCase
         {
-            case UseCase.Enable:
-                foreach (var go in gameObjects)
-                {
-                    go.SetActive(true);
-                }
-                break;
-            case UseCase.Disable:
-                foreach (var go in gameObjects)
-                {
-                    go.SetActive(false);
-                }
-                break;
+            Enable,
+            Disable
+        }
+        private UseCase _useCase;
+        public List<GameObject> gameObjects;
+        
+        protected override UniTask Initialize(GameObjectHandlerData currentData)
+        {
+            _useCase = currentData.useCase;
+            if(currentData.gameObjects != null)
+                gameObjects = currentData.gameObjects;
+
+            return UniTask.CompletedTask;
         }
 
-        Sequence.Finish(this);
-        Sequence.Stop(this);
+        protected override void OnBegin()
+        {
+            switch (_useCase)
+            {
+                case UseCase.Enable:
+                    foreach (var go in gameObjects)
+                    {
+                        go.SetActive(true);
+                    }
+                    break;
+                case UseCase.Disable:
+                    foreach (var go in gameObjects)
+                    {
+                        go.SetActive(false);
+                    }
+                    break;
+            }
+
+            Sequence.Finish(this);
+            Sequence.Stop(this);
+        }
+
+        protected override UniTask Unload()
+        {
+            return UniTask.CompletedTask;
+        }
     }
 
-    protected override UniTask Unload()
+    [System.Serializable]
+    public class GameObjectHandlerData : SequenceData
     {
-        return UniTask.CompletedTask;
+        public List<GameObject> gameObjects;
+        public GameObjectHandler.UseCase useCase;
     }
 }
 
-[System.Serializable]
-public class GameObjectHandlerData : SequenceData
-{
-    public List<GameObject> gameObjects;
-    public GameObjectHandler.UseCase useCase;
-}

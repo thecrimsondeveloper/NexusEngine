@@ -1,113 +1,149 @@
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using LuminaryLabs.NexusEngine;
 using UnityEngine;
 
-public class RigidbodyKinematicMovementHandler : EntitySequence<RigidbodyKinematicMovementData>
+namespace LuminaryLabs.NexusEngine.UnityHandlers
 {
-    public enum MovementAction
+    public class RigidbodyKinematicMovementHandler : EntitySequence<RigidbodyKinematicMovementData>
     {
-        MoveToPosition,
-        RotateToRotation,
-        LerpPosition,
-        SlerpRotation
-    }
-
-    private MovementAction _action;
-    public List<Rigidbody> kinematicRigidbodies;
-
-    protected override UniTask Initialize(RigidbodyKinematicMovementData currentData)
-    {
-        _action = currentData.movementAction;
-        if (currentData.kinematicRigidbodies != null)
-            kinematicRigidbodies = currentData.kinematicRigidbodies;
-
-        return UniTask.CompletedTask;
-    }
-
-    protected override void OnBegin()
-    {
-        switch (_action)
+        public enum MovementAction
         {
-            case MovementAction.MoveToPosition:
-                MoveToPosition().Forget();
-                break;
-            case MovementAction.RotateToRotation:
-                RotateToRotation().Forget();
-                break;
-            case MovementAction.LerpPosition:
-                LerpPosition().Forget();
-                break;
-            case MovementAction.SlerpRotation:
-                SlerpRotation().Forget();
-                break;
+            MoveToPosition,
+            RotateToRotation,
+            LerpPosition,
+            SlerpRotation,
+            FollowPath // New movement option for following a spline path
         }
-    }
 
-    private async UniTask MoveToPosition()
-    {
-        foreach (var rb in kinematicRigidbodies)
+        private MovementAction _action;
+        public List<Rigidbody> kinematicRigidbodies;
+        private SplineHandler _splineHandler; // Reference to the spline handler for following a path
+
+        protected override UniTask Initialize(RigidbodyKinematicMovementData currentData)
         {
-            rb.MovePosition(currentData.targetPosition);
-            await UniTask.Yield();
+            _action = currentData.movementAction;
+            if (currentData.kinematicRigidbodies != null)
+                kinematicRigidbodies = currentData.kinematicRigidbodies;
+
+            if (currentData.splineHandler != null)
+                _splineHandler = currentData.splineHandler; // Assign spline handler for path-following
+
+            return UniTask.CompletedTask;
         }
-        Sequence.Finish(this);
-        Sequence.Stop(this);
-    }
 
-    private async UniTask RotateToRotation()
-    {
-        foreach (var rb in kinematicRigidbodies)
+        protected override void OnBegin()
         {
-            rb.MoveRotation(Quaternion.Euler(currentData.targetRotation));
-            await UniTask.Yield();
-        }
-        Sequence.Finish(this);
-        Sequence.Stop(this);
-    }
-
-    private async UniTask LerpPosition()
-    {
-        foreach (var rb in kinematicRigidbodies)
-        {
-            while (Vector3.Distance(rb.position, currentData.targetPosition) > 0.01f)
+            switch (_action)
             {
-                rb.MovePosition(Vector3.Lerp(rb.position, currentData.targetPosition, Time.deltaTime * currentData.moveSpeed));
-                await UniTask.Yield();
+                case MovementAction.MoveToPosition:
+                    MoveToPosition().Forget();
+                    break;
+                case MovementAction.RotateToRotation:
+                    RotateToRotation().Forget();
+                    break;
+                case MovementAction.LerpPosition:
+                    LerpPosition().Forget();
+                    break;
+                case MovementAction.SlerpRotation:
+                    SlerpRotation().Forget();
+                    break;
+                case MovementAction.FollowPath:
+                    FollowPath().Forget(); // New follow path action
+                    break;
             }
         }
-        Sequence.Finish(this);
-        Sequence.Stop(this);
-    }
 
-    private async UniTask SlerpRotation()
-    {
-        foreach (var rb in kinematicRigidbodies)
+        private async UniTask MoveToPosition()
         {
-            while (Quaternion.Angle(rb.rotation, Quaternion.Euler(currentData.targetRotation)) > 0.1f)
+            foreach (var rb in kinematicRigidbodies)
             {
-                rb.MoveRotation(Quaternion.Slerp(rb.rotation, Quaternion.Euler(currentData.targetRotation), Time.deltaTime * currentData.rotateSpeed));
+                rb.MovePosition(currentData.targetPosition);
                 await UniTask.Yield();
             }
+            Sequence.Finish(this);
+            Sequence.Stop(this);
         }
-        Sequence.Finish(this);
-        Sequence.Stop(this);
+
+        private async UniTask RotateToRotation()
+        {
+            foreach (var rb in kinematicRigidbodies)
+            {
+                rb.MoveRotation(Quaternion.Euler(currentData.targetRotation));
+                await UniTask.Yield();
+            }
+            Sequence.Finish(this);
+            Sequence.Stop(this);
+        }
+
+        private async UniTask LerpPosition()
+        {
+            foreach (var rb in kinematicRigidbodies)
+            {
+                while (Vector3.Distance(rb.position, currentData.targetPosition) > 0.01f)
+                {
+                    rb.MovePosition(Vector3.Lerp(rb.position, currentData.targetPosition, Time.deltaTime * currentData.moveSpeed));
+                    await UniTask.Yield();
+                }
+            }
+            Sequence.Finish(this);
+            Sequence.Stop(this);
+        }
+
+        private async UniTask SlerpRotation()
+        {
+            foreach (var rb in kinematicRigidbodies)
+            {
+                while (Quaternion.Angle(rb.rotation, Quaternion.Euler(currentData.targetRotation)) > 0.1f)
+                {
+                    rb.MoveRotation(Quaternion.Slerp(rb.rotation, Quaternion.Euler(currentData.targetRotation), Time.deltaTime * currentData.rotateSpeed));
+                    await UniTask.Yield();
+                }
+            }
+            Sequence.Finish(this);
+            Sequence.Stop(this);
+        }
+
+        // New method to follow a spline path
+        private async UniTask FollowPath()
+        {
+            if (_splineHandler == null)
+            {
+                Sequence.Finish(this);
+                return;
+            }
+
+            foreach (var rb in kinematicRigidbodies)
+            {
+                float t = 0f; // Time factor for traveling along the path
+                while (t <= 1f)
+                {
+                    Vector3 targetPosition = _splineHandler.GetPointAt(t);
+                    rb.MovePosition(targetPosition);
+                    t += Time.deltaTime * currentData.pathFollowSpeed; // Adjust the speed of path following
+                    await UniTask.Yield();
+                }
+            }
+
+            Sequence.Finish(this);
+            Sequence.Stop(this);
+        }
+
+        protected override UniTask Unload()
+        {
+            return UniTask.CompletedTask;
+        }
     }
 
-    protected override UniTask Unload()
+    [System.Serializable]
+    public class RigidbodyKinematicMovementData : SequenceData
     {
-        return UniTask.CompletedTask;
+        public RigidbodyKinematicMovementHandler.MovementAction movementAction;
+        public List<Rigidbody> kinematicRigidbodies;
+        public Vector3 targetPosition;
+        public Vector3 targetRotation;
+        public float moveSpeed = 1.0f;
+        public float rotateSpeed = 1.0f;
+        public float pathFollowSpeed = 1.0f; // Speed for following the spline path
+        public SplineHandler splineHandler; // Reference to the SplineHandler for path following
     }
-}
-
-[System.Serializable]
-public class RigidbodyKinematicMovementData : SequenceData
-{
-    public RigidbodyKinematicMovementHandler.MovementAction movementAction;
-    public List<Rigidbody> kinematicRigidbodies;
-    public Vector3 targetPosition;
-    public Vector3 targetRotation;
-    public float moveSpeed = 1.0f;
-    public float rotateSpeed = 1.0f;
 }
