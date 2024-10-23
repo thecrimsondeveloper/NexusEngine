@@ -37,6 +37,20 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             return GetBezierPoint(controlPoints[i].position, controlPoints[i + 1].position, controlPoints[i + 2].position, controlPoints[i + 3].position, t);
         }
 
+        // Check if the current segment corresponds to a pause point
+        public async UniTask<bool> CheckForPauseAtControlPoint(int segmentIndex)
+        {
+            if (currentData.pauseAtControlPoints.Contains(segmentIndex))
+            {
+                int pauseIndex = currentData.pauseAtControlPoints.IndexOf(segmentIndex);
+                float pauseDuration = currentData.pauseDurations[pauseIndex];
+                Debug.Log($"Pausing at control point {segmentIndex} for {pauseDuration} seconds.");
+                await UniTask.Delay((int)(pauseDuration * 1000)); // Pause for the duration in milliseconds
+                return true;
+            }
+            return false;
+        }
+
         private List<Vector3> CalculateBezierPoints(Transform[] points, int resolution, bool closedLoop)
         {
             List<Vector3> bezierPoints = new List<Vector3>();
@@ -82,12 +96,13 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         }
     }
 
-
     [System.Serializable]
     public class SplineHandlerData : SequenceData
     {
         public Transform[] controlPoints;
         public int resolution = 20; // Number of points to calculate for smoothness
         public bool closedLoop = false; // Option to create a closed loop
+        public List<int> pauseAtControlPoints = new List<int>(); // List of control point indices to pause at
+        public List<float> pauseDurations = new List<float>();   // Corresponding pause durations at each control point
     }
 }
