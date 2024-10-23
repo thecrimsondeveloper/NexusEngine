@@ -19,8 +19,8 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         public enum MovementConstraint
         {
             None,
-            Boundaries,
-            CustomZone
+            ColliderBounds,
+            MeshRendererBounds
         }
 
         private MovementType _movementType;
@@ -28,10 +28,23 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         public List<Rigidbody> rigidbodies;
 
+        private Bounds _movementBounds;
+
         protected override UniTask Initialize(RigidbodyMovementData currentData)
         {
             _movementType = currentData.movementType;
             _movementConstraint = currentData.movementConstraint;
+            
+            // Set bounds based on the constraint type
+            if (currentData.collider != null && _movementConstraint == MovementConstraint.ColliderBounds)
+            {
+                _movementBounds = currentData.collider.bounds;
+            }
+            else if (currentData.meshRenderer != null && _movementConstraint == MovementConstraint.MeshRendererBounds)
+            {
+                _movementBounds = currentData.meshRenderer.bounds;
+            }
+
             if (currentData.rigidbodies != null)
                 rigidbodies = currentData.rigidbodies;
 
@@ -135,36 +148,28 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         private Vector3 GetRandomDirectionWithinConstraints()
         {
-            switch (_movementConstraint)
+            if (_movementConstraint == MovementConstraint.None)
             {
-                case MovementConstraint.Boundaries:
-                    // Example of random direction constrained by boundaries
-                    return new Vector3(
-                        Random.Range(currentData.boundaryMin.x, currentData.boundaryMax.x),
-                        Random.Range(currentData.boundaryMin.y, currentData.boundaryMax.y),
-                        Random.Range(currentData.boundaryMin.z, currentData.boundaryMax.z)
-                    ).normalized;
-                case MovementConstraint.CustomZone:
-                    // Implement custom zone logic
-                    break;
+                return Random.insideUnitSphere.normalized;
             }
-            return Random.insideUnitSphere.normalized;  // Default to random direction
+
+            // If there are bounds, constrain direction based on them
+            Vector3 randomPointWithinBounds = GetRandomPositionWithinConstraints();
+            return (randomPointWithinBounds - Vector3.zero).normalized; // Normalized vector from origin
         }
 
         private Vector3 GetRandomPositionWithinConstraints()
         {
-            switch (_movementConstraint)
+            if (_movementConstraint == MovementConstraint.ColliderBounds || _movementConstraint == MovementConstraint.MeshRendererBounds)
             {
-                case MovementConstraint.Boundaries:
-                    return new Vector3(
-                        Random.Range(currentData.boundaryMin.x, currentData.boundaryMax.x),
-                        Random.Range(currentData.boundaryMin.y, currentData.boundaryMax.y),
-                        Random.Range(currentData.boundaryMin.z, currentData.boundaryMax.z)
-                    );
-                case MovementConstraint.CustomZone:
-                    // Implement custom zone logic
-                    break;
+                // Generate a random point within the bounds
+                return new Vector3(
+                    Random.Range(_movementBounds.min.x, _movementBounds.max.x),
+                    Random.Range(_movementBounds.min.y, _movementBounds.max.y),
+                    Random.Range(_movementBounds.min.z, _movementBounds.max.z)
+                );
             }
+
             return Vector3.zero;
         }
 
@@ -180,8 +185,8 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         public RigidbodyMovementHandler.MovementType movementType;
         public RigidbodyMovementHandler.MovementConstraint movementConstraint;
         public List<Rigidbody> rigidbodies;
-        public Vector3 boundaryMin;
-        public Vector3 boundaryMax;
+        public Collider collider;  // Define movement constraint via collider bounds
+        public MeshRenderer meshRenderer;  // Define movement constraint via mesh renderer bounds
         public Transform target;
         public List<Vector3> patrolPoints;
         public float forceStrength = 1.0f;
