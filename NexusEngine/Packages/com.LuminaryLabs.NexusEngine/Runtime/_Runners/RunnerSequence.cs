@@ -12,7 +12,6 @@ namespace LuminaryLabs.NexusEngine
     {
         private bool destroyOnUnload = false;
         private int currentWaitForIndex = 0; // Index for tracking the current waitFor sequence
-        private Transform spawnPosition; // Position to spawn the runner at
 
         #if ODIN_INSPECTOR
         [FoldoutGroup("Data"), ShowInInspector, HideInEditorMode]
@@ -30,11 +29,6 @@ namespace LuminaryLabs.NexusEngine
         {
             destroyOnUnload = currentData.destroyOnUnload;
 
-            if(currentData.spawnPosition != null)
-            {
-                spawnPosition = currentData.spawnPosition;
-            }
-
             beginWith = new List<MonoSequence>(currentData.beginWith);
             finishWith = new List<MonoSequence>(currentData.finishWith);
             waitFor = new List<MonoSequence>(currentData.waitFor);
@@ -51,7 +45,6 @@ namespace LuminaryLabs.NexusEngine
                 Sequence.Run(sequence, new SequenceRunData
                 {
                     superSequence = this,
-                    spawnPosition = spawnPosition.localPosition,
                     onBegin = OnBeginSequenceBegin,
                     onUnload = OnWaitSequenceUnload,
                 });
@@ -78,7 +71,6 @@ namespace LuminaryLabs.NexusEngine
             Sequence.Run(currentWaitForSequence, new SequenceRunData
             {
                 superSequence = this,
-                spawnPosition = spawnPosition.localPosition,
                 onBegin = OnWaitSequenceBegin,
                 onFinished = OnWaitSequenceFinished,
                 onUnload = OnWaitSequenceUnload
@@ -129,7 +121,6 @@ namespace LuminaryLabs.NexusEngine
                 Sequence.Run(sequence, new SequenceRunData 
                 {
                     superSequence = sequence.superSequence,
-                    spawnPosition = spawnPosition.localPosition
                 });
             }
         }
@@ -159,7 +150,6 @@ namespace LuminaryLabs.NexusEngine
                 Sequence.Run(sequence, new SequenceRunData 
                 { 
                     superSequence = this, 
-                    spawnPosition = spawnPosition.localPosition,
                     onBegin = OnFinishSequenceBegin,
                     onUnload = OnFinishSequenceUnload,
                 });
