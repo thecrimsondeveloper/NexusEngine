@@ -12,6 +12,7 @@ namespace LuminaryLabs.NexusEngine
     {
         private bool destroyOnUnload = false;
         private int currentWaitForIndex = 0; // Index for tracking the current waitFor sequence
+        private Transform spawnPosition; // Position to spawn the runner at
 
         #if ODIN_INSPECTOR
         [FoldoutGroup("Data"), ShowInInspector, HideInEditorMode]
@@ -28,6 +29,17 @@ namespace LuminaryLabs.NexusEngine
         protected override UniTask Initialize(RunnerSequenceData currentData)
         {
             destroyOnUnload = currentData.destroyOnUnload;
+
+            if(currentData.spawnPosition != null)
+            {
+                spawnPosition = currentData.spawnPosition;
+            }
+            else
+            {
+                spawnPosition = transform;
+            }
+
+            transform.position = spawnPosition.position;
 
             beginWith = new List<MonoSequence>(currentData.beginWith);
             finishWith = new List<MonoSequence>(currentData.finishWith);
@@ -185,6 +197,7 @@ namespace LuminaryLabs.NexusEngine
     public class RunnerSequenceData : SequenceData
     {
         public bool destroyOnUnload = false;
+        public Transform spawnPosition;
 
         #if ODIN_INSPECTOR
         [BoxGroup("beginWith", false)]
