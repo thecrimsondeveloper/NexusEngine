@@ -304,7 +304,7 @@ namespace LuminaryLabs.NexusEngine
                 }
                 if(runData.spawnRotation.HasValue == false && isPrefab)
                 {
-                    runData.spawnPosition = monoBehaviour.transform.position;
+                    runData.spawnRotation = monoBehaviour.transform.rotation;
                 }
 
                 if (isPrefab == false) { return sequence; }
