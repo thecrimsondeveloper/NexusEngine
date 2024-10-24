@@ -34,10 +34,6 @@ namespace LuminaryLabs.NexusEngine
             {
                 spawnPosition = currentData.spawnPosition;
             }
-            else
-            {
-                spawnPosition = transform;
-            }
 
             beginWith = new List<MonoSequence>(currentData.beginWith);
             finishWith = new List<MonoSequence>(currentData.finishWith);
@@ -55,7 +51,7 @@ namespace LuminaryLabs.NexusEngine
                 Sequence.Run(sequence, new SequenceRunData
                 {
                     superSequence = this,
-                    spawnPosition = spawnPosition.position,
+                    spawnPosition = spawnPosition.localPosition,
                     onBegin = OnBeginSequenceBegin,
                     onUnload = OnWaitSequenceUnload,
                 });
@@ -82,7 +78,7 @@ namespace LuminaryLabs.NexusEngine
             Sequence.Run(currentWaitForSequence, new SequenceRunData
             {
                 superSequence = this,
-                spawnPosition = spawnPosition.position,
+                spawnPosition = spawnPosition.localPosition,
                 onBegin = OnWaitSequenceBegin,
                 onFinished = OnWaitSequenceFinished,
                 onUnload = OnWaitSequenceUnload
@@ -133,7 +129,7 @@ namespace LuminaryLabs.NexusEngine
                 Sequence.Run(sequence, new SequenceRunData 
                 {
                     superSequence = sequence.superSequence,
-                    spawnPosition = spawnPosition.position
+                    spawnPosition = spawnPosition.localPosition
                 });
             }
         }
@@ -163,6 +159,7 @@ namespace LuminaryLabs.NexusEngine
                 Sequence.Run(sequence, new SequenceRunData 
                 { 
                     superSequence = this, 
+                    spawnPosition = spawnPosition.localPosition,
                     onBegin = OnFinishSequenceBegin,
                     onUnload = OnFinishSequenceUnload,
                 });
