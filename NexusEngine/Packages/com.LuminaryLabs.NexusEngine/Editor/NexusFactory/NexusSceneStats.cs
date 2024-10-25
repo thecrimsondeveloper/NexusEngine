@@ -22,9 +22,9 @@ public class NexusSceneStats : NexusFactoryPane
         // Loop through all MeshFilters and accumulate triangle counts
         foreach (MeshFilter meshFilter in meshFilters)
         {
-            if (meshFilter.sharedMesh != null)
+            if (meshFilter.mesh != null)
             {
-                trianglesInScene += meshFilter.sharedMesh.triangles.Length / 3;
+                trianglesInScene += meshFilter.mesh.triangles.Length / 3;
             }
         }
 
