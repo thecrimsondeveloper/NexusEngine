@@ -225,6 +225,10 @@ namespace LuminaryLabs.NexusEngine
 
         public static async UniTask Stop(ISequence sequence)
         {
+            if(sequence.phase == Phase.Begin)
+            {
+                await UniTask.NextFrame();
+            }
             sequence.phase = Phase.Unloading;
 
             if (!IsRunning(sequence))
@@ -251,6 +255,11 @@ namespace LuminaryLabs.NexusEngine
 
         public static async UniTask Finish(ISequence sequence)
         {
+            if(sequence.phase == Phase.Begin)
+            {
+                await UniTask.NextFrame();
+            }
+            
             if (!IsRunning(sequence))
             {
                 string mustRunError = sequence.GetType() + " is not currently running. You must Run a Sequence in order for it to Finish";

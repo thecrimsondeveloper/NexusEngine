@@ -21,6 +21,7 @@ public class NexusFactory : EditorWindow
     // OnEnable to initialize some panes
     private void OnEnable()
     {
+        factoryPanes.Add(new NexusSceneStats());
         factoryPanes.Add(new NexusMeshBaker());
         factoryPanes.Add(new NexusSkyboxGenerator());
         factoryPanes.Add(new NexusWorldGenerator());
