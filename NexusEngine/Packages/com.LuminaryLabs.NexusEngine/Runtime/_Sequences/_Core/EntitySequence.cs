@@ -40,13 +40,13 @@ namespace LuminaryLabs.NexusEngine
 #else
         [SerializeField]
 #endif
-        private T _currentData;
+        // private T _currentData;
 
-        public new T currentData
-        {
-            get => base.currentData != null ? (T)base.currentData : _currentData;
-            set => _currentData = value;
-        }
+        // public new T currentData
+        // {
+        //     get => _currentData;
+        //     set => _currentData = value;
+        // }
 
         protected virtual void Awake()
         {
@@ -86,40 +86,31 @@ namespace LuminaryLabs.NexusEngine
 
         protected override UniTask Initialize(object currentData = null)
         {
+            Nexus.Log("Init Entity Sequence: " + name);
+            if(currentData != null) 
+            {
+                Nexus.Log("Init Entity Given Data Type: " + currentData.GetType().ToString());  
+            }
+
             if (currentData is T data)
             {
+                Nexus.Log("Init Entity Given Data: " + name);  
                 return Initialize(data);
             }
             else if(this.currentData is T)
             {
+                Nexus.Log("Init Entity Current Data: " + name);
                 return Initialize(this.currentData);
             }
 
+            Nexus.Log("Init Entity New Data(): " + name);
             return Initialize(new SequenceData() as T);
         }
 
         protected abstract UniTask Initialize(T currentData);
     }
 
-    public sealed class EntitySequence : EntitySequence<EntitySequenceData>
-    {
-        protected override UniTask Initialize(EntitySequenceData currentData)
-        {
-            Debug.Log("INIT ENTITY");
-            return UniTask.CompletedTask;
-        }
-
-        protected override void OnBegin()
-        {
-
-        }
-
-        protected override UniTask Unload()
-        {
-            return UniTask.CompletedTask;
-        }
-    }
-
+    
     [System.Serializable]
     public class EntitySequenceData : SequenceData
     {

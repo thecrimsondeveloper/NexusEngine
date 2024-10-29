@@ -206,6 +206,7 @@ namespace LuminaryLabs.NexusEngine
             //if data is passed in, set it
             if (runData.sequenceData != null)
             {
+                Nexus.Log("Data was Given on " + sequence.name);
                 sequence.currentData = runData.sequenceData;
             }
             else //if no data is passed in, set the current data to the sequence's data

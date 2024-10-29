@@ -6,12 +6,12 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 {
     public class ObjectPoolCreationHandler : EntitySequence<ObjectPoolCreationHandlerData>
     {
-        private Dictionary<string, Queue<EntitySequence>> _pools;
+        private Dictionary<string, Queue<MonoSequence>> _pools;
         private Transform _poolParent;
 
         protected override async UniTask Initialize(ObjectPoolCreationHandlerData currentData)
         {
-            _pools = new Dictionary<string, Queue<EntitySequence>>();
+            _pools = new Dictionary<string, Queue<MonoSequence>>();
             _poolParent = new GameObject("PooledSequences").transform;
             _poolParent.gameObject.SetActive(false);
 
@@ -21,11 +21,11 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             }
         }
 
-        private async UniTask CreatePool(EntitySequence prefabSequence, int initialSize)
+        private async UniTask CreatePool(MonoSequence prefabSequence, int initialSize)
         {
             if (!_pools.ContainsKey(prefabSequence.name))
             {
-                var sequenceQueue = new Queue<EntitySequence>();
+                var sequenceQueue = new Queue<MonoSequence>();
 
                 for (int i = 0; i < initialSize; i++)
                 {
@@ -37,9 +37,9 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             }
         }
 
-        private EntitySequence sequenceInstance;
+        private MonoSequence sequenceInstance;
 
-        private async UniTask<EntitySequence> InstantiateSequenceWithRun(EntitySequence prefabSequence)
+        private async UniTask<MonoSequence> InstantiateSequenceWithRun(MonoSequence prefabSequence)
         {
             // Use Sequence.Run to initialize the sequence
             Sequence.Run(prefabSequence, new SequenceRunData { sequenceData = prefabSequence.currentData, onBegin = StoreSequenceInstance });
@@ -51,10 +51,10 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         private void StoreSequenceInstance(ISequence _sequence)
         {
-            sequenceInstance = _sequence as EntitySequence;
+            sequenceInstance = _sequence as MonoSequence;
         }
 
-        public EntitySequence GetFromPool(EntitySequence prefabSequence)
+        public MonoSequence GetFromPool(MonoSequence prefabSequence)
         {
             if (_pools.TryGetValue(prefabSequence.name, out var sequenceQueue))
             {
@@ -81,7 +81,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             }
         }
 
-        public void ReturnToPool(EntitySequence sequenceInstance)
+        public void ReturnToPool(MonoSequence sequenceInstance)
         {
             Sequence.Finish(sequenceInstance);
             Sequence.Stop(sequenceInstance);
@@ -113,7 +113,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             return UniTask.CompletedTask;
         }
 
-        public Queue<EntitySequence> GetPool(string sequenceName)
+        public Queue<MonoSequence> GetPool(string sequenceName)
         {
             if (_pools.TryGetValue(sequenceName, out var sequenceQueue))
             {
@@ -140,10 +140,10 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
     [System.Serializable]
     public class PoolConfig
     {
-        public EntitySequence prefabSequence;
+        public MonoSequence prefabSequence;
         public int size;
         
-        public PoolConfig(EntitySequence prefabSequence, int size)
+        public PoolConfig(MonoSequence prefabSequence, int size)
         {
             this.prefabSequence = prefabSequence;
             this.size = size;

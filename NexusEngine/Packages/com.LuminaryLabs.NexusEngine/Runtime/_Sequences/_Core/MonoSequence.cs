@@ -43,9 +43,13 @@ namespace LuminaryLabs.NexusEngine
         }
 
 
-        protected abstract UniTask Initialize(object currentData);
+        protected virtual UniTask Initialize(object currentData) 
+        {
+            Nexus.Log("Init Mono: " + name);
+            return UniTask.CompletedTask;
+        }
         protected abstract void OnBegin();
-        protected abstract UniTask Unload();
+        protected virtual UniTask Unload(){return UniTask.CompletedTask;}
 
         protected virtual UniTask Finish() { return UniTask.CompletedTask; }
         protected virtual void OnFinished() { }
