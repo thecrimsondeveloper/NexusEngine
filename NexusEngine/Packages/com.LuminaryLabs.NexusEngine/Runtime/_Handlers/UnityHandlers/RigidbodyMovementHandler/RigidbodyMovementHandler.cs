@@ -30,11 +30,27 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         private Bounds _movementBounds;
 
+        private Transform target;
+        private List<Vector3> patrolPoints;
+        private float forceStrength = 1.0f;
+        private float impulseStrength = 1.0f;
+        private float velocityMagnitude = 1.0f;
+
         protected override UniTask Initialize(RigidbodyMovementData currentData)
         {
             _movementType = currentData.movementType;
             _movementConstraint = currentData.movementConstraint;
-            
+
+            if(currentData.target != null)
+                target = currentData.target;
+            if(currentData.patrolPoints != null)
+                patrolPoints = currentData.patrolPoints;
+            if(currentData.forceStrength != 0)
+                forceStrength = currentData.forceStrength;
+            if(currentData.impulseStrength != 0)
+                impulseStrength = currentData.impulseStrength;
+            if(currentData.velocityMagnitude != 0)
+                velocityMagnitude = currentData.velocityMagnitude;
             // Set bounds based on the constraint type
             if (currentData.collider != null && _movementConstraint == MovementConstraint.ColliderBounds)
             {
@@ -81,7 +97,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             foreach (var rb in rigidbodies)
             {
                 Vector3 forceDirection = GetRandomDirectionWithinConstraints();
-                rb.AddForce(forceDirection * currentData.forceStrength, ForceMode.Force);
+                rb.AddForce(forceDirection * forceStrength, ForceMode.Force);
                 await UniTask.Yield();
             }
         }
@@ -91,7 +107,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             foreach (var rb in rigidbodies)
             {
                 Vector3 impulseDirection = GetRandomDirectionWithinConstraints();
-                rb.AddForce(impulseDirection * currentData.impulseStrength, ForceMode.Impulse);
+                rb.AddForce(impulseDirection * impulseStrength, ForceMode.Impulse);
                 await UniTask.Yield();
             }
         }
@@ -100,7 +116,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         {
             foreach (var rb in rigidbodies)
             {
-                rb.velocity = GetRandomDirectionWithinConstraints() * currentData.velocityMagnitude;
+                rb.velocity = GetRandomDirectionWithinConstraints() * velocityMagnitude;
                 await UniTask.Yield();
             }
         }
@@ -113,7 +129,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                 {
                     Vector3 randomPosition = GetRandomPositionWithinConstraints();
                     Vector3 direction = (randomPosition - rb.position).normalized;
-                    rb.AddForce(direction * currentData.forceStrength, ForceMode.Force);
+                    rb.AddForce(direction * forceStrength, ForceMode.Force);
                     await UniTask.Yield();
                 }
             }
@@ -125,9 +141,9 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             {
                 while (true)
                 {
-                    Vector3 targetPosition = currentData.target.position;
+                    Vector3 targetPosition = target.position;
                     Vector3 direction = (targetPosition - rb.position).normalized;
-                    rb.AddForce(direction * currentData.forceStrength, ForceMode.Force);
+                    rb.AddForce(direction * forceStrength, ForceMode.Force);
                     await UniTask.Yield();
                 }
             }
@@ -137,10 +153,10 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         {
             foreach (var rb in rigidbodies)
             {
-                foreach (var point in currentData.patrolPoints)
+                foreach (var point in patrolPoints)
                 {
                     Vector3 direction = (point - rb.position).normalized;
-                    rb.AddForce(direction * currentData.forceStrength, ForceMode.Force);
+                    rb.AddForce(direction * forceStrength, ForceMode.Force);
                     await UniTask.Yield();
                 }
             }

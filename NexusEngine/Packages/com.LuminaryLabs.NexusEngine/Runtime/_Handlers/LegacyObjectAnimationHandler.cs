@@ -9,22 +9,32 @@ namespace LuminaryLabs.NexusEngine
         private Animation animationComponent;
         private bool addedAnimationComponent = false;
 
+        public GameObject targetObject;    // The object to which the Animation component will be added
+        public AnimationClip animationClip;  // The animation clip to play
+
         protected override UniTask Initialize(LegacyObjectAnimationHandlerData currentData)
         {
+            //set the target object and animation clip
+            targetObject = currentData.targetObject;
+            animationClip = currentData.animationClip;
+
             // Get or add the legacy Animation component to the target object
-            animationComponent = currentData.targetObject.GetComponent<Animation>();
+            animationComponent = targetObject.GetComponent<Animation>();
 
             if (animationComponent == null)
             {
-                animationComponent = currentData.targetObject.AddComponent<Animation>();
+                animationComponent = targetObject.AddComponent<Animation>();
                 addedAnimationComponent = true;
             }
 
             // Add the animation clip to the animation component
             if (currentData.animationClip != null)
             {
-                animationComponent.AddClip(currentData.animationClip, currentData.animationClip.name);
+                animationComponent.AddClip(animationClip, animationClip.name);
+
             }
+
+
 
             return UniTask.CompletedTask;
         }
@@ -32,9 +42,9 @@ namespace LuminaryLabs.NexusEngine
         protected override void OnBegin()
         {
             // Play the specified animation clip
-            if (animationComponent != null && currentData.animationClip != null)
+            if (animationComponent != null && animationClip != null)
             {
-                animationComponent.Play(currentData.animationClip.name);
+                animationComponent.Play(animationClip.name);
             }
             else
             {

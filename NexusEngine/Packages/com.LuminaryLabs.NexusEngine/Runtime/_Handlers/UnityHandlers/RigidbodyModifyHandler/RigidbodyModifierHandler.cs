@@ -15,12 +15,24 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         private ModifyAction _action;
         public List<Rigidbody> rigidbodies;
+        public Vector3 targetVelocity;
+        public Vector3 forceDirection;
+        public float forceMagnitude = 1.0f;
+        public float impulseMagnitude = 1.0f;
 
         protected override UniTask Initialize(RigidbodyModifierData currentData)
         {
             _action = currentData.modifyAction;
             if (currentData.rigidbodies != null)
                 rigidbodies = currentData.rigidbodies;
+            if (currentData.targetVelocity != null)
+                targetVelocity = currentData.targetVelocity;
+            if (currentData.forceDirection != null)
+                forceDirection = currentData.forceDirection;
+            if (currentData.forceMagnitude != 0)
+                forceMagnitude = currentData.forceMagnitude;
+            if (currentData.impulseMagnitude != 0)
+                impulseMagnitude = currentData.impulseMagnitude;
 
             return UniTask.CompletedTask;
         }
@@ -32,19 +44,19 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                 case ModifyAction.SetVelocity:
                     foreach (var rb in rigidbodies)
                     {
-                        rb.velocity = currentData.targetVelocity;
+                        rb.velocity = targetVelocity;
                     }
                     break;
                 case ModifyAction.AddForce:
                     foreach (var rb in rigidbodies)
                     {
-                        rb.AddForce(currentData.forceDirection * currentData.forceMagnitude, ForceMode.Force);
+                        rb.AddForce(forceDirection * forceMagnitude, ForceMode.Force);
                     }
                     break;
                 case ModifyAction.AddImpulse:
                     foreach (var rb in rigidbodies)
                     {
-                        rb.AddForce(currentData.forceDirection * currentData.impulseMagnitude, ForceMode.Impulse);
+                        rb.AddForce(forceDirection * impulseMagnitude, ForceMode.Impulse);
                     }
                     break;
             }
