@@ -60,14 +60,19 @@ namespace LuminaryLabs.NexusEngine
 
         private void RunNextWaitForSequence()
         {
+            Nexus.Log("Runner Sequence: Run Next Wait For Sequence." + name);
             if (currentWaitForIndex >= waitFor.Count)
             {
+                Nexus.Log("Auto Complete Runner Sequence" + name);
                 Complete();
                 return;
             }
 
+
             // Run the current waitFor sequence based on the index
             MonoSequence currentWaitForSequence = waitFor[currentWaitForIndex];
+
+            Nexus.Log("Pre Run" + currentWaitForSequence.name);
             Sequence.Run(currentWaitForSequence, new SequenceRunData
             {
                 superSequence = this,
@@ -84,7 +89,7 @@ namespace LuminaryLabs.NexusEngine
 
         private void OnWaitSequenceBegin(ISequence sequence)
         {
-            Debug.Log("WAIT SEQUENCE BEGIN: " + sequence.GetType());
+            Debug.Log("WAIT SEQUENCE BEGIN: " + sequence.name);
             waitForSequences.Add(sequence);
         }
 

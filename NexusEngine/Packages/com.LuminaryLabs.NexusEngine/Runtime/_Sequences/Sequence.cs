@@ -34,32 +34,63 @@ namespace LuminaryLabs.NexusEngine
 
         private static SequenceEvents RegisterSequence(ISequence sequence, SequenceRunData runData)
         {
+            Nexus.Log("Registering Sequence: " + sequence.name);
             if (sequence.guid == Guid.Empty)
+            {
                 sequence.guid = Guid.NewGuid();
+                Nexus.Log("Generated new GUID for sequence: " + sequence.name);
+            }
+
             if (!runningSequences.ContainsKey(sequence.guid))
             {
+                Nexus.Log("Sequence not found in runningSequences. Adding new sequence: " + sequence.name);
                 SequenceEvents events = new SequenceEvents(sequence);
                 runningSequences.Add(sequence.guid, sequence);
                 sequenceEvents.Add(sequence.guid, events);
 
                 if (runData.onInitialize != null) events.RegisterEvent(runData.onInitialize, SequenceEventType.OnInitialize);
+                else Nexus.Log("onInitialize event is null for sequence: " + sequence.name);
+
                 if (runData.onBegin != null) events.RegisterEvent(runData.onBegin, SequenceEventType.OnBegin);
+                else Nexus.Log("onBegin event is null for sequence: " + sequence.name);
+
                 if (runData.onFinished != null) events.RegisterEvent(runData.onFinished, SequenceEventType.OnFinished);
+                else Nexus.Log("onFinished event is null for sequence: " + sequence.name);
+
                 if (runData.onUnload != null) events.RegisterEvent(runData.onUnload, SequenceEventType.OnUnload);
+                else Nexus.Log("onUnload event is null for sequence: " + sequence.name);
+
                 if (runData.onUnloaded != null) events.RegisterEvent(runData.onUnloaded, SequenceEventType.OnUnloaded);
+                else Nexus.Log("onUnloaded event is null for sequence: " + sequence.name);
+
                 return events;
             }
             else if (sequenceEvents.TryGetValue(sequence.guid, out var sequenceEvent))
             {
+                Nexus.Log("Sequence already registered. Updating events for sequence: " + sequence.name);
+
                 if (runData.onInitialize != null) sequenceEvent.RegisterEvent(runData.onInitialize, SequenceEventType.OnInitialize);
+                else Nexus.Log("onInitialize event is null for sequence: " + sequence.name);
+
                 if (runData.onBegin != null) sequenceEvent.RegisterEvent(runData.onBegin, SequenceEventType.OnBegin);
+                else Nexus.Log("onBegin event is null for sequence: " + sequence.name);
+
                 if (runData.onFinished != null) sequenceEvent.RegisterEvent(runData.onFinished, SequenceEventType.OnFinished);
+                else Nexus.Log("onFinished event is null for sequence: " + sequence.name);
+
                 if (runData.onUnload != null) sequenceEvent.RegisterEvent(runData.onUnload, SequenceEventType.OnUnload);
+                else Nexus.Log("onUnload event is null for sequence: " + sequence.name);
+
                 if (runData.onUnloaded != null) sequenceEvent.RegisterEvent(runData.onUnloaded, SequenceEventType.OnUnloaded);
+                else Nexus.Log("onUnloaded event is null for sequence: " + sequence.name);
+
                 return sequenceEvent;
             }
+
+            Nexus.LogError("Failed to register or update sequence: " + sequence.name);
             return null;
         }
+
 
         private static void UnregisterSequence(ISequence sequence)
         {
@@ -121,15 +152,16 @@ namespace LuminaryLabs.NexusEngine
                 HandleMonoBehaviour(monoBehaviour, runData);
             }
 
+            Nexus.Log("PreRegister Sequence: " + sequence.name);
 
             SequenceEvents events = RegisterSequence(sequence, runData);
+
+            Nexus.Log("Sequence Ready To Run "+ sequence.name);
+
             // Start the sequence and store the running task
             UniTask runningTask = RunSequence(sequence, events, runData);
             sequenceObject.SetTask(runningTask);
             sequenceObject.events = events;
-
-            Nexus.Log(sequence);
-
 
             return sequenceObject;
         }
@@ -183,12 +215,10 @@ namespace LuminaryLabs.NexusEngine
             }
         }
 
-
-
-
         static async UniTask RunSequence(ISequence sequence, SequenceEvents events, SequenceRunData runData)
         {
-            //cleanup
+            Nexus.Log("Async Run "+ sequence.name);
+            // Cleanup for replacement sequence
             bool hasReplacement = runData.replace != null;
             if (hasReplacement && IsRunning(runData.replace))
             {
@@ -196,33 +226,47 @@ namespace LuminaryLabs.NexusEngine
             }
             await UniTask.NextFrame();
 
-            //setup sequence heirarchy
+            // Setup sequence hierarchy
             if (runData.superSequence != null)
             {
                 sequence.superSequence = runData.superSequence;
             }
 
-            //set data
-            //if data is passed in, set it
-            if (runData.sequenceData != null)
+            // Handle data assignment
+            if (runData.sequenceData == null)
             {
-                Nexus.Log("Data was Given on " + sequence.name);
-                sequence.currentData = runData.sequenceData;
+                // If no sequenceData is provided, use currentData of the sequence
+                if (sequence.currentData != null)
+                {
+                    Nexus.Log($"Using existing data for sequence: {sequence.name}");
+                    runData.sequenceData = sequence.currentData;
+                }
+                else
+                {
+                    // If sequence also has no currentData, create a new instance
+                    runData.sequenceData = default;
+                }
             }
-            else //if no data is passed in, set the current data to the sequence's data
-            {
-                runData.sequenceData = sequence.currentData;
-            }
+
+            // Assign the data to the sequence
+            sequence.currentData = runData.sequenceData;
 
             sequence.phase = Phase.Initialization;
-            await sequence.InitializeSequence(runData.sequenceData);
-            if (events != null) events.InvokeEvent(SequenceEventType.OnInitialize, sequence); // OnBegin
 
+            // Initialize sequence with the provided data
+            await sequence.InitializeSequence(runData.sequenceData);
+            if (events != null) events.InvokeEvent(SequenceEventType.OnInitialize, sequence);
+
+            // Proceed to Begin phase
             sequence.phase = Phase.Begin;
             sequence.OnBeginSequence();
-            if (events != null) events.InvokeEvent(SequenceEventType.OnBegin, sequence); // OnBegin
+            if (events != null) events.InvokeEvent(SequenceEventType.OnBegin, sequence);
+
+            // Set sequence to Run phase
             sequence.phase = Phase.Run;
+            Nexus.Log("Async Run Function Complete "+ sequence.name);
         }
+
 
         public static async UniTask Stop(ISequence sequence)
         {
@@ -276,7 +320,7 @@ namespace LuminaryLabs.NexusEngine
 
 
             await sequence.FinishSequence();
-            Nexus.Log("Sequence Finished: " + sequence is UnityEngine.Object ? (sequence as UnityEngine.Object).name : sequence.GetType());
+            Nexus.Log("Sequence Finished: "  + sequence.name);
             if (sequenceEvents.TryGetValue(sequence.guid, out var events))
             {
                 Nexus.Log("Invoking Sequence Events for OnFinished");

@@ -12,8 +12,14 @@ namespace LuminaryLabs.NexusEngine
     {
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
+        protected object _currentData;
 
-        public object currentData { get; set; }
+        public virtual object currentData
+        {
+            get => _currentData;
+            set => _currentData = value;
+        }
+        
         public Phase phase { get; set; }
 
         public UniTask InitializeSequence(object currentData = null)

@@ -24,18 +24,8 @@ namespace LuminaryLabs.Example
     
         void OnMouseDown()
         {
-            Stopwatch stopwatch = new Stopwatch(); // Create a stopwatch instance
-            stopwatch.Start(); // Start the timer
-            
-            if (Sequence.IsRunning(this))
-            {
-                stopwatch.Stop(); // Stop the timer
-                long elapsedMilliseconds = stopwatch.ElapsedMilliseconds; // Get the elapsed time in milliseconds
-                
-                Debug.Log("Time taken for Sequence.IsRunning: " + elapsedMilliseconds + " ms");
-                
+            if(phase == Phase.Run)
                 Complete(); // Complete the sequence
-            }
         }
         private async void Complete()
         {

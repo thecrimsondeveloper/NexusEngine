@@ -26,32 +26,38 @@ namespace LuminaryLabs.NexusEngine
         // Register listeners using a switch case
         public void RegisterEvent(UnityAction<ISequence> action, SequenceEventType eventType)
         {
-            switch (eventType)
+            Nexus.Log("Register Event "+eventType.ToString()+" Called On: " + sequence.name);
+
+            if(eventType == SequenceEventType.OnInitialize)
             {
-                case SequenceEventType.OnInitialize:
-                    OnInitializeEvent.AddListener(action);
-                    Nexus.Log("Listener added to OnInitializeEvent");
-                    break;
-                case SequenceEventType.OnBegin:
-                    OnBeginEvent.AddListener(action);
-                    Nexus.Log("Listener added to OnBeginEvent");
-                    break;
-                case SequenceEventType.OnFinished:
-                    OnFinishedEvent.AddListener(action);
-                    Nexus.Log("Listener added to OnFinishedEvent");
-                    break;
-                case SequenceEventType.OnUnload:
-                    OnUnloadEvent.AddListener(action);
-                    Nexus.Log("Listener added to OnUnloadEvent");
-                    break;
-                case SequenceEventType.OnUnloaded:
-                    OnUnloadedEvent.AddListener(action);
-                    Nexus.Log("Listener added to OnUnloadedEvent");
-                    break;
-                default:
-                    Nexus.LogError("Unknown event type: " + eventType);
-                    break;
+                OnInitializeEvent.AddListener(action);
+                Nexus.Log("Listener added to OnInitializeEvent");
+            } 
+            else if(eventType == SequenceEventType.OnBegin)
+            {
+                OnBeginEvent.AddListener(action);
+                Nexus.Log("Listener added to OnBeginEvent");
             }
+            else if (eventType == SequenceEventType.OnFinished)
+            {
+                OnFinishedEvent.AddListener(action);
+                Nexus.Log("Listener added to OnFinishedEvent");
+            }
+            else if (eventType == SequenceEventType.OnUnload)
+            {
+                OnUnloadEvent.AddListener(action);
+                Nexus.Log("Listener added to OnUnloadEvent");
+            }
+            else if (eventType == SequenceEventType.OnUnloaded)
+            {
+                OnUnloadedEvent.AddListener(action);
+                Nexus.Log("Listener added to OnUnloadedEvent");
+            }
+            else
+            {
+                Nexus.Log("Listener was not added to any of the events");
+            }
+            Nexus.Log("After Register Event "+eventType.ToString()+" Called On: " + sequence.name);
         }
 
         // Unregister listeners using a switch case
@@ -88,7 +94,7 @@ namespace LuminaryLabs.NexusEngine
         // Invoke events using a switch case
         public void InvokeEvent(SequenceEventType eventType, ISequence sequence)
         {
-            Nexus.Log("Invoking Event: " + eventType + " on " + sequence.GetType());
+            Nexus.Log("Invoking Event: " + eventType + " on " + sequence.name);
             switch (eventType)
             {
                 case SequenceEventType.OnInitialize:

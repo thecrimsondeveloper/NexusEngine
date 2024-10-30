@@ -35,18 +35,31 @@ namespace LuminaryLabs.NexusEngine
 
 
 
-#if ODIN_INSPECTOR
+    #if ODIN_INSPECTOR
         [BoxGroup("ENTITY DATA"), SerializeField]
-#else
+    #else
         [SerializeField]
-#endif
-        // private T _currentData;
+    #endif
+    private new T _currentData;
 
-        // public new T currentData
-        // {
-        //     get => _currentData;
-        //     set => _currentData = value;
-        // }
+    // Override the base property to ensure consistent access
+    public override object currentData
+    {
+        get => _currentData;
+        set
+        {
+            base.currentData = value;
+            
+            if (value is T typedValue)
+            {
+                _currentData = typedValue;
+            }
+            else
+            {
+                Debug.LogError($"Invalid type assignment for currentData. Expected {typeof(T)}, got {value?.GetType()}");
+            }
+        }
+    }
 
         protected virtual void Awake()
         {
