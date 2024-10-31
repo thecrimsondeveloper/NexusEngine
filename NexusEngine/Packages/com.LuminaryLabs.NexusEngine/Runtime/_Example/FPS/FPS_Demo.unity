@@ -568,7 +568,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
       propertyPath: _currentData.waitFor.Array.size
-      value: 3
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
+      propertyPath: _currentData.beginWith.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
       propertyPath: _currentData.finishWith.Array.size
@@ -577,15 +581,19 @@ PrefabInstance:
     - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
       propertyPath: _currentData.waitFor.Array.data[0]
       value: 
-      objectReference: {fileID: 1694384903}
+      objectReference: {fileID: 815209409}
     - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
       propertyPath: _currentData.waitFor.Array.data[1]
       value: 
-      objectReference: {fileID: 815209409}
+      objectReference: {fileID: 164048275}
     - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
       propertyPath: _currentData.waitFor.Array.data[2]
       value: 
       objectReference: {fileID: 164048275}
+    - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
+      propertyPath: _currentData.beginWith.Array.data[0]
+      value: 
+      objectReference: {fileID: 1694384903}
     - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
       propertyPath: _currentData.continueWith.Array.size
       value: 1
@@ -4402,6 +4410,10 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
+      propertyPath: _currentData.beginWith.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
       propertyPath: _currentData.waitFor.Array.data[0]
       value: 
       objectReference: {fileID: 568107553}
@@ -4418,8 +4430,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 213860355}
     - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
+      propertyPath: _currentData.beginWith.Array.data[0]
+      value: 
+      objectReference: {fileID: 568107553}
+    - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
       propertyPath: _currentData.continueWith.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7890071982718629839, guid: 6dfa118a00e364546bf8e8d0a9fcbf8c, type: 3}
       propertyPath: _currentData.continueWith.Array.data[0]

@@ -132,9 +132,11 @@ namespace LuminaryLabs.NexusEngine
 
         private void StartContinueWithSequences()
         {
+
+            Nexus.Log("Continuing With " + continueWith.Count + " sequences on " + name);
             foreach (MonoSequence sequence in continueWith)
             {
-                Debug.Log("Continuing With " + sequence.name);
+                Nexus.Log("Continuing With " + sequence.name);
                 Sequence.Run(sequence, new SequenceRunData 
                 {
                     superSequence = sequence.superSequence,
@@ -200,6 +202,7 @@ namespace LuminaryLabs.NexusEngine
 
         protected override void OnUnloaded()
         {
+            Nexus.Log("Runner Unloaded: " + name);
             StartContinueWithSequences();
             if (destroyOnUnload)
             {
