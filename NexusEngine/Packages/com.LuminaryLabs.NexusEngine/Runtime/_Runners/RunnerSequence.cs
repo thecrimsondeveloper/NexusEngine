@@ -54,20 +54,22 @@ namespace LuminaryLabs.NexusEngine
             currentWaitForIndex = 0;
             if (waitFor.Count > 0)
             {
-                RunNextWaitForSequence();
+                RunWaitForSequence();
             }
         }
 
-        private void RunNextWaitForSequence()
+
+        void RunWaitForSequence(int index = 0)
         {
-            if (currentWaitForIndex >= waitFor.Count)
+             // Run the current waitFor sequence based on the index
+            MonoSequence currentWaitForSequence = waitFor[index];
+
+            if(currentWaitForSequence is RunnerSequence runner)
             {
-                Complete();
-                return;
+                Nexus.Log(" Pre Running Sub Runner: " + runner.name);
             }
 
-            // Run the current waitFor sequence based on the index
-            MonoSequence currentWaitForSequence = waitFor[currentWaitForIndex];
+            Nexus.Log("Pre Run" + currentWaitForSequence.name);
             Sequence.Run(currentWaitForSequence, new SequenceRunData
             {
                 superSequence = this,
@@ -77,6 +79,30 @@ namespace LuminaryLabs.NexusEngine
             });
         }
 
+        
+        private void OnWaitSequenceFinished(ISequence sequence)
+        {
+            Nexus.Log("Wait Sequence Finished and was part of the wait for list: " + sequence.name);
+            RunNextWaitForSequence();
+        }
+
+
+        private void RunNextWaitForSequence()
+        {
+            // Increment the index and run the next sequence
+            currentWaitForIndex++;
+
+            Nexus.Log("Running Next Wait For Sequence on " + name);
+            if (currentWaitForIndex >= waitFor.Count)
+            {
+                Nexus.Log("Auto Complete Runner Sequence" + name);
+                Complete();
+                return;
+            }
+
+            RunWaitForSequence(currentWaitForIndex);
+        }
+
         private void OnBeginSequenceBegin(ISequence sequence)
         {
             beginSequences.Add(sequence);
@@ -84,7 +110,7 @@ namespace LuminaryLabs.NexusEngine
 
         private void OnWaitSequenceBegin(ISequence sequence)
         {
-            Debug.Log("WAIT SEQUENCE BEGIN: " + sequence.GetType());
+            Debug.Log("WAIT SEQUENCE BEGIN: " + sequence.name);
             waitForSequences.Add(sequence);
         }
 
@@ -104,15 +130,6 @@ namespace LuminaryLabs.NexusEngine
             finishWithSequences.Remove(sequence);
         }
 
-        private void OnWaitSequenceFinished(ISequence sequence)
-        {
-            waitForSequences.Remove(sequence);
-
-            // Increment the index and run the next sequence
-            currentWaitForIndex++;
-            RunNextWaitForSequence();
-        }
-
         private void StartContinueWithSequences()
         {
             foreach (MonoSequence sequence in continueWith)
@@ -125,47 +142,59 @@ namespace LuminaryLabs.NexusEngine
             }
         }
 
-        private async void Complete()
+       private async void Complete()
         {
-            // Stop any remaining sequences
-            foreach (ISequence sequence in beginSequences)
-            {
-                await Sequence.Stop(sequence);
-            }
-
-            foreach (ISequence sequence in waitForSequences)
-            {
-                await Sequence.Stop(sequence);
-            }
-
-            
+            // Ensure we finish the sequence first
             await Sequence.Finish(this);
+            await Sequence.Stop(this);
         }
 
         protected override async UniTask Finish()
         {
+            // Trigger finishing sequences first
             foreach (MonoSequence sequence in finishWith)
             {
                 Debug.Log("Finishing With " + sequence.name);
-                Sequence.Run(sequence, new SequenceRunData 
-                { 
-                    superSequence = this, 
+                Sequence.Run(sequence, new SequenceRunData
+                {
+                    superSequence = this,
                     onBegin = OnFinishSequenceBegin,
                     onUnload = OnFinishSequenceUnload,
                 });
             }
 
             await UniTask.NextFrame();
-
-            await Sequence.Stop(this);
         }
 
         protected override async UniTask Unload()
         {
-            for(int i = 0; i< finishWithSequences.Count - 1; i++)
+
+             Nexus.Log("Complete " + name);
+            while(beginSequences.Count > 0)
             {
-                ISequence sequence = finishWithSequences[i];
-                await Sequence.Stop(sequence);
+                ISequence sequenceToStop = beginSequences[0];
+                if(sequenceToStop == null) continue;
+
+                await Sequence.Stop(sequenceToStop);
+
+                if(beginSequences.Contains(sequenceToStop))
+                {
+                    beginSequences.Remove(sequenceToStop);
+                }
+            }
+
+            while(waitForSequences.Count > 0)
+            {
+                ISequence sequenceToStop = waitForSequences[0];
+                if(sequenceToStop == null) continue;
+
+
+                await Sequence.Stop(sequenceToStop);
+
+                if(waitForSequences.Contains(sequenceToStop))
+                {
+                    waitForSequences.Remove(sequenceToStop);
+                }
             }
         }
 

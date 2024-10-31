@@ -8,15 +8,24 @@ namespace LuminaryLabs.NexusEngine
 {
     public class SceneChangeHandler : EntitySequence<SceneChangeHandlerData>
     {
-        protected override UniTask Initialize(SceneChangeHandlerData currentData)
+
+        private string sceneName;         // The name of the scene to load
+        private SceneLoadMode loadMode;   // Mode for scene loading (Single or Additive)
+        private bool asyncLoad; 
+
+
+        protected override UniTask Initialize(SceneChangeHandlerData sceneChangeHandlerData)
         {
-            // Initialize any setup for the scene change here if needed
+            sceneName = sceneChangeHandlerData.sceneName;
+            loadMode = sceneChangeHandlerData.loadMode;
+            asyncLoad = sceneChangeHandlerData.asyncLoad;
+
             return UniTask.CompletedTask;
         }
 
         protected override void OnBegin()
         {
-            if (currentData.asyncLoad)
+            if (asyncLoad)
             {
                 // Run async scene loading
                 LoadSceneAsync().Forget();
@@ -31,13 +40,13 @@ namespace LuminaryLabs.NexusEngine
         // Method for synchronous scene loading
         private void LoadScene()
         {
-            if (currentData.loadMode == SceneLoadMode.Single)
+            if (loadMode == SceneLoadMode.Single)
             {
-                SceneManager.LoadScene(currentData.sceneName, LoadSceneMode.Single);
+                SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
             }
-            else if (currentData.loadMode == SceneLoadMode.Additive)
+            else if (loadMode == SceneLoadMode.Additive)
             {
-                SceneManager.LoadScene(currentData.sceneName, LoadSceneMode.Additive);
+                SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
             }
 
             Complete();
@@ -47,13 +56,13 @@ namespace LuminaryLabs.NexusEngine
         private async UniTaskVoid LoadSceneAsync()
         {
             AsyncOperation asyncOperation;
-            if (currentData.loadMode == SceneLoadMode.Single)
+            if (loadMode == SceneLoadMode.Single)
             {
-                asyncOperation = SceneManager.LoadSceneAsync(currentData.sceneName, LoadSceneMode.Single);
+                asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
             }
             else
             {
-                asyncOperation = SceneManager.LoadSceneAsync(currentData.sceneName, LoadSceneMode.Additive);
+                asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
             }
 
             await UniTask.WaitUntil(() => asyncOperation.isDone);

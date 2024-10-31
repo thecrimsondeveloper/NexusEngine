@@ -14,12 +14,19 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         private ModifyAction _action;
         public List<Rigidbody> kinematicRigidbodies;
+        public Vector3 targetPosition;
+        public Vector3 targetRotation;
 
         protected override UniTask Initialize(RigidbodyKinematicModifierData currentData)
         {
             _action = currentData.modifyAction;
             if (currentData.kinematicRigidbodies != null)
                 kinematicRigidbodies = currentData.kinematicRigidbodies;
+            if(currentData.targetPosition != null)
+                targetPosition = currentData.targetPosition;
+            if(currentData.targetRotation != null)
+                targetRotation = currentData.targetRotation;
+            
 
             return UniTask.CompletedTask;
         }
@@ -31,13 +38,13 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                 case ModifyAction.SetPosition:
                     foreach (var rb in kinematicRigidbodies)
                     {
-                        rb.position = currentData.targetPosition;
+                        rb.position = targetPosition;
                     }
                     break;
                 case ModifyAction.SetRotation:
                     foreach (var rb in kinematicRigidbodies)
                     {
-                        rb.rotation = Quaternion.Euler(currentData.targetRotation);
+                        rb.rotation = Quaternion.Euler(targetRotation);
                     }
                     break;
             }

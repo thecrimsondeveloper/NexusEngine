@@ -1,15 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using UnityEditor;
+using UnityEngine;
 
 // NexusFactory Editor Window
 public class NexusFactory : EditorWindow
 {
-    // List of panes to display
-    private List<NexusFactoryPane> factoryPanes = new List<NexusFactoryPane>();
+    // Dictionary to store one instance of each pane type
+    private Dictionary<Type, NexusFactoryPane> factoryPanes = new Dictionary<Type, NexusFactoryPane>();
     private Vector2 scrollPosition = Vector2.zero;
 
     [MenuItem("Luminary Labs/Factory")]
@@ -18,17 +17,28 @@ public class NexusFactory : EditorWindow
         GetWindow<NexusFactory>("Nexus Factory");
     }
 
-    // OnEnable to initialize some panes
+    // OnEnable to initialize panes
     private void OnEnable()
     {
-        factoryPanes.Add(new NexusSceneStats());
-        factoryPanes.Add(new NexusMeshBaker());
-        factoryPanes.Add(new NexusSkyboxGenerator());
-        factoryPanes.Add(new NexusWorldGenerator());
+        AddPane<SequenceViewer>();
+        AddPane<NexusLogging>();
+        AddPane<NexusMeshBaker>();
+        AddPane<NexusSkyboxGenerator>();
+        AddPane<NexusWorldGenerator>();
+    }
+
+    // Method to add a pane only if it doesn’t already exist in the dictionary
+    private void AddPane<T>() where T : NexusFactoryPane, new()
+    {
+        Type paneType = typeof(T);
+        if (!factoryPanes.ContainsKey(paneType))
+        {
+            factoryPanes[paneType] = new T();
+        }
     }
 
     // OnGUI method of the EditorWindow
-     private void OnGUI()
+    private void OnGUI()
     {
         // Draw the title
         GUILayout.Label("Nexus Factory", EditorStyles.boldLabel);
@@ -40,20 +50,20 @@ public class NexusFactory : EditorWindow
         scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
 
         // Draw each pane
-        foreach (var pane in factoryPanes)
+        foreach (var pane in factoryPanes.Values)
         {
-            pane.Draw();
-            GUILayout.Space(10); // Add some spacing between panes
+            pane.DrawContent();
+            GUILayout.Space(3); // Add some spacing between panes
         }
 
         // End the scroll view
         GUILayout.EndScrollView();
+
+        Repaint();
     }
 
     public static void BeginContentArea()
     {
-
-
         // Draw a border for the content area
         Rect innerRect = GUILayoutUtility.GetRect(0, 0, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(false));
         innerRect.yMin += 5; // Add padding to avoid overlapping with the outer group
@@ -66,12 +76,12 @@ public class NexusFactory : EditorWindow
         EditorGUI.DrawRect(innerRect, contentOutlineColor); // Draw the outline background
 
         // Draw the inner content area within the border
-        GUILayout.BeginVertical(EditorStyles.helpBox); // -3 (Content Group)
+        GUILayout.BeginVertical(EditorStyles.helpBox);
     }
 
     public static void EndContentArea()
     {
-        GUILayout.EndVertical(); // -3 (Content Group)
+        GUILayout.EndVertical();
     }
 
     public static string GetCurrentFolderPath()
@@ -118,39 +128,25 @@ public class NexusFactory : EditorWindow
 }
 
 // Custom class NexusFactoryPane
-public abstract class NexusFactoryPane
+public abstract class NexusFactoryPane : ScriptableObject
 {
     public string title;          // Title for the foldout
-    public bool isFolded = true;  // Whether the foldout is expanded
+    public bool isFolded = false;  // Whether the foldout is expanded
 
-    public void Draw()
+    public void DrawContent()
     {
-
-
-        // // Draw a separate area for the title and foldout
-        // GUIStyle titleStyle = new GUIStyle(GUI.skin.box)
-        // {
-        //     padding = new RectOffset(10, 10, 10, 10),
-        //     normal = { background = EditorGUIUtility.isProSkin ? Texture2D.grayTexture : Texture2D.whiteTexture }
-        // };
-
-        // GUILayout.BeginVertical(titleStyle); // -2 (Title Group)
-
-        // Foldout logic
+        NexusFactory.BeginContentArea();
         isFolded = EditorGUILayout.Foldout(isFolded, title, true);
 
-        // GUILayout.EndVertical(); // -2 (Title Group)
-
-        // Check if foldout is expanded to display the content
         if (isFolded)
         {
             NexusFactory.BeginContentArea();
-
-            OnDraw(); // Custom content of the pane
-
+            WhenDraw();
             NexusFactory.EndContentArea();
         }
+
+        NexusFactory.EndContentArea();
     }
 
-    protected abstract void OnDraw();
+    protected abstract void WhenDraw();
 }

@@ -6,19 +6,30 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 {
     public class SplineHandler : EntitySequence<SplineHandlerData>
     {
-        public Transform[] controlPoints;
-        private List<Vector3> _gizmoPoints;
+        private Transform[] controlPoints;
+        private int resolution = 20; // Number of points to calculate for smoothness
+        private bool closedLoop = false; // Option to create a closed loop
+        public List<int> pauseAtControlPoints = new List<int>(); // List of control point indices to pause at
+        public List<float> pauseDurations = new List<float>();   // Corresponding pause durations at each control point
 
         protected override UniTask Initialize(SplineHandlerData currentData)
         {
             controlPoints = currentData.controlPoints;
+            resolution = currentData.resolution;
+            closedLoop = currentData.closedLoop;
+            pauseAtControlPoints = currentData.pauseAtControlPoints;
+            pauseDurations = currentData.pauseDurations;
+
             return UniTask.CompletedTask;
         }
 
+        private List<Vector3> _gizmoPoints;
+
         protected override void OnBegin()
         {
-            _gizmoPoints = CalculateBezierPoints(controlPoints, currentData.resolution, currentData.closedLoop);
+            _gizmoPoints = CalculateBezierPoints(controlPoints, resolution, closedLoop);
             Sequence.Finish(this);
+            Sequence.Stop(this);
         }
 
         // Get total number of segments in the spline
@@ -40,10 +51,10 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         // Check if the current segment corresponds to a pause point
         public async UniTask<bool> CheckForPauseAtControlPoint(int segmentIndex)
         {
-            if (currentData.pauseAtControlPoints.Contains(segmentIndex))
+            if (pauseAtControlPoints.Contains(segmentIndex))
             {
-                int pauseIndex = currentData.pauseAtControlPoints.IndexOf(segmentIndex);
-                float pauseDuration = currentData.pauseDurations[pauseIndex];
+                int pauseIndex = pauseAtControlPoints.IndexOf(segmentIndex);
+                float pauseDuration = pauseDurations[pauseIndex];
                 Debug.Log($"Pausing at control point {segmentIndex} for {pauseDuration} seconds.");
                 await UniTask.Delay((int)(pauseDuration * 1000)); // Pause for the duration in milliseconds
                 return true;

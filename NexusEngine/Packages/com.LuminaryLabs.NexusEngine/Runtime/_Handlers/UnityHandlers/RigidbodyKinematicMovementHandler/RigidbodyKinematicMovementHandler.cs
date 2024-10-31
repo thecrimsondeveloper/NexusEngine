@@ -25,38 +25,30 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         private MovementAction _action;
         public List<Rigidbody> kinematicRigidbodies;
         private SplineHandler _splineHandler; // Reference to the spline handler for following a path
-        private bool _isReversing; // Used for mirror mode
+        // Used for mirror mode
+        private Vector3 targetPosition;
+        private Vector3 targetRotation;
+        private float moveSpeed = 1.0f;
+        private float rotateSpeed = 1.0f;
+        private float pathFollowSpeed = 1.0f; // Speed for following the spline path
+        private PathFollowMode pathFollowMode; // Mode for path following (Clamp, Loop, Mirror)
+        private bool orientTowardsMovement = true;  // Flag to check if orientation is needed
+        private bool _isReversing = false; // Flag to track the direction of path following
 
         protected override UniTask Initialize(RigidbodyKinematicMovementData currentData)
         {
-            if (currentData == null)
-            {
-                Debug.LogError("RigidbodyKinematicMovementData is null.");
-                return UniTask.CompletedTask;
-            }
-
             _action = currentData.movementAction;
-            
-            // Ensure the kinematic rigidbodies list is not null
-            if (currentData.kinematicRigidbodies != null && currentData.kinematicRigidbodies.Count > 0)
-            {
+            if (currentData.kinematicRigidbodies != null)
                 kinematicRigidbodies = currentData.kinematicRigidbodies;
-            }
-            else
-            {
-                Debug.LogError("No rigidbodies found in RigidbodyKinematicMovementData.");
-            }
-
-            // Ensure the spline handler is not null
             if (currentData.splineHandler != null)
-            {
                 _splineHandler = currentData.splineHandler;
-            }
-            else if (_action == MovementAction.FollowPath)
-            {
-                Debug.LogError("SplineHandler is null. Cannot follow path.");
-            }
-
+            targetPosition = currentData.targetPosition;
+            targetRotation = currentData.targetRotation;
+            moveSpeed = currentData.moveSpeed;
+            rotateSpeed = currentData.rotateSpeed;
+            pathFollowSpeed = currentData.pathFollowSpeed;
+            pathFollowMode = currentData.pathFollowMode;
+            orientTowardsMovement = currentData.orientTowardsMovement;
             return UniTask.CompletedTask;
         }
 
@@ -106,7 +98,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             {
                 if (rb != null)
                 {
-                    rb.MovePosition(currentData.targetPosition);
+                    rb.MovePosition(targetPosition);
                     await UniTask.Yield();
                 }
             }
@@ -120,7 +112,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             {
                 if (rb != null)
                 {
-                    rb.MoveRotation(Quaternion.Euler(currentData.targetRotation));
+                    rb.MoveRotation(Quaternion.Euler(targetRotation));
                     await UniTask.Yield();
                 }
             }
@@ -132,9 +124,9 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         {
             foreach (var rb in kinematicRigidbodies)
             {
-                while (Vector3.Distance(rb.position, currentData.targetPosition) > 0.01f)
+                while (Vector3.Distance(rb.position, targetPosition) > 0.01f)
                 {
-                    rb.MovePosition(Vector3.Lerp(rb.position, currentData.targetPosition, Time.deltaTime * currentData.moveSpeed));
+                    rb.MovePosition(Vector3.Lerp(rb.position, targetPosition, Time.deltaTime * moveSpeed));
                     await UniTask.Yield();
                 }
             }
@@ -146,9 +138,9 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         {
             foreach (var rb in kinematicRigidbodies)
             {
-                while (Quaternion.Angle(rb.rotation, Quaternion.Euler(currentData.targetRotation)) > 0.1f)
+                while (Quaternion.Angle(rb.rotation, Quaternion.Euler(targetRotation)) > 0.1f)
                 {
-                    rb.MoveRotation(Quaternion.Slerp(rb.rotation, Quaternion.Euler(currentData.targetRotation), Time.deltaTime * currentData.rotateSpeed));
+                    rb.MoveRotation(Quaternion.Slerp(rb.rotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotateSpeed));
                     await UniTask.Yield();
                 }
             }
@@ -192,7 +184,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                     Vector3 movementDirection = (targetPosition - rb.position).normalized;
                     rb.MovePosition(targetPosition);
 
-                    if (currentData.orientTowardsMovement)
+                    if (orientTowardsMovement)
                         OrientTowardsMovement(rb, movementDirection);
 
                     // Check if we should pause at the control point and ensure we only pause once per control point
@@ -205,10 +197,10 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                     }
 
                     // Handle different path follow modes
-                    switch (currentData.pathFollowMode)
+                    switch (pathFollowMode)
                     {
                         case PathFollowMode.Clamp:
-                            t += Time.deltaTime * currentData.pathFollowSpeed / totalSegments;
+                            t += Time.deltaTime * pathFollowSpeed / totalSegments;
                             if (t >= 1f)
                             {
                                 t = 1f;
@@ -217,7 +209,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                             break;
 
                         case PathFollowMode.Loop:
-                            t += Time.deltaTime * currentData.pathFollowSpeed / totalSegments;
+                            t += Time.deltaTime * pathFollowSpeed / totalSegments;
                             if (t >= 1f)
                             {
                                 t = 0f; // Reset t to smoothly start from the beginning again
@@ -226,7 +218,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
                         case PathFollowMode.Mirror:
                             // Increment or decrement t depending on the direction (forward or reverse)
-                            t += (_isReversing ? -1 : 1) * Time.deltaTime * currentData.pathFollowSpeed / totalSegments;
+                            t += (_isReversing ? -1 : 1) * Time.deltaTime * pathFollowSpeed / totalSegments;
 
                             // If t reaches the end (1.0), reverse direction
                             if (t >= 1f)
@@ -260,7 +252,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             if (movementDirection != Vector3.zero)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(movementDirection);
-                rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, Time.deltaTime * currentData.rotateSpeed));
+                rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, Time.deltaTime * rotateSpeed));
             }
         }
 
@@ -271,7 +263,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             if (shouldPause)
             {
                 // Get pause duration from the spline handler and delay
-                float pauseDuration = _splineHandler.currentData.pauseDurations[_splineHandler.currentData.pauseAtControlPoints.IndexOf(segmentIndex)];
+                float pauseDuration = _splineHandler.pauseDurations[_splineHandler.pauseAtControlPoints.IndexOf(segmentIndex)];
                 Debug.Log($"Pausing for {pauseDuration} seconds at control point {segmentIndex}");
                 await UniTask.Delay((int)(pauseDuration * 1000)); // Pause for the specified duration
                 return true;

@@ -25,8 +25,17 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         private MovementType _movementType;
         private MovementConstraint _movementConstraint;
+        private Vector3 boundaryMin;
+        private Vector3 boundaryMax;
+        private Transform target;
+        private List<Vector3> patrolPoints;
+        private Vector3 circleCenter;
+        private float circleRadius = 1.0f;
+        private float moveSpeed = 1.0f;
+        private float swaySpeed = 1.0f;
+        private float circleSpeed = 1.0f;
 
-        public List<Transform> objectsToMove;
+        private List<Transform> objectsToMove;
 
         protected override UniTask Initialize(TransformMovementData currentData)
         {
@@ -34,6 +43,24 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             _movementConstraint = currentData.movementConstraint;
             if (currentData.objectsToMove != null)
                 objectsToMove = currentData.objectsToMove;
+            if (currentData.boundaryMin != null)
+                boundaryMin = currentData.boundaryMin;
+            if (currentData.boundaryMax != null)
+                boundaryMax = currentData.boundaryMax;  
+            if (currentData.target != null)
+                target = currentData.target;
+            if (currentData.patrolPoints != null)
+                patrolPoints = currentData.patrolPoints;
+            if (currentData.circleCenter != null)
+                circleCenter = currentData.circleCenter;
+            if (currentData.circleRadius != 0)
+                circleRadius = currentData.circleRadius;
+            if (currentData.moveSpeed != 0)
+                moveSpeed = currentData.moveSpeed;
+            if (currentData.swaySpeed != 0)
+                swaySpeed = currentData.swaySpeed;
+            if (currentData.circleSpeed != 0)
+                circleSpeed = currentData.circleSpeed;
 
             return UniTask.CompletedTask;
         }
@@ -70,7 +97,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                 while (true)
                 {
                     Vector3 randomPosition = GetRandomPositionWithinConstraints();
-                    await MoveToPosition(obj, randomPosition, currentData.moveSpeed);
+                    await MoveToPosition(obj, randomPosition, moveSpeed);
                     await UniTask.Yield();
                 }
             }
@@ -81,9 +108,9 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             foreach (var obj in objectsToMove)
             {
                 // Implement patrol logic: moving between waypoints
-                foreach (var point in currentData.patrolPoints)
+                foreach (var point in patrolPoints)
                 {
-                    await MoveToPosition(obj, point, currentData.moveSpeed);
+                    await MoveToPosition(obj, point, moveSpeed);
                     await UniTask.Yield();
                 }
             }
@@ -95,8 +122,8 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             {
                 while (true)
                 {
-                    Vector3 targetPosition = currentData.target.position;
-                    await MoveToPosition(obj, targetPosition, currentData.moveSpeed);
+                    Vector3 targetPosition = target.position;
+                    await MoveToPosition(obj, targetPosition, moveSpeed);
                     await UniTask.Yield();
                 }
             }
@@ -109,7 +136,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                 while (true)
                 {
                     Vector3 randomPosition = GetRandomPositionWithinConstraints();
-                    await MoveToPosition(obj, randomPosition, currentData.moveSpeed);
+                    await MoveToPosition(obj, randomPosition, moveSpeed);
                     await UniTask.Yield();
                 }
             }
@@ -122,7 +149,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                 while (true)
                 {
                     // Sway logic
-                    obj.position += new Vector3(0, Mathf.Sin(Time.time * currentData.swaySpeed), 0);
+                    obj.position += new Vector3(0, Mathf.Sin(Time.time * swaySpeed), 0);
                     await UniTask.Yield();
                 }
             }
@@ -134,7 +161,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             {
                 while (true)
                 {
-                    obj.position = currentData.circleCenter + new Vector3(Mathf.Cos(Time.time * currentData.circleSpeed) * currentData.circleRadius, 0, Mathf.Sin(Time.time * currentData.circleSpeed) * currentData.circleRadius);
+                    obj.position = circleCenter + new Vector3(Mathf.Cos(Time.time * circleSpeed) * circleRadius, 0, Mathf.Sin(Time.time * circleSpeed) * circleRadius);
                     await UniTask.Yield();
                 }
             }
@@ -146,9 +173,9 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             {
                 case MovementConstraint.Boundaries:
                     return new Vector3(
-                        Random.Range(currentData.boundaryMin.x, currentData.boundaryMax.x),
-                        Random.Range(currentData.boundaryMin.y, currentData.boundaryMax.y),
-                        Random.Range(currentData.boundaryMin.z, currentData.boundaryMax.z)
+                        Random.Range(boundaryMin.x, boundaryMax.x),
+                        Random.Range(boundaryMin.y, boundaryMax.y),
+                        Random.Range(boundaryMin.z, boundaryMax.z)
                     );
                 case MovementConstraint.CustomZone:
                     // Implement custom zone logic

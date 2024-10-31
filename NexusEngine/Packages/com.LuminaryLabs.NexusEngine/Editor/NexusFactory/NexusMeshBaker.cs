@@ -14,7 +14,7 @@ public class NexusMeshBaker : NexusFactoryPane
         title = "Mesh Baker";
     }
 
-    protected override void OnDraw()
+    protected override void WhenDraw()
     {
         GUILayout.Label("Nexus Mesh Baker", EditorStyles.boldLabel);
 

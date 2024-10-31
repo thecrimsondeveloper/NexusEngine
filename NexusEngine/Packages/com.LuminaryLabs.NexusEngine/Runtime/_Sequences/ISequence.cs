@@ -24,6 +24,8 @@ namespace LuminaryLabs.NexusEngine
         {
             return this is MonoBehaviour monoBehaviour ? monoBehaviour.transform : superSequence?.GetTransform();
         }
+
+        public string name => this is UnityEngine.Object obj ? obj.name : this.GetType().ToString();
     }
         public enum Phase 
         {

@@ -14,7 +14,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         private ObjectPoolCreationHandler _poolCreationHandler;
         private PoolAction _action;
-        private EntitySequence _prefabSequence;
+        private MonoSequence _prefabSequence;
 
         protected override UniTask Initialize(ObjectPoolUsageHandlerData currentData)
         {
@@ -51,7 +51,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             Sequence.Stop(this);
         }
 
-        private void SpawnFromPool(EntitySequence prefabSequence)
+        private void SpawnFromPool(MonoSequence prefabSequence)
         {
             var pooledInstance = _poolCreationHandler.GetFromPool(prefabSequence);
             if (pooledInstance != null)
@@ -64,13 +64,13 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             }
         }
 
-        private void ReturnToPool(EntitySequence sequenceInstance)
+        private void ReturnToPool(MonoSequence sequenceInstance)
         {
             Sequence.Finish(sequenceInstance);
             _poolCreationHandler.ReturnToPool(sequenceInstance);
         }
 
-        private void ClearPool(EntitySequence prefabSequence)
+        private void ClearPool(MonoSequence prefabSequence)
         {
             var pool = _poolCreationHandler.GetPool(prefabSequence.name);
             if (pool != null)
@@ -92,6 +92,6 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
     public class ObjectPoolUsageHandlerData : SequenceData
     {
         public ObjectPoolUsageHandler.PoolAction action;
-        public EntitySequence prefabSequence;
+        public MonoSequence prefabSequence;
     }
 }

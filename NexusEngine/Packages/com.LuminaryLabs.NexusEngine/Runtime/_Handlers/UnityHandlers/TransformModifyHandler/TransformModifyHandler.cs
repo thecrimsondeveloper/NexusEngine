@@ -19,12 +19,18 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         private ModifyAction _action;
         public List<Transform> transforms;
+        public Transform target;
+        public float moveSpeed = 1.0f;
+        public float rotateSpeed = 1.0f;
+        public float scaleSpeed = 1.0f;
         
         protected override UniTask Initialize(TransformModifyData currentData)
         {
             _action = currentData.modifyAction;
             if(currentData.transforms != null)
                 transforms = currentData.transforms;
+            if(currentData.target != null)
+                target = currentData.target;
             return UniTask.CompletedTask;
         }
 
@@ -35,19 +41,19 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                 case ModifyAction.SetPosition:
                     foreach (var t in transforms)
                     {
-                        t.position = currentData.targetPosition;
+                        t.position = target.position;
                     }
                     break;
                 case ModifyAction.SetRotation:
                     foreach (var t in transforms)
                     {
-                        t.rotation = Quaternion.Euler(currentData.targetRotation);
+                        t.rotation = Quaternion.Euler(target.rotation.eulerAngles);
                     }
                     break;
                 case ModifyAction.SetScale:
                     foreach (var t in transforms)
                     {
-                        t.localScale = currentData.targetScale;
+                        t.localScale = target.localScale;
                     }
                     break;
                 case ModifyAction.MoveTo:
@@ -66,9 +72,9 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         {
             foreach (var t in transforms)
             {
-                while (Vector3.Distance(t.position, currentData.targetPosition) > 0.01f)
+                while (Vector3.Distance(t.position, target.position) > 0.01f)
                 {
-                    t.position = Vector3.Lerp(t.position, currentData.targetPosition, Time.deltaTime * currentData.moveSpeed);
+                    t.position = Vector3.Lerp(t.position, target.position, Time.deltaTime * moveSpeed);
                     await UniTask.Yield();
                 }
 
@@ -81,9 +87,9 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         {
             foreach (var t in transforms)
             {
-                while (Quaternion.Angle(t.rotation, Quaternion.Euler(currentData.targetRotation)) > 0.1f)
+                while (Quaternion.Angle(t.rotation, Quaternion.Euler(target.rotation.eulerAngles)) > 0.1f)
                 {
-                    t.rotation = Quaternion.Slerp(t.rotation, Quaternion.Euler(currentData.targetRotation), Time.deltaTime * currentData.rotateSpeed);
+                    t.rotation = Quaternion.Slerp(t.rotation, Quaternion.Euler(target.rotation.eulerAngles), Time.deltaTime * rotateSpeed);
                     await UniTask.Yield();
                 }
 
@@ -96,9 +102,9 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
         {
             foreach (var t in transforms)
             {
-                while (Vector3.Distance(t.localScale, currentData.targetScale) > 0.01f)
+                while (Vector3.Distance(t.localScale, target.localScale) > 0.01f)
                 {
-                    t.localScale = Vector3.Lerp(t.localScale, currentData.targetScale, Time.deltaTime * currentData.scaleSpeed);
+                    t.localScale = Vector3.Lerp(t.localScale, target.localScale, Time.deltaTime * scaleSpeed);
                     await UniTask.Yield();
                 }
 
@@ -118,11 +124,6 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
     {
         public TransformModifyHandler.ModifyAction modifyAction;
         public List<Transform> transforms;
-        public Vector3 targetPosition;
-        public Vector3 targetRotation;
-        public Vector3 targetScale;
-        public float moveSpeed = 1.0f;
-        public float rotateSpeed = 1.0f;
-        public float scaleSpeed = 1.0f;
+        public Transform target;
     }
 }

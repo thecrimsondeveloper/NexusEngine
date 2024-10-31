@@ -6,23 +6,20 @@ using UnityEngine;
 using LuminaryLabs.NexusEngine;
 using Cysharp.Threading.Tasks;
 
-public class SequencesWindow : EditorWindow
+public class SequenceViewer : NexusFactoryPane
 {
+    public SequenceViewer()
+    {
+        title = "Sequence Viewer";
+    }
     private Vector2 scrollPos;
     private Dictionary<ISequence, bool> foldoutStates = new Dictionary<ISequence, bool>();
 
     // List of all running sequences
     public List<ISequence> sequences = new List<ISequence>();
 
-    [MenuItem("Luminary Labs/Sequence Viewer")]
-    public static void ShowWindow()
+    protected override void WhenDraw()
     {
-        GetWindow<SequencesWindow>("Sequence Viewer");
-    }
-
-    private void OnGUI()
-    {
-        // Display a message when not in play mode
         if (!Application.isPlaying)
         {
             GUILayout.Label("Please enter play mode to view running sequences.", EditorStyles.label);
@@ -56,7 +53,7 @@ public class SequencesWindow : EditorWindow
     void RefreshSequences()
     {
         sequences = Sequence.GetAll();
-        Repaint(); // Ensure the window repaints
+
     }
 
     // Draws a single sequence in the list
@@ -203,4 +200,6 @@ public class SequencesWindow : EditorWindow
             Debug.Log($"Sequence {sequence.GetType().Name} Completed.");
         }
     }
+
+
 }
