@@ -43,7 +43,7 @@ namespace LuminaryLabs.NexusEngine
 
             if (!runningSequences.ContainsKey(sequence.guid))
             {
-                Nexus.Log("Sequence not found in runningSequences. Adding new sequence: " + sequence.name);
+                Nexus.Log("Adding New Sequence: " + sequence.name);
                 SequenceEvents events = new SequenceEvents(sequence);
                 runningSequences.Add(sequence.guid, sequence);
                 sequenceEvents.Add(sequence.guid, events);
@@ -67,7 +67,7 @@ namespace LuminaryLabs.NexusEngine
             }
             else if (sequenceEvents.TryGetValue(sequence.guid, out var sequenceEvent))
             {
-                Nexus.Log("Sequence already registered. Updating events for sequence: " + sequence.name);
+                Nexus.Log("Updating Existing Sequence: " + sequence.name);
 
                 if (runData.onInitialize != null) sequenceEvent.RegisterEvent(runData.onInitialize, SequenceEventType.OnInitialize);
                 else Nexus.Log("onInitialize event is null for sequence: " + sequence.name);
@@ -96,12 +96,22 @@ namespace LuminaryLabs.NexusEngine
         {
             if (runningSequences.ContainsKey(sequence.guid))
             {
+                Nexus.Log("Removing " + sequence.name + " from the sequence list");
                 runningSequences.Remove(sequence.guid);
+            }
+            else
+            {
+                Nexus.Log(sequence.name + " not found when trying to UnRegister from sequence list");
             }
 
             if (sequenceEvents.ContainsKey(sequence.guid))
             {
+                Nexus.Log("Removing " + sequence.name + " from the events list");
                 sequenceEvents.Remove(sequence.guid);
+            }
+            else
+            {
+                Nexus.Log(sequence.name + " not found when trying to UnRegister from events list");
             }
         }
 
@@ -280,7 +290,13 @@ namespace LuminaryLabs.NexusEngine
             {
                 Nexus.LogWarning("Stop-Sequence: "+sequence.GetType()+" is not running with GUID: "+ sequence.guid);
             }
-            SequenceEvents evts = sequenceEvents[sequence.guid];
+
+            if(sequenceEvents.TryGetValue(sequence.guid, out SequenceEvents evts) == false)
+            {
+                Nexus.Log(sequence.name + " was not foundin the events Dictionary.");
+            }
+
+
             if (evts != null)
             {
                 evts.InvokeEvent(SequenceEventType.OnUnload, sequence); // OnUnloaded
@@ -325,6 +341,10 @@ namespace LuminaryLabs.NexusEngine
             {
                 Nexus.Log("Invoking Sequence Events for OnFinished");
                 events.InvokeEvent(SequenceEventType.OnFinished, sequence); // OnFinished
+            }
+            else
+            {
+                Nexus.Log("FINISHED EVENTS NOT FOUND WHEN FINISHING");
             }
             sequence.phase = Phase.Finished;
             sequence.OnFinishedSequence();

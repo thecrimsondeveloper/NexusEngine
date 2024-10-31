@@ -21,6 +21,8 @@ public class NexusFactory : EditorWindow
     // OnEnable to initialize some panes
     private void OnEnable()
     {
+        
+        factoryPanes.Add(new SequenceViewer());
         factoryPanes.Add(new NexusLogging());
         factoryPanes.Add(new NexusMeshBaker());
         factoryPanes.Add(new NexusSkyboxGenerator());
@@ -42,7 +44,7 @@ public class NexusFactory : EditorWindow
         // Draw each pane
         foreach (var pane in factoryPanes)
         {
-            pane.Draw();
+            pane.DrawContent();
             GUILayout.Space(10); // Add some spacing between panes
         }
 
@@ -121,36 +123,20 @@ public class NexusFactory : EditorWindow
 public abstract class NexusFactoryPane
 {
     public string title;          // Title for the foldout
-    public bool isFolded = true;  // Whether the foldout is expanded
+    public bool isFolded = false;  // Whether the foldout is expanded
 
-    public void Draw()
+    public void DrawContent()
     {
-
-
-        // // Draw a separate area for the title and foldout
-        // GUIStyle titleStyle = new GUIStyle(GUI.skin.box)
-        // {
-        //     padding = new RectOffset(10, 10, 10, 10),
-        //     normal = { background = EditorGUIUtility.isProSkin ? Texture2D.grayTexture : Texture2D.whiteTexture }
-        // };
-
-        // GUILayout.BeginVertical(titleStyle); // -2 (Title Group)
-
-        // Foldout logic
         isFolded = EditorGUILayout.Foldout(isFolded, title, true);
-
-        // GUILayout.EndVertical(); // -2 (Title Group)
-
-        // Check if foldout is expanded to display the content
+        
         if (isFolded)
         {
             NexusFactory.BeginContentArea();
-
-            OnDraw(); // Custom content of the pane
-
+            OnDraw();
             NexusFactory.EndContentArea();
         }
     }
 
     protected abstract void OnDraw();
 }
+
