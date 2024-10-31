@@ -21,7 +21,7 @@ public class NexusWorldGenerator : NexusFactoryPane
 
 
     NexusWorldGenerationHandler currentHandler;
-    protected override void OnDraw()
+    protected override void WhenDraw()
     {
 
 

@@ -18,7 +18,7 @@ public class SequenceViewer : NexusFactoryPane
     // List of all running sequences
     public List<ISequence> sequences = new List<ISequence>();
 
-    protected override void OnDraw()
+    protected override void WhenDraw()
     {
         if (!Application.isPlaying)
         {
@@ -53,6 +53,7 @@ public class SequenceViewer : NexusFactoryPane
     void RefreshSequences()
     {
         sequences = Sequence.GetAll();
+
     }
 
     // Draws a single sequence in the list

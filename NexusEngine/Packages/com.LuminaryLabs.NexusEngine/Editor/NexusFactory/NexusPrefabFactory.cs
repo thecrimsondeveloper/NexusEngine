@@ -8,7 +8,7 @@ namespace LuminaryLabs.NexusEngine
 {
     public class NexusPrefabFactory : NexusFactoryPane
     {
-        protected override void OnDraw()
+        protected override void WhenDraw()
         {
             // Your existing drawing code for the editor window
             // add a GUI button

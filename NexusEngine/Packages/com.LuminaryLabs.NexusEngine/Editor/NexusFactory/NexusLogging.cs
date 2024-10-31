@@ -10,7 +10,7 @@ public class NexusLogging : NexusFactoryPane
     {
         title = "Logging";
     }
-    protected override void OnDraw()
+    protected override void WhenDraw()
     {
         if (GUILayout.Button("Dump Log"))
         {

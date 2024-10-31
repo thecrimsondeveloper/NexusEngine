@@ -21,7 +21,7 @@ public class NexusSkyboxGenerator : NexusFactoryPane
 
     SkyboxResolution resolution = SkyboxResolution._1024;
 
-    protected override void OnDraw()
+    protected override void WhenDraw()
     {
 
         //horizontal layout for the buttons

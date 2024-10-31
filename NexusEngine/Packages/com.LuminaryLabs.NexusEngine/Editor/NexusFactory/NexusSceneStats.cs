@@ -11,7 +11,7 @@ public class NexusSceneStats : NexusFactoryPane
         title = "Stats";
     }
 
-    protected override void OnDraw()
+    protected override void WhenDraw()
     {
         // Reset triangle count
         trianglesInScene = 0;
