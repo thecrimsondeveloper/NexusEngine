@@ -198,6 +198,23 @@ namespace LuminaryLabs.NexusEngine
                     waitForSequences.Remove(sequenceToStop);
                 }
             }
+
+            await UniTask.NextFrame();
+
+            while(finishWithSequences.Count > 0)
+            {
+                ISequence sequenceToStop = finishWithSequences[0];
+                if(sequenceToStop == null) continue;
+
+
+                await Sequence.Stop(sequenceToStop);
+
+                if(finishWithSequences.Contains(sequenceToStop))
+                {
+                    finishWithSequences.Remove(sequenceToStop);
+                }
+            }
+            
         }
 
         protected override void OnUnloaded()

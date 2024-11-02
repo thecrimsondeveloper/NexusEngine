@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &4262224008330014284
+--- !u!1001 &2011807085906372561
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3605592986322802490, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3605592986322802490, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -26,15 +26,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3605592986322802490, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3605592986322802490, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3605592986322802490, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3605592986322802490, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_Name
-      value: DisableGameObject_Handler
+      value: RunSequenceInRandomRadius_Handler
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -58,26 +58,26 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7483259966426640620}
+      addedObject: {fileID: 5813693329339285852}
   m_SourcePrefab: {fileID: 100100000, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
---- !u!1 &8986177999832143100 stripped
+--- !u!1 &6663208149674761569 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
-  m_PrefabInstance: {fileID: 4262224008330014284}
+  m_PrefabInstance: {fileID: 2011807085906372561}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7483259966426640620
+--- !u!114 &5813693329339285852
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8986177999832143100}
+  m_GameObject: {fileID: 6663208149674761569}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 455f329fc0170c64c980c9f88c1d22b9, type: 3}
+  m_Script: {fileID: 11500000, guid: 5364e9ce3a8099a4ea43ca80785500b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _runType: 2
   _currentData:
-    gameObjects: []
-    useCase: 1
+    targetSequence: {fileID: 0}
+    radius: 1

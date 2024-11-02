@@ -12,7 +12,7 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
             Disable
         }
         private UseCase _useCase;
-        public List<GameObject> gameObjects;
+        private List<GameObject> gameObjects;
         
         protected override UniTask Initialize(GameObjectHandlerData currentData)
         {
