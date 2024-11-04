@@ -24,7 +24,9 @@ namespace LuminaryLabs.NexusEngine
         protected override UniTask Initialize(TransformTweenData currentData)
         {
             // Set private variables from data
-            targetTransform = currentData.targetTransform;
+
+
+            targetTransform = currentData.targetTransform == null ? superSequence.GetTransform() : currentData.targetTransform;
             modifyPosition = currentData.modifyPosition;
             modifyRotation = currentData.modifyRotation;
             modifyScale = currentData.modifyScale;
@@ -118,7 +120,7 @@ namespace LuminaryLabs.NexusEngine
             public bool modifyPosition = false;
             public Space space = Space.Self;
             public Vector3 positionInput;
-            
+
             [Space(10)]
             public bool modifyRotation = false;
             public Vector3 rotation;
