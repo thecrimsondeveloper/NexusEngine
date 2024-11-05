@@ -1,5 +1,5 @@
 {
-    "name": "com.NexusEngine.Runtime",
+    "name": "com.NexusEngine",
     "rootNamespace": "",
     "references": [
         "UniTask"
