@@ -53,7 +53,7 @@ namespace LuminaryLabs.NexusEngine
             }
         }
 
-        private void RunSequenceWithModifiers(RunnerSequenceDefinition definition, UnityAction<ISequence> onBeginCallback, UnityAction<ISequence> onUnloadCallback)
+        private void RunSequenceWithModifiers(RunnerSequenceDefinition definition, UnityAction<ISequence> onBeginCallback, UnityAction<ISequence> onUnloadCallback, UnityAction<ISequence> onFinishedCallback = null)
         {
 
 
@@ -66,6 +66,7 @@ namespace LuminaryLabs.NexusEngine
                     ApplyModifiers(definition);
                 },
                 onUnload = onUnloadCallback,
+                onFinished = onFinishedCallback
             });
         }
 
@@ -82,18 +83,6 @@ namespace LuminaryLabs.NexusEngine
                     });
                 }
             }
-        }
-
-        private void RunWaitForSequence()
-        {
-            if (currentWaitForIndex >= waitFor.Count)
-            {
-                Complete();
-                return;
-            }
-
-            var definition = waitFor[currentWaitForIndex];
-            RunSequenceWithModifiers(definition, OnWaitForSequenceCallback, OnWaitForSequenceUnload);
         }
 
         private void RunFinishSequences()
@@ -137,9 +126,42 @@ namespace LuminaryLabs.NexusEngine
         private void OnWaitForSequenceFinished(ISequence sequence)
         {
             Debug.Log("WaitFor sequence finished: " + sequence.name);
-            currentWaitForIndex++;
-            RunWaitForSequence();
+            RunNextWaitForSequence();
         }
+
+
+
+        private void RunNextWaitForSequence()
+        {
+            // Increment the index and run the next sequence
+            currentWaitForIndex++;
+
+            Nexus.Log("Running Next Wait For Sequence on " + name);
+            if (currentWaitForIndex >= waitFor.Count)
+            {
+                Nexus.Log("Auto Complete Runner Sequence" + name);
+                Complete();
+                return;
+            }
+
+            RunWaitForSequence(currentWaitForIndex);
+        }
+
+        
+        void RunWaitForSequence(int index = 0)
+        {
+             // Run the current waitFor sequence based on the index
+            RunnerSequenceDefinition definition = waitFor[index];
+            RunSequenceWithModifiers(definition, OnWaitForSequenceCallback, OnWaitForSequenceUnload, OnWaitForSequenceFinished);
+        }
+
+
+
+        
+        
+
+
+        
 
         private void OnWaitForSequenceUnload(ISequence sequence)
         {
@@ -159,6 +181,7 @@ namespace LuminaryLabs.NexusEngine
             finishWithSequences.Remove(sequence);
         }
 
+
         private void OnContinueWithSequenceCallback(ISequence sequence)
         {
             Debug.Log("ContinueWith sequence started: " + sequence.name);
@@ -171,34 +194,68 @@ namespace LuminaryLabs.NexusEngine
 
         private async void Complete()
         {
+            // Ensure we finish the sequence first
+            await Sequence.Finish(this);
+            await Sequence.Stop(this);
+        }
+
+        protected override async UniTask Finish()
+        {
+            Nexus.Log("Finishing NexusSequence: " + ((ISequence)this).name);
             RunFinishSequences();
             await UniTask.NextFrame();
-            RunContinueWithSequences();
-
-            if (destroyOnUnload)
-            {
-                Destroy(gameObject);
-            }
+            // await UniTask.NextFrame();
+            // await UniTask.Delay(50);
         }
+
 
         protected override async UniTask Unload()
         {
             // Stop all beginWith, waitFor, and finishWith sequences
-            await StopSequences(beginWith);
-            await StopSequences(waitFor);
-            await StopSequences(finishWith);
+            await StopSequences(beginSequences);
+            await StopSequences(waitForSequences);
         }
 
-        private async UniTask StopSequences(List<RunnerSequenceDefinition> sequences)
+         protected async override void OnUnloaded()
         {
-            foreach (var definition in sequences)
+            Nexus.Log("Runner Unloaded: " + name);
+            StartContinueWithSequences();
+            if (destroyOnUnload)
             {
-                var sequenceToStop = definition.sequenceToRun;
-                if (sequenceToStop != null)
+                Destroy(gameObject);
+            }
+            
+            await UniTask.NextFrame();
+            StopSequences(finishWithSequences);
+
+            base.OnUnloaded();
+        }
+
+         private void StartContinueWithSequences()
+        {
+
+            Nexus.Log("Continuing With " + continueWith.Count + " sequences on " + name);
+            foreach (RunnerSequenceDefinition sequenceDefinition in continueWith)
+            {
+                RunSequenceWithModifiers(sequenceDefinition, OnContinueWithSequenceCallback, OnContinueWithSequenceUnload);
+            }
+        }
+
+        private async UniTask StopSequences(List<ISequence> sequences)
+        {
+            while(sequences.Count > 0)
+            {
+                ISequence sequenceToStop = sequences[0];
+                if(sequenceToStop == null) continue;
+
+                await Sequence.Stop(sequenceToStop);
+
+                if(sequences.Contains(sequenceToStop))
                 {
-                    await Sequence.Stop(sequenceToStop);
+                    sequences.Remove(sequenceToStop);
                 }
             }
+
         }
     }
 

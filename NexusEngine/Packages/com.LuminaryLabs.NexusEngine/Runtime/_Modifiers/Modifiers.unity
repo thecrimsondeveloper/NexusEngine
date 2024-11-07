@@ -375,13 +375,17 @@ MonoBehaviour:
         beginWith: []
         waitFor:
         - sequenceToRun:
-            rid: 4270121796433870905
-          sequenceData:
-            rid: 4270121796433870906
-        - sequenceToRun:
             rid: 4270121796433870897
           sequenceData:
             rid: 4270121796433870898
+        - sequenceToRun:
+            rid: 4270121796433870913
+          sequenceData:
+            rid: 4270121796433870914
+        - sequenceToRun:
+            rid: 4270121796433870911
+          sequenceData:
+            rid: 4270121796433870912
         - sequenceToRun:
             rid: 4270121796433870885
           sequenceData:
@@ -408,6 +412,30 @@ MonoBehaviour:
           modifyScale: 0
           scale: {x: 1, y: 1, z: 1}
           duration: 1
+          ease:
+            serializedVersion: 2
+            m_Curve:
+            - serializedVersion: 3
+              time: 0
+              value: 0
+              inSlope: 0
+              outSlope: 1
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 1
+              value: 1
+              inSlope: 1
+              outSlope: 0
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
           modificationType: 0
     - rid: 4270121796433870898
       type: {class: TransformUpdateHandler/TransformUpdateHandlerData, ns: LuminaryLabs.NexusEngine, asm: com.NexusEngine}
@@ -420,17 +448,124 @@ MonoBehaviour:
         rotation: {x: 0, y: 180, z: 0}
         modifyScale: 0
         scale: {x: 1, y: 1, z: 1}
-        duration: 0.2
+        duration: 1
+        ease:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 4.6511846
+            outSlope: 4.6511846
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0.046522595
+          - serializedVersion: 3
+            time: 0.72850317
+            value: 0.9249755
+            inSlope: -1.90358
+            outSlope: -1.90358
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.33333334
+            outWeight: 0.24385956
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 1.2548428
+            outSlope: 1.2548428
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.23413615
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
         modificationType: 0
-    - rid: 4270121796433870905
-      type: {class: WaitUntilKeyPress, ns: LuminaryLabs.NexusEngine, asm: com.NexusEngine}
+    - rid: 4270121796433870911
+      type: {class: TransformUpdateHandler, ns: LuminaryLabs.NexusEngine, asm: com.NexusEngine}
       data:
         _currentData:
-          keyToPress: 0
-    - rid: 4270121796433870906
-      type: {class: WaitUntilKeyPressData, ns: LuminaryLabs.NexusEngine, asm: com.NexusEngine}
+          targetTransform: {fileID: 0}
+          modifyPosition: 0
+          space: 1
+          positionInput: {x: 0, y: 0, z: 0}
+          modifyRotation: 0
+          rotation: {x: 0, y: 0, z: 0}
+          modifyScale: 0
+          scale: {x: 1, y: 1, z: 1}
+          duration: 1
+          ease:
+            serializedVersion: 2
+            m_Curve:
+            - serializedVersion: 3
+              time: 0
+              value: 0
+              inSlope: 0
+              outSlope: 1
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 1
+              value: 1
+              inSlope: 1
+              outSlope: 0
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          modificationType: 0
+    - rid: 4270121796433870912
+      type: {class: TransformUpdateHandler/TransformUpdateHandlerData, ns: LuminaryLabs.NexusEngine, asm: com.NexusEngine}
       data:
-        keyToPress: 32
+        targetTransform: {fileID: 2049898839}
+        modifyPosition: 1
+        space: 1
+        positionInput: {x: 0, y: 2, z: 0}
+        modifyRotation: 1
+        rotation: {x: 0, y: 270, z: 0}
+        modifyScale: 1
+        scale: {x: 1, y: 2, z: 1}
+        duration: 1
+        ease:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 2
+            outSlope: 2
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        modificationType: 0
+    - rid: 4270121796433870913
+      type: {class: ChangeColorOfMeshRenderer, ns: LuminaryLabs.NexusEngine, asm: com.NexusEngine}
+      data: 
+    - rid: 4270121796433870914
+      type: {class: ChangeColorOfMeshRendererData, ns: LuminaryLabs.NexusEngine, asm: com.NexusEngine}
+      data:
+        meshRenderer: {fileID: 4488484498170800136}
+        color: {r: 1, g: 0, b: 0.12008619, a: 1}
 --- !u!1 &1755092336 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
@@ -441,7 +576,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3605592986322802490, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
   m_PrefabInstance: {fileID: 4426454867133819492}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1755092340
+--- !u!114 &1755092341
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -450,7 +585,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1755092336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b206de30e00936488ba806a384c265c, type: 3}
+  m_Script: {fileID: 11500000, guid: d2844ed1dfd647d4eb8addcf8d551073, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _runType: 0
@@ -458,11 +593,17 @@ MonoBehaviour:
     destroyOnUnload: 0
     beginWith: []
     waitFor:
-    - {fileID: 1674590007}
-    - {fileID: 2025620318}
+    - sequenceToRun: {fileID: 1674590007}
+      sequenceModifierDefinitions: []
+    - sequenceToRun: {fileID: 2025620318}
+      sequenceModifierDefinitions: []
     finishWith: []
     continueWith:
-    - {fileID: 1755092340}
+    - sequenceToRun: {fileID: 1755092341}
+      sequenceModifierDefinitions: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &2025620316
 GameObject:
   m_ObjectHideFlags: 0
@@ -559,6 +700,30 @@ MonoBehaviour:
           modifyScale: 0
           scale: {x: 1, y: 1, z: 1}
           duration: 1
+          ease:
+            serializedVersion: 2
+            m_Curve:
+            - serializedVersion: 3
+              time: 0
+              value: 0
+              inSlope: 0
+              outSlope: 1
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 1
+              value: 1
+              inSlope: 1
+              outSlope: 0
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
           modificationType: 0
     - rid: 4270121796433870898
       type: {class: TransformUpdateHandler/TransformUpdateHandlerData, ns: LuminaryLabs.NexusEngine, asm: com.NexusEngine}
@@ -572,6 +737,30 @@ MonoBehaviour:
         modifyScale: 0
         scale: {x: 1, y: 1, z: 1}
         duration: 0.2
+        ease:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 2
+            outSlope: 2
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
         modificationType: 0
 --- !u!4 &2049898839 stripped
 Transform:
@@ -872,7 +1061,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1755092340}
+      addedObject: {fileID: 1755092341}
   m_SourcePrefab: {fileID: 100100000, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
 --- !u!23 &4488484498170800136
 MeshRenderer:

@@ -14,6 +14,8 @@ namespace LuminaryLabs.NexusEngine
         private Vector3 rotation;
         private Vector3 scale;
         private Space space;
+        private AnimationCurve ease;
+
         private float duration;
         private Vector3 initialPosition;
         private Vector3 initialRotation;
@@ -32,6 +34,7 @@ namespace LuminaryLabs.NexusEngine
             rotation = currentData.rotation;
             scale = currentData.scale;
             space = currentData.space;
+            ease = currentData.ease;
             duration = currentData.duration;
             modificationType = currentData.modificationType;
 
@@ -63,7 +66,7 @@ namespace LuminaryLabs.NexusEngine
                     break;
                 }
                 elapsedTime += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsedTime / duration);
+                float t = ease.Evaluate(Mathf.Clamp01(elapsedTime / duration));
 
                 // Modify position if enabled
                 if (modifyPosition)
@@ -133,6 +136,8 @@ namespace LuminaryLabs.NexusEngine
 
             [Space(10)]
             public float duration = 1.0f;
+
+            public AnimationCurve ease = AnimationCurve.Linear(0, 0, 1, 1);
 
             public ModificationType modificationType = ModificationType.SET; // Specify whether to use SET or ADD
         }
