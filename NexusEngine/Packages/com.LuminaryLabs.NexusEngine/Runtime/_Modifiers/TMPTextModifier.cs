@@ -26,7 +26,7 @@ namespace LuminaryLabs.NexusEngine
         protected override void ModifySequence(ISequence sequence)
         {
             text.text = newText;
-
+            
         }
     }
 

@@ -11,17 +11,12 @@ namespace LuminaryLabs.NexusEngine
     public abstract class SequenceModifier : BaseSequence<SequenceModifierData>
     {
 
-        protected override async void OnBegin()
+        protected override void OnBegin()
         {
-
             if (superSequence != null)
             {
                 ModifySequence(superSequence);  
             }
-
-            await UniTask.CompletedTask;
-            await Sequence.Finish(this);
-            await Sequence.Stop(this);
         }
 
         protected abstract void ModifySequence(ISequence sequence);
@@ -36,7 +31,7 @@ namespace LuminaryLabs.NexusEngine
 
     }
 
-    public class SequenceModifierData : SequenceData
+    public class SequenceModifierData : BaseSequenceData
     {
 
     }

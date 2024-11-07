@@ -1,15 +1,24 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace LuminaryLabs.NexusEngine
 {
-    public class NexusSequenceRunner : EntitySequence<NexusSequenceRunnerData>
+    public class BaseSequenceRunner : EntitySequence<BaseSequenceRunnerData>
     {
         private List<BaseSequenceDefinition> sequencesToRun = new List<BaseSequenceDefinition>();
 
-        protected override UniTask Initialize(NexusSequenceRunnerData currentData)
+#if ODIN_INSPECTOR
+        [ShowInInspector, HideInEditorMode]
+#endif
+        private List<ISequence> runningSequences = new List<ISequence>();   
+
+
+        protected override UniTask Initialize(BaseSequenceRunnerData currentData)
         {
+
+            runningSequences.Clear();
             // Populate the sequencesToRun list with the data provided
             sequencesToRun = new List<BaseSequenceDefinition>(currentData.sequencesToRun);
             return UniTask.CompletedTask;
@@ -37,63 +46,51 @@ namespace LuminaryLabs.NexusEngine
             {
                 superSequence = this,
                 sequenceData = definition.sequenceData,
-                onBegin = (sequence) => OnSequenceBegin(sequence),
-                onFinished = (sequence) => OnSequenceFinished(sequence),
-                onUnload = (sequence) => OnSequenceUnload(sequence)
+                onBegin = OnSequenceBegin,
+                onFinished = OnSequenceFinished,
+                onUnload = OnSequenceUnload,
+                onUnloaded = OnSequenceUnloaded
             });
         }
 
         private void OnSequenceBegin(ISequence sequence)
         {
             // Add any additional actions for sequence begin here if needed
+            runningSequences.Add(sequence);
+
         }
 
         private void OnSequenceFinished(ISequence sequence)
         {
             // Check if all sequences are finished
-            sequencesToRun.RemoveAll(def => def.sequenceToRun == sequence);
+            runningSequences.Remove(sequence);
+        }
 
-            if (sequencesToRun.Count == 0)
+        private void OnSequenceUnload(ISequence sequence)
+        {
+            // Add any additional actions for sequence unload here if needed
+            runningSequences.Remove(sequence);
+        }
+        private void OnSequenceUnloaded(ISequence sequence)
+        {
+        
+            if (runningSequences.Count == 0)
             {
                 Complete();
             }
         }
 
-        private void OnSequenceUnload(ISequence sequence)
-        {
-            sequencesToRun.RemoveAll(def => def.sequenceToRun == sequence);
-        }
-
         private async void Complete()
         {
-            // Ensure we finish the runner itself after all sequences complete
+            // // Ensure we finish the runner itself after all sequences complete
             await Sequence.Finish(this);
             await Sequence.Stop(this);
         }
 
-        protected override async UniTask Unload()
-        {
-            // Stop all sequences when unloading
-            while (sequencesToRun.Count > 0)
-            {
-                var sequenceToStop = sequencesToRun[0].sequenceToRun;
-                if (sequenceToStop != null)
-                {
-                    await Sequence.Stop(sequenceToStop);
-                }
-                sequencesToRun.RemoveAt(0);
-            }
-        }
-
-        protected override void OnUnloaded()
-        {
-            Destroy(gameObject);
-            base.OnUnloaded();
-        }
     }
 
     [System.Serializable]
-    public class NexusSequenceRunnerData : SequenceData
+    public class BaseSequenceRunnerData : SequenceData
     {
         public List<BaseSequenceDefinition> sequencesToRun = new List<BaseSequenceDefinition>();
     }

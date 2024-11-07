@@ -8,6 +8,7 @@ namespace LuminaryLabs.NexusEngine
     [System.Serializable]
     public abstract class BaseSequence : ISequence
     {
+
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
         protected object _currentData;
@@ -24,14 +25,13 @@ namespace LuminaryLabs.NexusEngine
 
         public UniTask InitializeSequence(object currentData = null)
         {
+            Nexus.Log("Init Base Sequence: " + (this as ISequence).name);
+
             return Initialize(currentData);
         }
-        public async virtual void OnBeginSequence()
+        public virtual void OnBeginSequence()
         {
             OnBegin();
-            await UniTask.CompletedTask;
-            await Sequence.Finish(this);
-            await Sequence.Stop(this);
         }
 
         public virtual UniTask UnloadSequence()
@@ -67,45 +67,47 @@ namespace LuminaryLabs.NexusEngine
     }
 
 
-   public abstract class BaseSequence<T> : BaseSequence where T : SequenceData
+   public abstract class BaseSequence<T> : BaseSequence where T : BaseSequenceData
     {
 
 
-// #if ODIN_INSPECTOR
-//         [BoxGroup("ENTITY DATA"), SerializeField]
-// #else
-//         [SerializeField]
-// #endif
-//         // private NexusSequenceData nexusData;
+    // #if ODIN_INSPECTOR
+    //         [BoxGroup("ENTITY DATA"), SerializeField]
+    // #else
+    //         [SerializeField]
+    // #endif
+    //         // private NexusSequenceData nexusData;
 
 
 
 
-    #if ODIN_INSPECTOR
-        [BoxGroup("RUN DATA"), SerializeField]
-    #else
-        [SerializeField]
-    #endif
-    private new T _currentData;
+        #if ODIN_INSPECTOR
+            [BoxGroup("RUN DATA"), SerializeField]
+        #else
+            [SerializeField]
+        #endif
+        private new T _currentData;
 
-    // Override the base property to ensure consistent access
-    public override object currentData
-    {
-        get => _currentData;
-        set
+        // Override the base property to ensure consistent access
+        public override object currentData
         {
-            base.currentData = value;
-            
-            if (value is T typedValue)
+            get => _currentData;
+            set
             {
-                _currentData = typedValue;
-            }
-            else
-            {
-                Debug.LogError($"Invalid type assignment for currentData. Expected {typeof(T)}, got {value?.GetType()}");
+                base.currentData = value;
+                
+                if (value is T typedValue)
+                {
+                    _currentData = typedValue;
+                }
+                else
+                {
+                    Debug.LogError($"Invalid type assignment for currentData. Expected {typeof(T)}, got {value?.GetType()}");
+                }
             }
         }
-    }
+
+        private bool completeAfterBegin = false;
 
 
         protected override UniTask Initialize(object currentData = null)
@@ -114,6 +116,7 @@ namespace LuminaryLabs.NexusEngine
             {
                 Nexus.Log("Init Entity Given Data Type: " + currentData.GetType().ToString());  
             }
+
 
             if (currentData is T data)
             {
@@ -126,12 +129,19 @@ namespace LuminaryLabs.NexusEngine
             return Initialize(new SequenceData() as T);
         }
 
+
         protected abstract UniTask Initialize(T currentData);
+
+        protected async virtual void Complete()
+        {
+            await Sequence.Finish(this);
+            await Sequence.Stop(this);
+        }
     }
 
     [System.Serializable]
     public class BaseSequenceData : SequenceData
     {
 
-    }
+    }   
 }

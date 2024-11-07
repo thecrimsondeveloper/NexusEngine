@@ -17,9 +17,11 @@ namespace LuminaryLabs.NexusEngine
             return UniTask.CompletedTask;
         }
 
-        protected override void OnBegin()
+        protected override async void OnBegin()
         {
             meshRenderer.material.color = color;
+            await UniTask.NextFrame();
+            this.Complete();
         }
     }
 

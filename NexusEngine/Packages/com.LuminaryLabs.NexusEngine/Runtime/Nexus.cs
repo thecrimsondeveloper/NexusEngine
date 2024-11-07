@@ -13,6 +13,8 @@ namespace LuminaryLabs.NexusEngine
     public static class Nexus
     {
         const string LogPrefix = "(NEXUS ENGINE) ";
+        const string WarningPrefix = "(NEXUS ENGINE WARNING) ";
+        const string ErrorPrefix = "(NEXUS ENGINE ERROR) ";
         public static List<string> logDump = new List<string>();
 
 
@@ -25,11 +27,15 @@ namespace LuminaryLabs.NexusEngine
 
         public static void LogWarning(string input, UnityEngine.Object context = default)
         {
+            string log = WarningPrefix + input;
+            logDump.Add(log);
             Debug.LogWarning(LogPrefix + input, context);
         }
 
         public static void LogError(string input, UnityEngine.Object context = default)
         {
+            string log = ErrorPrefix + input;
+            logDump.Add(log);
             Debug.LogError(LogPrefix + input, context);
         }
 

@@ -45,14 +45,17 @@ namespace LuminaryLabs.NexusEngine
 
         private void RunBeginSequences()
         {
+            Nexus.Log("Running begin sequences in a NexusSequence there are " + beginWith.Count + " sequences to run");
             foreach (var definition in beginWith)
             {
                 RunNexusSequence(definition, OnBeginSequenceCallback, OnBeginSequenceUnload);
             }
         }
 
-        private void RunNexusSequence(BaseSequenceDefinition definition, UnityAction<ISequence> onBeginCallback, UnityAction<ISequence> onUnloadCallback)
+        private void RunNexusSequence(BaseSequenceDefinition definition, UnityAction<ISequence> onBeginCallback, UnityAction<ISequence> onUnloadCallback, UnityAction<ISequence> onFinishedCallback = null)
         {
+            Nexus.Log("Running NexusSequence: " + ((ISequence)definition.sequenceToRun).name);
+
             // Run the main NexusSequence
             Sequence.Run(definition.sequenceToRun, new SequenceRunData
             {
@@ -60,25 +63,24 @@ namespace LuminaryLabs.NexusEngine
                 sequenceData = definition.sequenceData,
                 onBegin = onBeginCallback,
                 onUnload = onUnloadCallback,
+                onFinished = onFinishedCallback
             });
         }
 
-        private void RunWaitForSequence()
+         void RunWaitForSequence(int index = 0)
         {
-            if (currentWaitForIndex >= waitFor.Count)
-            {
-                Complete();
-                return;
-            }
+             // Run the current waitFor sequence based on the index
 
-            var definition = waitFor[currentWaitForIndex];
-            RunNexusSequence(definition, OnWaitForSequenceCallback, OnWaitForSequenceUnload);
+
+            BaseSequenceDefinition definition = waitFor[index];
+            RunNexusSequence(definition, OnWaitForSequenceCallback, OnWaitForSequenceUnload, OnWaitForSequenceFinished);
         }
 
         private void RunFinishSequences()
         {
             foreach (var definition in finishWith)
             {
+                Nexus.Log("Running finish sequence: " + ((ISequence)definition.sequenceToRun).name);
                 RunNexusSequence(definition, OnFinishSequenceCallback, OnFinishSequenceUnload);
             }
         }
@@ -87,74 +89,95 @@ namespace LuminaryLabs.NexusEngine
 
         private void OnBeginSequenceCallback(ISequence sequence)
         {
-            Debug.Log("Begin sequence started: " + sequence.name);
+            Nexus.Log("Nexus Begin sequence started: " + sequence.name);
             beginSequences.Add(sequence);
         }
 
         private void OnBeginSequenceUnload(ISequence sequence)
         {
-            Debug.Log("Begin sequence unloaded: " + sequence.name);
+            Nexus.Log("Nexus Begin sequence unloaded: " + sequence.name);
             beginSequences.Remove(sequence);
         }
 
         private void OnWaitForSequenceCallback(ISequence sequence)
         {
-            Debug.Log("WaitFor sequence started: " + sequence.name);
-
+            Nexus.Log("Nexus WaitFor sequence started: " + sequence.name);
             waitForSequences.Add(sequence);
         }
 
         private void OnWaitForSequenceFinished(ISequence sequence)
         {
-            Debug.Log("WaitFor sequence finished: " + sequence.name);
-            currentWaitForIndex++;
-            RunWaitForSequence();
+            Nexus.Log("Nexus WaitFor sequence finished: " + sequence.name);
+            RunNextWaitForSequence();
         }
+         private void RunNextWaitForSequence()
+        {
+            // Increment the index and run the next sequence
+            currentWaitForIndex++;
+            if (currentWaitForIndex >= waitFor.Count)
+            {
+                Complete();
+                return;
+            }
+
+            RunWaitForSequence(currentWaitForIndex);
+        }
+
 
         private void OnWaitForSequenceUnload(ISequence sequence)
         {
-            Debug.Log("WaitFor sequence unloaded: " + sequence.name);
+            Nexus.Log("Nexus WaitFor sequence unloaded: " + sequence.name);
             waitForSequences.Remove(sequence);
         }
 
         private void OnFinishSequenceCallback(ISequence sequence)
         {
-            Debug.Log("Finish sequence started: " + sequence.name);
+            Nexus.Log("Nexus Finish sequence started: " + sequence.name);
             finishWithSequences.Add(sequence);
         }
 
         private void OnFinishSequenceUnload(ISequence sequence)
         {
-            Debug.Log("Finish sequence unloaded: " + sequence.name);
+            Nexus.Log("Nexus Finish sequence unloaded: " + sequence.name);
             finishWithSequences.Remove(sequence);
         }
-        private async void Complete()
-        {
-            RunFinishSequences();
-            await UniTask.NextFrame();
-
-            await Sequence.Finish(this);
-            await Sequence.Stop(this);
-
-        }
-
         protected override async UniTask Unload()
         {
-            await StopSequences(beginWith);
-            await StopSequences(waitFor);
-            await StopSequences(finishWith);
+            await StopSequences(beginSequences);
+            await StopSequences(waitForSequences);
+        }
+        protected override async UniTask Finish()
+        {
+            Nexus.Log("Finishing NexusSequence: " + ((ISequence)this).name);
+            RunFinishSequences();
+            await UniTask.NextFrame();
+            // await UniTask.NextFrame();
+            // await UniTask.Delay(50);
         }
 
-        private async UniTask StopSequences(List<BaseSequenceDefinition> sequences)
+
+
+        protected override async void OnUnloaded()
         {
-            foreach (var definition in sequences)
+            await UniTask.NextFrame();
+            StopSequences(finishWithSequences);
+        }
+
+        private async UniTask StopSequences(List<ISequence> sequences)
+        {
+            while(sequences.Count > 0)
             {
-                var sequenceToStop = definition.sequenceToRun;
-                if (sequenceToStop != null)
+                ISequence sequenceToStop = sequences[0];
+                if(sequenceToStop == null) continue;
+
+                await Sequence.Stop(sequenceToStop);
+
+                if(sequences.Contains(sequenceToStop))
                 {
-                    await Sequence.Stop(sequenceToStop);
+                    sequences.Remove(sequenceToStop);
                 }
             }
+
         }
     }
 
