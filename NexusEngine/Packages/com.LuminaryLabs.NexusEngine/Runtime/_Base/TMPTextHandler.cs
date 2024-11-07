@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class TMPTextHandler : BaseSequence<TMPTextHandlerData>
 {
-
+    // TextMeshProUGUI textMeshPro;
     private string text;
     private float timePerCharacter;
     protected override UniTask Initialize(TMPTextHandlerData currentData)

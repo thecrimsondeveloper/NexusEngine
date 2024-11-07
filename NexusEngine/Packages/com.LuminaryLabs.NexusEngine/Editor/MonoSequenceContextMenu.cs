@@ -70,7 +70,7 @@ public class MonoSequenceContextMenu : MonoBehaviour
     }
 
     // RunnerSequence Menu
-    [MenuItem("Assets/Create RunnerSequence", false, 1)]
+    [MenuItem("Assets/Create RunnerSequence V2", false, 1)]
     private static void CreateRunnerSequence()
     {
         // Load the MonoSequence_Base prefab
