@@ -103,7 +103,7 @@ public class MonoSequenceContextMenu : MonoBehaviour
         GameObject runnerSequenceInstance = PrefabUtility.InstantiatePrefab(sourcePrefab) as GameObject;
 
         // Add the RunnerSequence component to the instantiated prefab
-        runnerSequenceInstance.AddComponent<RunnerSequence>();
+        runnerSequenceInstance.AddComponent<RunnerSequenceV2>();
 
         // Save the new prefab with the RunnerSequence component
         PrefabUtility.SaveAsPrefabAsset(runnerSequenceInstance, relativePath);

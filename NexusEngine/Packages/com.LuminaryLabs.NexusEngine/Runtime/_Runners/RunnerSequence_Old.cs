@@ -6,9 +6,10 @@ using Sirenix.OdinInspector;
 #endif
 using UnityEngine;
 
-namespace LuminaryLabs.NexusEngine
+namespace LuminaryLabs.NexusEngine.Deprecated
 {
-    public class RunnerSequence : EntitySequence<RunnerSequenceData>
+    
+    public class RunnerSequence_Old : EntitySequence<RunnerSequenceData>
     {
         private bool destroyOnUnload = false;
         private int currentWaitForIndex = 0; // Index for tracking the current waitFor sequence
@@ -64,7 +65,7 @@ namespace LuminaryLabs.NexusEngine
              // Run the current waitFor sequence based on the index
             MonoSequence currentWaitForSequence = waitFor[index];
 
-            if(currentWaitForSequence is RunnerSequence runner)
+            if(currentWaitForSequence is RunnerSequence_Old runner)
             {
                 Nexus.Log(" Pre Running Sub Runner: " + runner.name);
             }
