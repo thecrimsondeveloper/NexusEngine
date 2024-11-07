@@ -42,7 +42,7 @@ public class SequenceViewer : NexusFactoryPane
         {
             if (sequence != null)
             {
-                DrawSequence(sequence);
+                DrawSequencePane(sequence);
             }
         }
 
@@ -56,41 +56,73 @@ public class SequenceViewer : NexusFactoryPane
 
     }
 
-    // Draws a single sequence in the list
-    private void DrawSequence(ISequence sequence)
+    void DrawSequence(ISequence sequence, string prefix = "")
     {
-        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-        GUILayout.Label(GetSequenceLabel(sequence), EditorStyles.boldLabel);
 
-        if (sequence.superSequence != null)
+        // Display a reference to the sequence
+        if (sequence is UnityEngine.Object uniObject)
         {
-            GUILayout.Label($"Super Sequence: {GetSequenceLabel(sequence.superSequence)}");
+            
+            // Display the reference to the GameObject if it's a MonoBehaviour
+            if (sequence is MonoBehaviour monoBehaviour)
+            {
+                EditorGUILayout.ObjectField(prefix + "GameObject", monoBehaviour.gameObject, typeof(GameObject), true);
+            }
+            else
+            {
+                EditorGUILayout.PropertyField(new SerializedObject(uniObject).FindProperty("m_Script"));
+            }
         }
         else
         {
-            GUILayout.Label("Super Sequence: None");
+            GUILayout.Label($"Sequence: {sequence.GetType().Name}");
         }
+    }
 
-        GUILayout.Label(sequence.currentData != null ? "Has Data" : "No Data");
 
-        // Add Finish and Stop buttons for the sequence
+
+   private void DrawSequencePane(ISequence sequence)
+    {
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+        //make the sequence name bold
+
+        // Add Complete button for the sequence
         EditorGUILayout.BeginHorizontal();
-        // if (GUILayout.Button("Finish"))
-        // {
-        //     FinishSequence(sequence);
-        // }
-
-        // if (GUILayout.Button("Stop"))
-        // {
-        //     StopSequence(sequence);
-        // }
-        if (GUILayout.Button("Complete"))
+        GUILayout.Label("Sequence: " + sequence.name, EditorStyles.boldLabel);
+         if (GUILayout.Button("Complete"))
         {
             CompleteSequence(sequence);
         }
+
         EditorGUILayout.EndHorizontal();
 
+        DrawSequence(sequence);
+
+
+        //draw a read only enum field for the sequence state
+        EditorGUILayout.EnumPopup("Phase: ", sequence.phase);//, EditorStyles.miniLabel);
+
+        //draw a serialize field for the object data
+        
+
+        if (sequence.superSequence != null)
+        {
+            DrawSequence(sequence.superSequence, "Super ");
+        }
+
+
+
+
+        DrawSequenceDetails(sequence);
+       
+        EditorGUILayout.EndVertical();
+    }
+
+    void DrawSequenceDetails(ISequence sequence)
+    {
+        NexusFactory.BeginContentArea();
         // Add a foldout for properties and fields of the sequence
         bool foldout = foldoutStates.ContainsKey(sequence) && foldoutStates[sequence];
         foldout = EditorGUILayout.Foldout(foldout, "Sequence Details");
@@ -106,20 +138,7 @@ public class SequenceViewer : NexusFactoryPane
             DrawSequenceValues(sequence);
         }
 
-        // Add a button to select the sequence object in the inspector (if applicable)
-        if (GUILayout.Button("Select Sequence"))
-        {
-            if (sequence is MonoBehaviour monoBehaviour)
-            {
-                Selection.activeObject = monoBehaviour;
-            }
-            else if (sequence is ScriptableObject scriptableObject)
-            {
-                Selection.activeObject = scriptableObject;
-            }
-        }
-
-        EditorGUILayout.EndVertical();
+        NexusFactory.EndContentArea();
     }
 
     // Uses reflection to display the properties and fields of the sequence
@@ -134,13 +153,22 @@ public class SequenceViewer : NexusFactoryPane
             try
             {
                 object value = property.GetValue(sequence);
-                GUILayout.Label($"{property.Name}: {value}");
+                if(value is UnityEngine.Object uniObject)
+                {
+                    EditorGUILayout.ObjectField("Property: " + property.Name, uniObject, typeof(UnityEngine.Object), true);
+                }
+                else
+                {
+                    GUILayout.Label($"Property: {property.Name}: {value}");
+                }
             }
             catch (Exception e)
             {
-                GUILayout.Label($"{property.Name}: (Error retrieving value: {e.Message})");
+                // GUILayout.Label($"{property.Name}: (Error retrieving value: {e.Message})");
             }
         }
+
+        
 
         // Retrieve and display all public fields
         FieldInfo[] fields = sequence.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
@@ -149,11 +177,19 @@ public class SequenceViewer : NexusFactoryPane
             try
             {
                 object value = field.GetValue(sequence);
-                GUILayout.Label($"{field.Name}: {value}");
+
+                if(value is UnityEngine.Object uniObject)
+                {
+                    EditorGUILayout.ObjectField("Field: " + field.Name, uniObject, typeof(UnityEngine.Object), true);
+                }
+                else
+                {
+                    GUILayout.Label($"Field: {field.Name}: {value}");
+                }
             }
             catch (Exception e)
             {
-                GUILayout.Label($"{field.Name}: (Error retrieving value: {e.Message})");
+                // GUILayout.Label($"{field.Name}: (Error retrieving value: {e.Message})");
             }
         }
 

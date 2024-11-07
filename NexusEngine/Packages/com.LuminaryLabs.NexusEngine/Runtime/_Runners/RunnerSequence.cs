@@ -37,7 +37,7 @@ namespace LuminaryLabs.NexusEngine
             return UniTask.CompletedTask;
         }
 
-        protected override async void OnBegin()
+        protected override void OnBegin()
         {
             // Start sequences specified in beginWith
             foreach (MonoSequence sequence in beginWith)
@@ -46,7 +46,7 @@ namespace LuminaryLabs.NexusEngine
                 {
                     superSequence = this,
                     onBegin = OnBeginSequenceBegin,
-                    onUnload = OnWaitSequenceUnload,
+                    onUnload = OnBeginSequenceUnload,
                 });
             }
 
@@ -106,6 +106,12 @@ namespace LuminaryLabs.NexusEngine
         private void OnBeginSequenceBegin(ISequence sequence)
         {
             beginSequences.Add(sequence);
+        }
+
+        private void OnBeginSequenceUnload(ISequence sequence)
+        {
+            Debug.Log("WAIT SEQUENCE UNLOAD: " + sequence.GetType());
+            waitForSequences.Remove(sequence);
         }
 
         private void OnWaitSequenceBegin(ISequence sequence)

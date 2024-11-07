@@ -11,6 +11,7 @@ namespace LuminaryLabs.NexusEngine
 {
     public abstract class EntitySequence<T> : MonoSequence where T : SequenceData
     {
+        
         public enum RunType
         {
             Start,

@@ -357,12 +357,18 @@ namespace LuminaryLabs.NexusEngine
         }
         private static ISequence HandleInstantiation(ISequence sequence, SequenceRunData runData = null)
         {
-            // if (sequence is ScriptableObject scriptableObject)
-            // {
-            //     ScriptableObject scriptableInstance = Instantiate(scriptableObject);
-            //     runData.onGenerated?.Invoke(scriptableInstance);
-            //     return scriptableInstance as ISequence;
-            // }
+            if (sequence is ScriptableObject scriptableObject)
+            {
+                ScriptableObject scriptableInstance = Instantiate(scriptableObject);
+                runData.onGenerated?.Invoke(scriptableInstance);
+                //add an event to the sequence to handle the unloading of the scriptable object
+                runData.onUnload += (ISequence seq) =>
+                {
+                    Nexus.Log("Unloading Scriptable Object: " + scriptableInstance.name);
+                    Destroy(scriptableInstance);
+                };
+                return scriptableInstance as ISequence;
+            }
 
 
 
