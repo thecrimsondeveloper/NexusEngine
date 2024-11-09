@@ -26,6 +26,17 @@ namespace LuminaryLabs.NexusEngine
         }
 
         public string name => this is UnityEngine.Object obj ? obj.name : this.GetType().ToString();
+
+        public async void Complete()
+        {
+            if (phase == Phase.Finished)
+            {
+                return;
+            }
+            phase = Phase.Finished;
+            await Sequence.Finish(this);
+            await Sequence.Stop(this);
+        }
     }
         public enum Phase 
         {

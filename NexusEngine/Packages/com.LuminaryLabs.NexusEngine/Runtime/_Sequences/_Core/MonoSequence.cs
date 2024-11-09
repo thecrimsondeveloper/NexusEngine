@@ -10,6 +10,15 @@ namespace LuminaryLabs.NexusEngine
 {
     public abstract class MonoSequence : MonoBehaviour, ISequence
     {
+
+        public enum WhenToDestroy
+        {
+            None,
+            BeforeUnloaded,
+            AfterUnloaded,
+        }
+
+        public WhenToDestroy whenToDestroy = WhenToDestroy.None;
         public ISequence superSequence { get; set; }
         public Guid guid { get; set; }
         protected object _currentData;
@@ -45,7 +54,17 @@ namespace LuminaryLabs.NexusEngine
         }
         public virtual void OnUnloadedSequence()
         {
+            if (whenToDestroy == WhenToDestroy.BeforeUnloaded)
+            {
+                Destroy(gameObject);
+            }
+            
             OnUnloaded();
+            
+            if (whenToDestroy == WhenToDestroy.AfterUnloaded)
+            {
+                Destroy(gameObject);
+            }
         }
 
 

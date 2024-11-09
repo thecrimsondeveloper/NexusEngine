@@ -11,7 +11,6 @@ namespace LuminaryLabs.NexusEngine
 {
     public class RunnerSequenceV2 : EntitySequence<RunnerSequenceV2Data>
     {
-        private bool destroyOnUnload = false;
         private int currentWaitForIndex = 0; // Index for tracking the current waitFor sequence
 
         #if ODIN_INSPECTOR
@@ -25,8 +24,6 @@ namespace LuminaryLabs.NexusEngine
 
         protected override UniTask Initialize(RunnerSequenceV2Data currentData)
         {
-            destroyOnUnload = currentData.destroyOnUnload;
-
             beginWith = new List<RunnerSequenceDefinition>(currentData.beginWith);
             finishWith = new List<RunnerSequenceDefinition>(currentData.finishWith);
             waitFor = new List<RunnerSequenceDefinition>(currentData.waitFor);
@@ -56,30 +53,44 @@ namespace LuminaryLabs.NexusEngine
         private void RunSequenceWithModifiers(RunnerSequenceDefinition definition, UnityAction<ISequence> onBeginCallback, UnityAction<ISequence> onUnloadCallback, UnityAction<ISequence> onFinishedCallback = null)
         {
 
+            Debug.Log("(RUNNER) Running sequence with modifiers: " + definition.sequenceToRun.name);
 
-            // Run the main sequence
-            Sequence.Run(definition.sequenceToRun, new SequenceRunData
+            SequenceRunData defaultRunData = new SequenceRunData
             {
                 superSequence = this,
-                onBegin = (sequence) => {
-                    onBeginCallback(sequence);
-                    ApplyModifiers(definition);
+                onBegin = (sequence) =>
+                {
+                    onBeginCallback?.Invoke(sequence);
+                    ApplyModifiers(sequence, definition);
                 },
                 onUnload = onUnloadCallback,
                 onFinished = onFinishedCallback
-            });
+            };
+
+            if(definition.updateTranform)
+            {
+                defaultRunData.spawnPosition = definition.spawnPosition;
+                defaultRunData.spawnRotation = Quaternion.Euler(definition.spawnRotation);
+                defaultRunData.spawnSpace = definition.space;
+            }
+
+
+            // Run the main sequence
+            Sequence.Run(definition.sequenceToRun, defaultRunData);
         }
 
-        private void ApplyModifiers(RunnerSequenceDefinition definition)
+        private void ApplyModifiers(ISequence sequence, RunnerSequenceDefinition definition)
         {
-            foreach (var modifierDefinition in definition.sequenceModifierDefinitions)
+            Debug.Log($"(RUNNER) Applying ({definition.baseSequenceDefinitions.Count}) modifiers to " + definition.sequenceToRun.name);
+            foreach (var baseSequenceDefinition in definition.baseSequenceDefinitions)
             {
-                if (modifierDefinition != null && modifierDefinition.sequenceModifier != null)
+                Debug.Log("(RUNNER) Applying modifiers to " + definition.sequenceToRun.name);
+                if (baseSequenceDefinition != null && baseSequenceDefinition.sequenceToRun != null)
                 {
-                    Sequence.Run(modifierDefinition.sequenceModifier, new SequenceRunData
+                    Sequence.Run(baseSequenceDefinition.sequenceToRun, new SequenceRunData
                     {
-                        superSequence = this,
-                        sequenceData = modifierDefinition.sequenceModifierData,
+                        superSequence = sequence,
+                        sequenceData = baseSequenceDefinition.sequenceData,
                     });
                 }
             }
@@ -220,11 +231,7 @@ namespace LuminaryLabs.NexusEngine
         {
             Nexus.Log("Runner Unloaded: " + name);
             StartContinueWithSequences();
-            if (destroyOnUnload)
-            {
-                Destroy(gameObject);
-            }
-            
+
             await UniTask.NextFrame();
             StopSequences(finishWithSequences);
 
@@ -262,7 +269,6 @@ namespace LuminaryLabs.NexusEngine
     [System.Serializable]
     public class RunnerSequenceV2Data : SequenceData
     {
-        public bool destroyOnUnload = false;
 
         #if ODIN_INSPECTOR
         [BoxGroup("beginWith", false)]
@@ -298,6 +304,36 @@ namespace LuminaryLabs.NexusEngine
     public class RunnerSequenceDefinition
     {
         public MonoSequence sequenceToRun; // Made public to allow referencing in the inspector
-        public List<SequenceModifierDefinition> sequenceModifierDefinitions = new List<SequenceModifierDefinition>();
+        
+
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Modifiers")]
+        #endif
+        public Transform sequenceParent;
+
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Modifiers")]
+        #endif
+        public bool updateTranform = false;
+        
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Modifiers")]
+        #endif
+        public Vector3 spawnPosition;
+
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Modifiers")]
+        #endif
+        public Vector3 spawnRotation;
+
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Modifiers")]
+        #endif
+        public Space space = Space.Self;
+
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Modifiers")]
+        #endif
+        public List<BaseSequenceDefinition> baseSequenceDefinitions = new List<BaseSequenceDefinition>();
     }
 }

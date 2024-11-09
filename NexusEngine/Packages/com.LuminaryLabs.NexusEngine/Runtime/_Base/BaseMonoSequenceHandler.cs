@@ -8,38 +8,69 @@ namespace LuminaryLabs.NexusEngine
 {
     public class BaseMonoSequenceHandler : BaseSequence<BaseMonoSequenceHandlerData>
     {
-        private MonoSequence monoSequence;
-
+        private RunnerSequenceDefinition monoSequenceDefinition;
+        private bool waitForSequenceToFinish = true;       
         private ISequence runningSequence;
 
         protected override UniTask Initialize(BaseMonoSequenceHandlerData currentData)
         {
             // Set the MonoSequence from the provided data
-            monoSequence = currentData.monoSequence;
+            monoSequenceDefinition = currentData.monoSequence;
+            waitForSequenceToFinish = currentData.waitForSequenceToFinish;
             return UniTask.CompletedTask;
         }
 
         protected override async void OnBegin()
         {
-            if (monoSequence == null)
+            if (monoSequenceDefinition == null)
             {
                 Debug.LogWarning("MonoSequence is missing.");
                 Complete();
                 return;
             }
 
-            // Run the provided MonoSequence
-            var runResult = Sequence.Run(monoSequence, new SequenceRunData
+            SequenceRunData defaultRunData = new SequenceRunData
             {
                 superSequence = this,
-                onBegin = OnMonoSequenceBegin,
+                onBegin = (sequence) => {
+                    OnMonoSequenceBegin(sequence);
+                    ApplyModifiers(sequence, monoSequenceDefinition);
+                },
                 onFinished = OnMonoSequenceFinished,
-            });
+            };
 
-            if (runResult.sequence == null)
+            if(monoSequenceDefinition.updateTranform)
             {
-                Debug.LogWarning("Failed to run MonoSequence.");
+                defaultRunData.spawnPosition = monoSequenceDefinition.spawnPosition;
+                defaultRunData.spawnRotation = Quaternion.Euler(monoSequenceDefinition.spawnRotation);
+                defaultRunData.spawnSpace = monoSequenceDefinition.space;
+            }
+
+            // Run the provided MonoSequence
+            var runResult = Sequence.Run(monoSequenceDefinition.sequenceToRun, defaultRunData);
+
+            if (runResult.sequence == null || waitForSequenceToFinish == false)
+            {
+                await UniTask.NextFrame();
                 Complete();
+            }
+
+        }
+
+        private void ApplyModifiers(ISequence sequence, RunnerSequenceDefinition definition)
+        {
+            Debug.Log($"(RUNNER) Applying ({definition.baseSequenceDefinitions.Count}) modifiers to " + definition.sequenceToRun.name);
+            foreach (var baseSequenceDefinition in definition.baseSequenceDefinitions)
+            {
+                Debug.Log("(RUNNER) Applying modifiers to " + definition.sequenceToRun.name);
+                if (baseSequenceDefinition != null && baseSequenceDefinition.sequenceToRun != null)
+                {
+                    Sequence.Run(baseSequenceDefinition.sequenceToRun, new SequenceRunData
+                    {
+                        superSequence = sequence,
+                        sequenceData = baseSequenceDefinition.sequenceData,
+                    });
+                }
             }
         }
 
@@ -60,17 +91,15 @@ namespace LuminaryLabs.NexusEngine
 
         protected override async UniTask Unload()
         {
-            if (monoSequence != null && monoSequence.phase == Phase.Run)
-            {
-                await Sequence.Stop(monoSequence);
-            }
+
         }
     }
 
     [System.Serializable]
     public class BaseMonoSequenceHandlerData : BaseSequenceData
     {
+        public bool waitForSequenceToFinish = true;
         [Tooltip("The MonoSequence to run")]
-        public MonoSequence monoSequence;
+        public RunnerSequenceDefinition monoSequence;
     }
 }

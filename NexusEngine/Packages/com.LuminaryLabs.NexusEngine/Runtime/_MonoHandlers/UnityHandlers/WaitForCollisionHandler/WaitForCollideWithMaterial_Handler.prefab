@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &6616190241967278623
+--- !u!1001 &2999700387499746507
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_Name
-      value: WaitForKeyPress_Space
+      value: WaitForCollideWithMaterial_Handler Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -58,26 +58,25 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -1359853375364625897}
+      addedObject: {fileID: 7102176238184678948}
   m_SourcePrefab: {fileID: 100100000, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
---- !u!1 &2036271999882866863 stripped
+--- !u!1 &7940467345855356539 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
-  m_PrefabInstance: {fileID: 6616190241967278623}
+  m_PrefabInstance: {fileID: 2999700387499746507}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-1359853375364625897
+--- !u!114 &7102176238184678948
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2036271999882866863}
+  m_GameObject: {fileID: 7940467345855356539}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be9ca18b233acbf45a9ed94b5f30c479, type: 3}
+  m_Script: {fileID: 11500000, guid: a36049d37ae367a48a13720bc6ea1ef0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whenToDestroy: 2
   _runType: 2
   _currentData:
-    keysToWaitFor: 20000000
+    physicsMaterial: {fileID: 0}
