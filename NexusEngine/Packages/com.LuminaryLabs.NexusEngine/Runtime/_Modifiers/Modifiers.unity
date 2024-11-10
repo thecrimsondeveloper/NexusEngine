@@ -130,6 +130,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4265069004917385966, guid: 07b2d984c7257f34daf491f71d313157, type: 3}
+      propertyPath: _currentData.gameObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4265069004917385966, guid: 07b2d984c7257f34daf491f71d313157, type: 3}
+      propertyPath: _currentData.gameObjects.Array.data[0]
+      value: 
+      objectReference: {fileID: 1216427178}
     - target: {fileID: 661982486910204278, guid: 07b2d984c7257f34daf491f71d313157, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -438,6 +446,48 @@ Transform:
   - {fileID: 222016821}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1315679375 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4504312651262304877, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+  m_PrefabInstance: {fileID: 8116802561729396224}
+  m_PrefabAsset: {fileID: 0}
+--- !u!143 &1315679379
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315679375}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1815714509 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -4265069004917385966, guid: 07b2d984c7257f34daf491f71d313157, type: 3}
+  m_PrefabInstance: {fileID: 213818892}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455f329fc0170c64c980c9f88c1d22b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8116802561729396224
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -490,10 +540,49 @@ PrefabInstance:
       propertyPath: m_Name
       value: ExampleSequence_Director
       objectReference: {fileID: 0}
+    - target: {fileID: 7233561999233283186, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      propertyPath: _currentData.waitFor.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8104243599345017019, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      propertyPath: managedReferences[-2]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8104243599345017019, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      propertyPath: managedReferences[4270121796433870919]
+      value: com.NexusEngine LuminaryLabs.NexusEngine.BaseMonoSequenceHandler
+      objectReference: {fileID: 0}
+    - target: {fileID: 8104243599345017019, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      propertyPath: managedReferences[4270121796433870920]
+      value: com.NexusEngine LuminaryLabs.NexusEngine.BaseMonoSequenceHandlerData
+      objectReference: {fileID: 0}
+    - target: {fileID: 8104243599345017019, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      propertyPath: managedReferences[4270121796433870920].monoSequence
+      value: 
+      objectReference: {fileID: 1815714509}
+    - target: {fileID: 8104243599345017019, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      propertyPath: managedReferences[4270121796433870875].beginWith.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8104243599345017019, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      propertyPath: managedReferences[4270121796433870919]._currentData.monoSequence
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8104243599345017019, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      propertyPath: managedReferences[4270121796433870875].beginWith.Array.data[1].sequenceData
+      value: 4270121796433870920
+      objectReference: {fileID: 0}
+    - target: {fileID: 8104243599345017019, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      propertyPath: managedReferences[4270121796433870875].beginWith.Array.data[1].sequenceToRun
+      value: 4270121796433870919
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4504312651262304877, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1315679379}
   m_SourcePrefab: {fileID: 100100000, guid: 3b1d2950de3bf8c4fb3497fe698567c9, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

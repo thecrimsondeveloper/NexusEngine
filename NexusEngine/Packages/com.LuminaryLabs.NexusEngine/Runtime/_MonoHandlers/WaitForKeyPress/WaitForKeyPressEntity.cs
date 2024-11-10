@@ -54,7 +54,6 @@ namespace LuminaryLabs.NexusEngine
         protected override UniTask Unload()
         {
             // Clean up by destroying the GameObject when the sequence is done
-            Destroy(gameObject);
             return UniTask.CompletedTask;
         }
     }

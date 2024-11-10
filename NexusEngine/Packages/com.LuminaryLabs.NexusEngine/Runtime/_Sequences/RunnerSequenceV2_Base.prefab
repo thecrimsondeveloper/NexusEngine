@@ -77,9 +77,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2844ed1dfd647d4eb8addcf8d551073, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  whenToDestroy: 0
   _runType: 2
   _currentData:
-    destroyOnUnload: 0
     beginWith: []
     waitFor: []
     finishWith: []

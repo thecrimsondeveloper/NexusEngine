@@ -31,6 +31,8 @@ namespace LuminaryLabs.NexusEngine
         }
 
         [SerializeField] MonoScript sequenceTemplate;
+        [SerializeField] MonoScript entitySequenceTemplate;
+        [SerializeField] MonoScript baseSequenceTemplate;
         [SerializeField] GameObject monoSequencePrefab;
         [SerializeField] MonoSequence runnerSequencePrefab;
 
@@ -65,5 +67,30 @@ namespace LuminaryLabs.NexusEngine
 
             return settings.sequenceTemplate;
         }
+
+        public static MonoScript GetEntitySequenceTemplate()
+        {
+            SequenceEditorSettings settings = Instance;
+
+            if (settings == null)
+            {
+                return null;
+            }
+
+            return settings.entitySequenceTemplate;
+        }
+
+        public static MonoScript GetBaseSequenceTemplate()
+        {
+            SequenceEditorSettings settings = Instance;
+
+            if (settings == null)
+            {
+                return null;
+            }
+
+            return settings.baseSequenceTemplate;
+        }
+
     }
 }
