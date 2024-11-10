@@ -8,9 +8,9 @@ namespace LuminaryLabs.NexusEngine
     public class BaseRigidbodyKinematicHandler : BaseSequence<BaseRigidbodyKinematicHandler.BaseRigidbodyKinematicHandlerData>
     {
         private Rigidbody rigidbody;
-        private KindematicMode kindematicMode;
+        private KinematicMode kindematicMode;
 
-        public enum KindematicMode
+        public enum KinematicMode
         {
             ON,
             OFF,
@@ -29,13 +29,13 @@ namespace LuminaryLabs.NexusEngine
         {
             switch (kindematicMode)
             {
-                case KindematicMode.ON:
+                case KinematicMode.ON:
                     rigidbody.isKinematic = true;
                     break;
-                case KindematicMode.OFF:
+                case KinematicMode.OFF:
                     rigidbody.isKinematic = false;
                     break;
-                case KindematicMode.TOGGLE:
+                case KinematicMode.TOGGLE:
                     rigidbody.isKinematic = !rigidbody.isKinematic;
                     break;
             }
@@ -47,7 +47,7 @@ namespace LuminaryLabs.NexusEngine
         public class BaseRigidbodyKinematicHandlerData : BaseSequenceData
         {
             public Rigidbody rigidbody;
-            public KindematicMode kindematicMode;
+            public KinematicMode kindematicMode;
         }
     }
 }
