@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -95,8 +96,8 @@ namespace LuminaryLabs.NexusEngine.Editor
             return null;
         }
 
-        /// <summary>
-        /// Modifies the class names in the script file based on the provided template and new script name.
+       /// <summary>
+        /// Modifies the class names, type parameters, and function parameter types in the script file.
         /// </summary>
         public static void ModifyClassNames(MonoScript templateScript, string scriptPath, string newScriptName)
         {
@@ -120,16 +121,38 @@ namespace LuminaryLabs.NexusEngine.Editor
                 return;
             }
 
+            // Define the old and new data class names
             string oldDataClassName = $"{oldClassName}Data";
             string newDataClassName = $"{newScriptName}Data";
 
-            // Replace both the main class name and the data class name
-            scriptContent = scriptContent
-                .Replace($"public class {oldClassName}", $"public class {newScriptName}")
-                .Replace($"public class {oldDataClassName}", $"public class {newDataClassName}");
+            // Replace the main class name
+            scriptContent = scriptContent.Replace($"public class {oldClassName}", $"public class {newScriptName}");
+
+            // Replace the data class name
+            scriptContent = scriptContent.Replace($"public class {oldDataClassName}", $"public class {newDataClassName}");
+
+            // Extract the base class type and its type parameter
+            string baseClassPattern = @"class\s+\w+\s*:\s*(\w+<(\w+)>)";
+            Match baseClassMatch = Regex.Match(scriptContent, baseClassPattern);
+            if (baseClassMatch.Success)
+            {
+                string oldBaseClassType = baseClassMatch.Groups[1].Value;
+                string oldBaseDataType = baseClassMatch.Groups[2].Value;
+
+                // Replace the type parameter in the base class
+                string newBaseClassType = oldBaseClassType.Replace(oldBaseDataType, newDataClassName);
+                scriptContent = scriptContent.Replace(oldBaseClassType, newBaseClassType);
+            }
+
+            // Use regex to update the Initialize method's parameter type
+            string oldInitializePattern = $@"protected\s+override\s+UniTask\s+Initialize\(\s*{oldDataClassName}\s+currentData\s*\)";
+            string newInitializeReplacement = $"protected override UniTask Initialize({newDataClassName} currentData)";
+            scriptContent = Regex.Replace(scriptContent, oldInitializePattern, newInitializeReplacement);
 
             // Write the modified content back to the file
             File.WriteAllText(scriptPath, scriptContent);
+
+            Debug.Log($"Successfully updated class names, base class, and Initialize method in '{scriptPath}'.");
         }
     }
 }
