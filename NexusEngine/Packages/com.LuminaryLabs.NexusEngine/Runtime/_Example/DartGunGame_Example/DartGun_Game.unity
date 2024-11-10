@@ -5929,6 +5929,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8919510360486443022, guid: aa051f170b55d9c48b3e89fa07fc6d9e, type: 3}
+      propertyPath: managedReferences[4270121839831285792].waitForSequenceToFinish
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919510360486443022, guid: aa051f170b55d9c48b3e89fa07fc6d9e, type: 3}
       propertyPath: managedReferences[4270121839831285793]._currentData.position.x
       value: 0
       objectReference: {fileID: 0}
@@ -6050,6 +6054,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8919510360486443022, guid: aa051f170b55d9c48b3e89fa07fc6d9e, type: 3}
       propertyPath: managedReferences[4270121839831285791]._currentData.monoSequence.space
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919510360486443022, guid: aa051f170b55d9c48b3e89fa07fc6d9e, type: 3}
+      propertyPath: managedReferences[4270121839831285791]._currentData.waitForSequenceToFinish
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8919510360486443022, guid: aa051f170b55d9c48b3e89fa07fc6d9e, type: 3}

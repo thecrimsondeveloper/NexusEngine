@@ -88,42 +88,50 @@ public class NexusFactory : EditorWindow
     {
         string folderPath = "Assets"; // Default path is the root of the Assets folder
 
-        try
+        // Get the Project Browser window type
+        Type projectBrowserType = Type.GetType("UnityEditor.ProjectBrowser, UnityEditor");
+
+        // Get all open instances of the Project Browser
+        EditorWindow[] projectBrowsers = Resources.FindObjectsOfTypeAll(projectBrowserType) as EditorWindow[];
+
+        if (projectBrowsers != null && projectBrowsers.Length > 0)
         {
-            // Get the Project Browser window type
-            Type projectBrowserType = Type.GetType("UnityEditor.ProjectBrowser, UnityEditor");
+            // Get the first instance (there could be multiple Project Browsers)
+            var projectBrowser = projectBrowsers[0];
 
-            // Get all open instances of the Project Browser
-            EditorWindow[] projectBrowsers = Resources.FindObjectsOfTypeAll(projectBrowserType) as EditorWindow[];
+            // Use reflection to access the internal field m_ViewMode
+            FieldInfo viewModeField = projectBrowserType.GetField("m_ViewMode", BindingFlags.Instance | BindingFlags.NonPublic);
+            int viewMode = (int)viewModeField.GetValue(projectBrowser);
 
-            if (projectBrowsers != null && projectBrowsers.Length > 0)
+            if (viewMode == 1) // 1 means 'TwoColumns' mode
             {
-                // Get the first instance (there could be multiple Project Browsers)
-                var projectBrowser = projectBrowsers[0];
+                // Get the selected folder paths in the project browser
+                MethodInfo getSelectedFoldersMethod = projectBrowserType.GetMethod("GetSelectedFolders", BindingFlags.Instance | BindingFlags.NonPublic);
+                string[] selectedFolders = (string[])getSelectedFoldersMethod.Invoke(projectBrowser, null);
 
-                // Use reflection to access the internal field m_ViewMode
-                FieldInfo viewModeField = projectBrowserType.GetField("m_ViewMode", BindingFlags.Instance | BindingFlags.NonPublic);
-                int viewMode = (int)viewModeField.GetValue(projectBrowser);
-
-                if (viewMode == 1) // 1 means 'TwoColumns' mode
+                if (selectedFolders != null && selectedFolders.Length > 0)
                 {
-                    // Get the selected folder paths in the project browser
-                    MethodInfo getSelectedFoldersMethod = projectBrowserType.GetMethod("GetSelectedFolders", BindingFlags.Instance | BindingFlags.NonPublic);
-                    string[] selectedFolders = (string[])getSelectedFoldersMethod.Invoke(projectBrowser, null);
-
-                    if (selectedFolders != null && selectedFolders.Length > 0)
-                    {
-                        folderPath = selectedFolders[0];
-                    }
+                    folderPath = selectedFolders[0];
                 }
             }
         }
-        catch (Exception ex)
-        {
-            Debug.LogError("Error getting current folder path: " + ex.Message);
-        }
+ 
 
         return folderPath;
+    }
+
+    public static string GetSelectedFolderPath()
+    {
+        // Check if there’s an active selection and it's a folder
+        if (Selection.activeObject != null)
+        {
+            string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+            if (AssetDatabase.IsValidFolder(path))
+                return path;
+        }
+
+        // Default to "Assets" if no valid folder is selected
+        return "Assets";
     }
 }
 
