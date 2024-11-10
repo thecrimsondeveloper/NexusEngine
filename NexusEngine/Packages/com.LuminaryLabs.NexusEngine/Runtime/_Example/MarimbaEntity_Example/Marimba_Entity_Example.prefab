@@ -1,64 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7723239612417993766
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 415991574430033744}
-  - component: {fileID: 2301269423661947102}
-  m_Layer: 0
-  m_Name: Mallet_Entity
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &415991574430033744
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7723239612417993766}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.437, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 427051024934733727}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
---- !u!54 &2301269423661947102
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7723239612417993766}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1001 &317933335303896303
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -352,7 +293,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4971943347567158615, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: m_Name
-      value: Marimba_Entity Variant
+      value: Marimba_Entity_Example
       objectReference: {fileID: 0}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _runType
@@ -360,7 +301,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.size
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[0].space
@@ -368,11 +309,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[1].space
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[2].space
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[3].space
@@ -399,39 +340,47 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
+      propertyPath: _currentData.beginWith.Array.data[9].space
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[0].sequenceToRun
       value: 
       objectReference: {fileID: 1745575147494087991}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[1].sequenceToRun
       value: 
-      objectReference: {fileID: 1968169120072593973}
+      objectReference: {fileID: 773955492761957633}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[2].sequenceToRun
       value: 
-      objectReference: {fileID: 3905145510947028760}
+      objectReference: {fileID: 1968169120072593973}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[3].sequenceToRun
       value: 
-      objectReference: {fileID: 9132529862987889536}
+      objectReference: {fileID: 3905145510947028760}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[4].sequenceToRun
       value: 
-      objectReference: {fileID: 95018137097355948}
+      objectReference: {fileID: 9132529862987889536}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[5].sequenceToRun
       value: 
-      objectReference: {fileID: 6841745138551955821}
+      objectReference: {fileID: 95018137097355948}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[6].sequenceToRun
       value: 
-      objectReference: {fileID: 3720942509394488183}
+      objectReference: {fileID: 6841745138551955821}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[7].sequenceToRun
       value: 
-      objectReference: {fileID: 8348018046485415733}
+      objectReference: {fileID: 3720942509394488183}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.data[8].sequenceToRun
+      value: 
+      objectReference: {fileID: 8348018046485415733}
+    - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
+      propertyPath: _currentData.beginWith.Array.data[9].sequenceToRun
       value: 
       objectReference: {fileID: 1265954234956164862}
     m_RemovedComponents: []
@@ -442,7 +391,7 @@ PrefabInstance:
       addedObject: {fileID: 4775643886481185545}
     - targetCorrespondingSourceObject: {fileID: 3559357693954640093, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       insertIndex: 1
-      addedObject: {fileID: 415991574430033744}
+      addedObject: {fileID: 5819317011239498559}
     - targetCorrespondingSourceObject: {fileID: 3559357693954640093, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4697165307344155659}
@@ -739,6 +688,79 @@ MonoBehaviour:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3300119379274104292, guid: 10f993a8033db394b9ab32981378e748, type: 3}
   m_PrefabInstance: {fileID: 4904677273757585581}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6970801474573876970
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 427051024934733727}
+    m_Modifications:
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.707
+      objectReference: {fileID: 0}
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5036601256790777951, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+      propertyPath: m_Name
+      value: MarimbaMallet_Entity (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+--- !u!114 &773955492761957633 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7638359408622652395, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+  m_PrefabInstance: {fileID: 6970801474573876970}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2844ed1dfd647d4eb8addcf8d551073, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &5819317011239498559 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3494545917534522837, guid: eb61e568863410b468e51f1838c35ce6, type: 3}
+  m_PrefabInstance: {fileID: 6970801474573876970}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7359455919705281828
 PrefabInstance:
