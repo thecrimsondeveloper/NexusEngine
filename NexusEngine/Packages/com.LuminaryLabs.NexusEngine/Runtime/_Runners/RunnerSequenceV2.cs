@@ -58,6 +58,7 @@ namespace LuminaryLabs.NexusEngine
             SequenceRunData defaultRunData = new SequenceRunData
             {
                 superSequence = this,
+                parent = definition.sequenceParent,
                 onBegin = (sequence) =>
                 {
                     onBeginCallback?.Invoke(sequence);
