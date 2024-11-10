@@ -22,21 +22,21 @@ namespace LuminaryLabs.NexusEngine
         {
             string log = LogPrefix + input;
             logDump.Add(log);
-            Debug.Log(log, context);
+            // Debug.Log(log, context);
         }
 
         public static void LogWarning(string input, UnityEngine.Object context = default)
         {
             string log = WarningPrefix + input;
             logDump.Add(log);
-            Debug.LogWarning(LogPrefix + input, context);
+            // Debug.LogWarning(LogPrefix + input, context);
         }
 
         public static void LogError(string input, UnityEngine.Object context = default)
         {
             string log = ErrorPrefix + input;
             logDump.Add(log);
-            Debug.LogError(LogPrefix + input, context);
+            // Debug.LogError(LogPrefix + input, context);
         }
 
         public static void Log(object obj)

@@ -30,6 +30,7 @@ public class BaseBeepHandler : BaseSequence<BaseBeepHandlerData>
     /// </summary>
     protected override void OnBegin()
     {
+        Debug.Log("Playing beep sound...");
         // Use the private fields instead of directly accessing currentData
         PlayBeep(_frequency, _duration);
     }
@@ -45,6 +46,7 @@ public class BaseBeepHandler : BaseSequence<BaseBeepHandlerData>
         audioSource.Play();
 
         await UniTask.Delay((int)(duration * 1000));
+        Debug.Log("Playing beep sound complete.");
 
         // Complete the sequence
         Complete();
