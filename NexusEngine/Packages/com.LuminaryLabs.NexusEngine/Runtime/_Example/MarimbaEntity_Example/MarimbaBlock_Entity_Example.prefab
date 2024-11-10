@@ -134,7 +134,7 @@ PrefabInstance:
     - target: {fileID: 7102176238184678948, guid: 029d85355ed8a9d438ad86bdaf5e900c, type: 3}
       propertyPath: _currentData.physicsMaterial
       value: 
-      objectReference: {fileID: 13400000, guid: da58b658baba9184bb845eeb84625219, type: 2}
+      objectReference: {fileID: 13400000, guid: 39530b3cf22a7ea4cac4d2c0ff589975, type: 2}
     - target: {fileID: 7940467345855356539, guid: 029d85355ed8a9d438ad86bdaf5e900c, type: 3}
       propertyPath: m_Name
       value: WaitForCollideWithMaterial_Handler
