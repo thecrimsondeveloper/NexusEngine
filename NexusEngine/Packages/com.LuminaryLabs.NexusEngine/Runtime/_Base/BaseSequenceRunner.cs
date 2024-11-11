@@ -9,6 +9,8 @@ namespace LuminaryLabs.NexusEngine
 {
     public class BaseSequenceRunner : EntitySequence<BaseSequenceRunnerData>
     {
+        private bool stopCurrentlyRunningSequencesOnUnload = false;
+
         private List<BaseSequenceDefinition> sequencesToRun = new List<BaseSequenceDefinition>();
 
 #if ODIN_INSPECTOR
@@ -19,7 +21,7 @@ namespace LuminaryLabs.NexusEngine
 
         protected override UniTask Initialize(BaseSequenceRunnerData currentData)
         {
-
+            stopCurrentlyRunningSequencesOnUnload = currentData.stopCurrentlyRunningSequencesOnUnload;
             runningSequences.Clear();
             // Populate the sequencesToRun list with the data provided
             sequencesToRun = new List<BaseSequenceDefinition>(currentData.sequencesToRun);
@@ -34,6 +36,38 @@ namespace LuminaryLabs.NexusEngine
                 RunSequence(definition);
             }
         }
+
+        protected override async UniTask Unload()
+        {
+            if(stopCurrentlyRunningSequencesOnUnload)
+            {
+                await StopSequences(runningSequences);
+            }
+        }
+        
+        private async UniTask StopSequences(List<ISequence> sequences)
+        {
+            while (sequences.Count > 0)
+            {
+                ISequence sequenceToStop = sequences[0];
+
+                // If the sequence is null, remove it from the list and continue
+                if (sequenceToStop == null)
+                {
+                    sequences.RemoveAt(0);
+                    continue;
+                }
+
+                await Sequence.Stop(sequenceToStop);
+
+                // Remove the sequence after stopping it
+                if (sequences.Contains(sequenceToStop))
+                {
+                    sequences.Remove(sequenceToStop);
+                }
+            }
+        }
+
 
         private void RunSequence(BaseSequenceDefinition definition)
         {
@@ -94,6 +128,7 @@ namespace LuminaryLabs.NexusEngine
     [System.Serializable]
     public class BaseSequenceRunnerData : SequenceData
     {
+        public bool stopCurrentlyRunningSequencesOnUnload = false;
         public List<BaseSequenceDefinition> sequencesToRun = new List<BaseSequenceDefinition>();
     }
 }
