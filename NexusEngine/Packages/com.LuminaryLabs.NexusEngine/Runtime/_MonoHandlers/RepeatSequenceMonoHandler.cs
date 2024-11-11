@@ -31,8 +31,9 @@ namespace LuminaryLabs.NexusEngine
         }
 
 
-        void RunWaitForSequences()
+        async void RunWaitForSequences()
         {
+            
             foreach (var definition in waitForSequences)
             {
                 Sequence.Run(definition.sequenceToRun, new SequenceRunData
@@ -47,11 +48,13 @@ namespace LuminaryLabs.NexusEngine
 
         private void OnWaitForSequenceBegin(ISequence sequence)
         {
+            Nexus.Log("Repeate Sequence started: " + sequence.name);
             sequencesToWaitFor.Add(sequence);
         }
 
-        private void OnWaitForSequenceFinished(ISequence sequence)
+        private async void OnWaitForSequenceFinished(ISequence sequence)
         {
+            Nexus.Log("Repeate Sequence finished: " + sequence.name);
             if (sequencesToWaitFor.Contains(sequence))
             {
                 sequencesToWaitFor.Remove(sequence);
@@ -59,6 +62,8 @@ namespace LuminaryLabs.NexusEngine
 
             if (sequencesToWaitFor.Count == 0)
             {
+                await UniTask.NextFrame();
+                Nexus.Log("All sequences finished. Running WaitSequences Again.");
                 RunWaitForSequences();
             }
         }

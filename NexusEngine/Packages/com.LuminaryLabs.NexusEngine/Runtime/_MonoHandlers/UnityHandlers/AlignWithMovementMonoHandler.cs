@@ -51,7 +51,6 @@ namespace LuminaryLabs.NexusEngine
                 {
                     // Smooth alignment using Lerp with the damping divisor
                     float lerpFactor = 1 / dampingDivisor * Time.deltaTime;
-                    Debug.Log(lerpFactor);
                     transformToAlign.rotation = Quaternion.Lerp(
                         transformToAlign.rotation,
                         targetRotation,
