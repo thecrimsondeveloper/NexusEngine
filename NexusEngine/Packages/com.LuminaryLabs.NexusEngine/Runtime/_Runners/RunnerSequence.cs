@@ -9,7 +9,7 @@ using UnityEngine.Events;
 
 namespace LuminaryLabs.NexusEngine
 {
-    public class RunnerSequenceV2 : EntitySequence<RunnerSequenceV2Data>
+    public class RunnerSequence : EntitySequence<RunnerSequenceV2Data>
     {
         private int currentWaitForIndex = 0; // Index for tracking the current waitFor sequence
 
