@@ -234,7 +234,7 @@ namespace LuminaryLabs.NexusEngine
             {
                 await Stop(runData.replace);
             }
-            await UniTask.NextFrame();
+            // await UniTask.NextFrame();
 
             // Setup sequence hierarchy
             if (runData.superSequence != null)
@@ -288,7 +288,7 @@ namespace LuminaryLabs.NexusEngine
 
             if (!IsRunning(sequence))
             {
-                Nexus.LogWarning("Stop-Sequence: "+sequence.GetType()+" is not running with GUID: "+ sequence.guid);
+                Nexus.LogWarning("Stop-Sequence: "+sequence.name+" is not running with GUID: "+ sequence.guid);
             }
 
             if(sequenceEvents.TryGetValue(sequence.guid, out SequenceEvents evts) == false)
@@ -323,13 +323,12 @@ namespace LuminaryLabs.NexusEngine
             
             if (!IsRunning(sequence))
             {
-                string mustRunError = sequence.GetType() + " is not currently running. You must Run a Sequence in order for it to Finish";
+                string mustRunError = sequence.name + " is not currently running. You must Run a Sequence in order for it to Finish";
 
                 if(sequence is UnityEngine.Object obj)
-                Nexus.LogError(obj.name + ": " + mustRunError, obj);
+                    Nexus.LogError(obj.name + ": " + mustRunError, obj);
                 else
-                Nexus.LogError(mustRunError);
-
+                    Nexus.LogError(mustRunError);
                 return;
             }
 
