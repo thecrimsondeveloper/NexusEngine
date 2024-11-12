@@ -19,7 +19,7 @@ namespace LuminaryLabs.NexusEngine
 
         protected override UniTask Initialize(BaseRigidbodyKinematicHandlerData currentData)
         {
-            rigidbody = currentData.rigidbody;
+            rigidbody = currentData.rigidbody;  
             kindematicMode = currentData.kindematicMode;
 
             return UniTask.CompletedTask;
@@ -27,17 +27,20 @@ namespace LuminaryLabs.NexusEngine
 
         protected override async void OnBegin()
         {
-            switch (kindematicMode)
+            if(rigidbody != null)
             {
-                case KinematicMode.ON:
-                    rigidbody.isKinematic = true;
-                    break;
-                case KinematicMode.OFF:
-                    rigidbody.isKinematic = false;
-                    break;
-                case KinematicMode.TOGGLE:
-                    rigidbody.isKinematic = !rigidbody.isKinematic;
-                    break;
+                switch (kindematicMode)
+                {
+                    case KinematicMode.ON:
+                        rigidbody.isKinematic = true;
+                        break;
+                    case KinematicMode.OFF:
+                        rigidbody.isKinematic = false;
+                        break;
+                    case KinematicMode.TOGGLE:
+                        rigidbody.isKinematic = !rigidbody.isKinematic;
+                        break;
+                }
             }
 
             await UniTask.NextFrame();

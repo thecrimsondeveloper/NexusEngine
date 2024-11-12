@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace LuminaryLabs.NexusEngine
 {
-    public class PhysicsColliderIgnoreHandler : EntitySequence<PhysicsColliderIgnoreHandler.PhysicsColliderIgnoreData>
+    public class MonoColliderIgnoreHandler : EntitySequence<MonoColliderIgnoreHandlerData>
     {
         private bool resetIgnoringWhenUnload;
         private List<Collider> collidersToIgnore;
-        protected override UniTask Initialize(PhysicsColliderIgnoreData currentData)
+        protected override UniTask Initialize(MonoColliderIgnoreHandlerData currentData)
         {
             collidersToIgnore = currentData.collidersToIgnore;
             resetIgnoringWhenUnload = currentData.resetIgnoringWhenUnload;
@@ -67,13 +67,13 @@ namespace LuminaryLabs.NexusEngine
                 }
             }
         }
+    }
 
-            // Data class to store colliders that should ignore collisions
-        [System.Serializable]
-        public class PhysicsColliderIgnoreData : SequenceData
-        {
-            public bool resetIgnoringWhenUnload = true;
-            public List<Collider> collidersToIgnore;
-        }
+        // Data class to store colliders that should ignore collisions
+    [System.Serializable]
+    public class MonoColliderIgnoreHandlerData : SequenceData
+    {
+        public bool resetIgnoringWhenUnload = true;
+        public List<Collider> collidersToIgnore;
     }
 }

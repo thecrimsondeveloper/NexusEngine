@@ -9,7 +9,7 @@ using UnityEngine.Events;
 
 namespace LuminaryLabs.NexusEngine
 {
-    public class RunnerSequenceV2 : EntitySequence<RunnerSequenceV2Data>
+    public class RunnerSequence : EntitySequence<RunnerSequenceV2Data>
     {
         private int currentWaitForIndex = 0; // Index for tracking the current waitFor sequence
 
@@ -251,20 +251,27 @@ namespace LuminaryLabs.NexusEngine
 
         private async UniTask StopSequences(List<ISequence> sequences)
         {
-            while(sequences.Count > 0)
+            while (sequences.Count > 0)
             {
                 ISequence sequenceToStop = sequences[0];
-                if(sequenceToStop == null) continue;
+
+                // If the sequence is null, remove it from the list and continue
+                if (sequenceToStop == null)
+                {
+                    sequences.RemoveAt(0);
+                    continue;
+                }
 
                 await Sequence.Stop(sequenceToStop);
 
-                if(sequences.Contains(sequenceToStop))
+                // Remove the sequence after stopping it
+                if (sequences.Contains(sequenceToStop))
                 {
                     sequences.Remove(sequenceToStop);
                 }
             }
-
         }
+
     }
 
     [System.Serializable]
