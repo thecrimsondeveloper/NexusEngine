@@ -39,6 +39,11 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
 
         protected override void OnBegin()
         {
+            forceDirection.Normalize();
+            foreach (var rb in rigidbodies)
+            {
+                
+            }
             switch (_action)
             {
                 case ModifyAction.SetVelocity:
@@ -50,13 +55,13 @@ namespace LuminaryLabs.NexusEngine.UnityHandlers
                 case ModifyAction.AddForce:
                     foreach (var rb in rigidbodies)
                     {
-                        rb.AddForce(forceDirection * forceMagnitude, ForceMode.Force);
+                        rb.AddForce(rb.transform.InverseTransformDirection(forceDirection) * forceMagnitude, ForceMode.Force);
                     }
                     break;
                 case ModifyAction.AddImpulse:
                     foreach (var rb in rigidbodies)
                     {
-                        rb.AddForce(forceDirection * impulseMagnitude, ForceMode.Impulse);
+                        rb.AddForce(rb.transform.InverseTransformDirection(forceDirection) * impulseMagnitude, ForceMode.Impulse);
                     }
                     break;
             }
