@@ -326,10 +326,6 @@ PrefabInstance:
       value: MarimbaBlock_Entity (1)
       objectReference: {fileID: 0}
     - target: {fileID: 9083972858770128389, guid: 10f993a8033db394b9ab32981378e748, type: 3}
-      propertyPath: managedReferences[27701328593289258].frequency
-      value: 587.33
-      objectReference: {fileID: 0}
-    - target: {fileID: 9083972858770128389, guid: 10f993a8033db394b9ab32981378e748, type: 3}
       propertyPath: managedReferences[27701328593289258].audioSource
       value: 
       objectReference: {fileID: 1681037134}
