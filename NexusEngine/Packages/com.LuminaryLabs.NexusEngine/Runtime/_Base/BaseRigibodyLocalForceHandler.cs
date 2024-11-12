@@ -18,7 +18,6 @@ namespace LuminaryLabs.NexusEngine
         private Vector3 continuousForce;
         private ForceMode continuousForceMode;
         private float continuousForceDuration;
-        private bool isContinuousForceInfinite;
 
         protected override UniTask Initialize(BaseRigidbodyLocalForceData currentData)
         {
@@ -33,7 +32,6 @@ namespace LuminaryLabs.NexusEngine
             continuousForce = currentData.continuousForce;
             continuousForceMode = currentData.continuousForceMode;
             continuousForceDuration = currentData.continuousForceDuration;
-            isContinuousForceInfinite = Mathf.Approximately(continuousForceDuration, 1f);
 
             return UniTask.CompletedTask;
         }
@@ -54,7 +52,7 @@ namespace LuminaryLabs.NexusEngine
             }
 
             // Apply continuous force if specified
-            if (applyContinuousForce)
+            if (applyContinuousForce && continuousForceDuration > 0)
             {
                 await ApplyContinuousForce();
             }
@@ -70,12 +68,12 @@ namespace LuminaryLabs.NexusEngine
 
         private async UniTask ApplyContinuousForce()
         {
-            float elapsedTime = 0f;
+            float countdown = continuousForceDuration;
 
-            while (isContinuousForceInfinite || elapsedTime < continuousForceDuration)
+            while (countdown > 0)
             {
                 ApplyLocalForce(continuousForce, continuousForceMode);
-                elapsedTime += Time.deltaTime;
+                countdown -= Time.deltaTime;
                 await UniTask.Yield();
             }
         }
@@ -101,8 +99,7 @@ namespace LuminaryLabs.NexusEngine
             public Vector3 continuousForce = Vector3.zero;
             public ForceMode continuousForceMode = ForceMode.Force;
 
-            [Tooltip("Duration for continuous force application. Set to 0 for instant, 1 for infinite.")]
-            [Range(0, 1)]
+            [Tooltip("Duration for continuous force application in seconds. Set to 0 for no continuous force.")]
             public float continuousForceDuration = 0f;
         }
     }

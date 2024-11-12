@@ -77,6 +77,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5225d347b0017f94da58f5f18353c022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  whenToDestroy: 0
   _runType: 2
   _currentData:
     movementAction: 4
@@ -87,4 +88,6 @@ MonoBehaviour:
     rotateSpeed: 1
     pathFollowSpeed: 1
     splineHandler: {fileID: 0}
+    pathFollowMode: 0
+    orientTowardsMovement: 1
   kinematicRigidbodies: []

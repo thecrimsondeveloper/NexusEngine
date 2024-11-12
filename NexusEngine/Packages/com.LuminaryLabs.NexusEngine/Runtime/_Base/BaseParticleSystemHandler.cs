@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
@@ -35,7 +36,7 @@ public class BaseParticleSystemHandler : BaseSequence<BaseParticleSystemHandlerD
 
           
 
-            await UniTask.Delay((int)(overrideDuration == -1 ? mainModule.duration : overrideDuration * 1000));
+            await UniTask.Delay((int)(overrideDuration == -1 ? mainModule.duration : Mathf.Clamp(overrideDuration, 0, Mathf.Infinity) * 1000));
 
             // Complete the sequence after the delay
             Complete();

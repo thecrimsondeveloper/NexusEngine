@@ -48,7 +48,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3451404672816719063}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -977,6 +977,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3559357693954640093, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.1012
+      objectReference: {fileID: 0}
+    - target: {fileID: 3559357693954640093, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.54895
+      objectReference: {fileID: 0}
+    - target: {fileID: 3559357693954640093, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.418
       objectReference: {fileID: 0}
@@ -1018,7 +1026,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4971943347567158615, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: m_Name
-      value: MarimbaBlock_Entity Variant
+      value: MarimbaBlock_Entity_Example
       objectReference: {fileID: 0}
     - target: {fileID: 7717649549868715747, guid: b0a09a9946ac4ed4db1176597c1bba5e, type: 3}
       propertyPath: _currentData.beginWith.Array.size
@@ -1129,6 +1137,7 @@ MonoBehaviour:
   whenToDestroy: 0
   _runType: 2
   _currentData:
+    stopCurrentlyRunningSequencesOnUnload: 0
     sequencesToRun:
     - sequenceToRun:
         rid: 27701328593289257
