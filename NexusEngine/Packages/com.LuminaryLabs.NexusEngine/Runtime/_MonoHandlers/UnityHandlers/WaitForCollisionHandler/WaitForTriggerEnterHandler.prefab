@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_Name
-      value: WaitForCollisionExitHandler
+      value: WaitForTriggerEnterHandler
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -58,14 +58,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3332383478985874833}
+      addedObject: {fileID: -8251469948231574348}
   m_SourcePrefab: {fileID: 100100000, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
 --- !u!1 &7210111099860208789 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
   m_PrefabInstance: {fileID: 2566016841202726437}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3332383478985874833
+--- !u!114 &-8251469948231574348
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -81,5 +81,5 @@ MonoBehaviour:
   _runType: 2
   _currentData:
     collider: {fileID: 0}
-    eventType: 1
-    detectionType: 0
+    eventType: 0
+    detectionType: 1

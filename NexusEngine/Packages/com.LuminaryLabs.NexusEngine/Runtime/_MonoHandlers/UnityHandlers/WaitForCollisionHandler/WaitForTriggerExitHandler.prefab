@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5157509295596255920, guid: 255812d14cb551743b109cdea3dfcbe7, type: 3}
       propertyPath: m_Name
-      value: WaitForCollisionExitHandler
+      value: WaitForTriggerExitHandler
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -82,4 +82,4 @@ MonoBehaviour:
   _currentData:
     collider: {fileID: 0}
     eventType: 1
-    detectionType: 0
+    detectionType: 1

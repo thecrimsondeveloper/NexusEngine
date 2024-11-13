@@ -25,6 +25,22 @@ namespace LuminaryLabs.NexusEngine
             return this is MonoBehaviour monoBehaviour ? monoBehaviour.transform : superSequence?.GetTransform();
         }
 
+        public bool TryGetUnityComponent<T>(out T component) where T : Component
+        {
+            if (this is MonoBehaviour monoBehaviour)
+            {
+                component = monoBehaviour.GetComponent<T>();
+                return component != null;
+            }
+            else if (superSequence != null)
+            {
+                return superSequence.TryGetUnityComponent(out component);
+            }   
+
+            component = null;
+            return false;
+        }
+
         public string name => this is UnityEngine.Object obj ? obj.name : this.GetType().ToString();
 
         public async void Complete()

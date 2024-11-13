@@ -9,9 +9,15 @@ using UnityEngine;
 namespace LuminaryLabs.NexusEngine
 {
 
+    public class MonoSequenceDefinition
+    {
+       
+    }
+
     [System.Serializable]
     public class BaseSequenceDefinition
     {
+
         [SerializeReference]
         public BaseSequence sequenceToRun;
         [SerializeReference]

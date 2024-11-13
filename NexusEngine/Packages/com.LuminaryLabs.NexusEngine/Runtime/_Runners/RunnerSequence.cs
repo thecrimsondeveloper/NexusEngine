@@ -343,5 +343,23 @@ namespace LuminaryLabs.NexusEngine
         [FoldoutGroup("Modifiers")]
         #endif
         public List<BaseSequenceDefinition> baseSequenceDefinitions = new List<BaseSequenceDefinition>();
+
+        public static void ApplyModifiers(ISequence sequence, RunnerSequenceDefinition definition)
+        {
+            Debug.Log($"(RUNNER) Applying ({definition.baseSequenceDefinitions.Count}) modifiers to " + definition.sequenceToRun.name);
+            foreach (var baseSequenceDefinition in definition.baseSequenceDefinitions)
+            {
+                Debug.Log("(RUNNER) Applying modifiers to " + definition.sequenceToRun.name);
+                if (baseSequenceDefinition != null && baseSequenceDefinition.sequenceToRun != null)
+                {
+                    Sequence.Run(baseSequenceDefinition.sequenceToRun, new SequenceRunData
+                    {
+                        superSequence = sequence,
+                        sequenceData = baseSequenceDefinition.sequenceData,
+                    });
+                }
+            }
+        }
+
     }
 }
