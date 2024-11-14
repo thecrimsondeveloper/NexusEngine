@@ -154,12 +154,13 @@ namespace LuminaryLabs.NexusEngine
                 runData = new SequenceRunData();
             }
 
-            sequence = HandleInstantiation(sequence, runData);
 
+            sequence = HandleInstantiation(sequence, runData);
             //handle anything to do with Unity Objects
-            if (sequence is MonoBehaviour monoBehaviour)
+            if (sequence is MonoBehaviour monoBehaviour && runData.setupInHeirarchy)
             {
-                HandleMonoBehaviour(monoBehaviour, runData);
+                GameObject sequenceGameObject = monoBehaviour.gameObject;
+                SetupInHeirarchy(monoBehaviour, runData);
             }
 
             Nexus.Log("PreRegister Sequence: " + sequence.name);
@@ -169,6 +170,7 @@ namespace LuminaryLabs.NexusEngine
             Nexus.Log("Sequence Ready To Run "+ sequence.name);
 
             // Start the sequence and store the running task
+
             UniTask runningTask = RunSequence(sequence, events, runData);
             sequenceObject.SetTask(runningTask);
             sequenceObject.events = events;
@@ -176,7 +178,7 @@ namespace LuminaryLabs.NexusEngine
             return sequenceObject;
         }
 
-       public static void HandleMonoBehaviour(MonoBehaviour sequence, SequenceRunData runData)
+       public static void SetupInHeirarchy(MonoBehaviour sequence, SequenceRunData runData)
         {
             if (sequence == null || runData == null)
             {

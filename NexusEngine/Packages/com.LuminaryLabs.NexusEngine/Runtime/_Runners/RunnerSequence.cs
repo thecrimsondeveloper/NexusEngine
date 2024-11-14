@@ -65,7 +65,8 @@ namespace LuminaryLabs.NexusEngine
                     ApplyModifiers(sequence, definition);
                 },
                 onUnload = onUnloadCallback,
-                onFinished = onFinishedCallback
+                onFinished = onFinishedCallback,
+                setupInHeirarchy = definition.setupSequenceInHeirarchy
             };
 
             if(definition.updateTranform)
@@ -318,6 +319,10 @@ namespace LuminaryLabs.NexusEngine
         [FoldoutGroup("Modifiers")]
         #endif
         public Transform sequenceParent;
+        #if ODIN_INSPECTOR
+        [FoldoutGroup("Modifiers")]
+        #endif
+        public bool setupSequenceInHeirarchy = true;
 
         #if ODIN_INSPECTOR
         [FoldoutGroup("Modifiers")]

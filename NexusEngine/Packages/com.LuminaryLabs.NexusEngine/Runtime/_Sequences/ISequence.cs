@@ -41,7 +41,8 @@ namespace LuminaryLabs.NexusEngine
             return false;
         }
 
-        public string name => this is UnityEngine.Object obj ? obj.name : this.GetType().ToString();
+        public string name => this is UnityEngine.Object obj ? 
+                            (obj.GetType().ToString()) : this.GetType().ToString();
 
         public async void Complete()
         {

@@ -41,6 +41,7 @@ namespace LuminaryLabs.NexusEngine
                     RunnerSequenceDefinition.ApplyModifiers(sequence, monoSequenceDefinition);
                 },
                 onFinished = OnMonoSequenceFinished,
+                setupInHeirarchy = monoSequenceDefinition.setupSequenceInHeirarchy
             };
 
             if(monoSequenceDefinition.updateTranform)

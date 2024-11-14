@@ -87,6 +87,7 @@ namespace LuminaryLabs.NexusEngine
         /// </summary>
         /// /// ///
         public SequenceAction<Object> onGenerated { get; set; }
+        public bool setupInHeirarchy { get; set;} = true;
 
         public override string ToString() => $"SequenceRunData: {sequenceData}\nSuperSequence: {superSequence}\nReplace: {replace}\nSpawnPosition: {spawnPosition}\nSpawnRotation: {spawnRotation}\nParent: {parent}";
     }

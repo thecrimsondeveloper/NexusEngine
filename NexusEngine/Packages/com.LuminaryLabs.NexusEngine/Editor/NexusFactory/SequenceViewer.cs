@@ -90,7 +90,7 @@ public class SequenceViewer : NexusFactoryPane
 
         // Add Complete button for the sequence
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Sequence: " + sequence.name, EditorStyles.boldLabel);
+        GUILayout.Label("Name: " + sequence.name, EditorStyles.boldLabel);
          if (GUILayout.Button("Complete"))
         {
             CompleteSequence(sequence);
