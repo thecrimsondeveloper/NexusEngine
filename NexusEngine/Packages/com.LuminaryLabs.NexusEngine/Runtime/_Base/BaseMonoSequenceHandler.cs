@@ -9,6 +9,7 @@ namespace LuminaryLabs.NexusEngine
     public class BaseMonoSequenceHandler : BaseSequence<BaseMonoSequenceHandlerData>
     {
         private RunnerSequenceDefinition monoSequenceDefinition;
+        private bool completeAfterRunningDefinition = true;
         private bool waitForSequenceToFinish = true;       
         private bool unloadRunningSequenceOnUnload = false;
 
@@ -17,6 +18,7 @@ namespace LuminaryLabs.NexusEngine
         protected override UniTask Initialize(BaseMonoSequenceHandlerData currentData)
         {
             // Set the MonoSequence from the provided data
+            completeAfterRunningDefinition  = currentData.completeAfterRunningDefinition;
             monoSequenceDefinition = currentData.monoSequence;
             waitForSequenceToFinish = currentData.waitForSequenceToFinish;
             unloadRunningSequenceOnUnload = currentData.unloadRunningSequenceOnUnload;
@@ -52,14 +54,13 @@ namespace LuminaryLabs.NexusEngine
             }
 
             // Run the provided MonoSequence
-            var runResult = Sequence.Run(monoSequenceDefinition.sequenceToRun, defaultRunData);
+            Sequence.Run(monoSequenceDefinition.sequenceToRun, defaultRunData);
 
-            if (runResult.sequence == null || waitForSequenceToFinish == false)
+            //if we are not waiting for the sequence to finish, complete immediately if toggle is set
+            if (completeAfterRunningDefinition && !waitForSequenceToFinish)
             {
-                await UniTask.NextFrame();
                 Complete();
             }
-
         }
         private void OnMonoSequenceBegin(ISequence sequence)
         {
@@ -88,6 +89,7 @@ namespace LuminaryLabs.NexusEngine
     [System.Serializable]
     public class BaseMonoSequenceHandlerData : BaseSequenceData
     {
+        public bool completeAfterRunningDefinition = true;
         public bool waitForSequenceToFinish = true;
         public bool unloadRunningSequenceOnUnload = false;
         [Tooltip("The MonoSequence to run")]
