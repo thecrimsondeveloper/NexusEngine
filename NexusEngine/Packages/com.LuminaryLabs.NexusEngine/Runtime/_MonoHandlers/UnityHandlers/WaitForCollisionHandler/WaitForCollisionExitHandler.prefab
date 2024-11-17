@@ -77,7 +77,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0a2809df89d227418566c10b6d9c7bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  whenToDestroy: 0
   _runType: 2
   _currentData:
     collider: {fileID: 0}
-    collisionType: 1
+    eventType: 1
+    detectionType: 0

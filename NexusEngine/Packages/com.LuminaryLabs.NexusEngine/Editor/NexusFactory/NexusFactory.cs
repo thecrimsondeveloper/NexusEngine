@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using LuminaryLabs.NexusEngine.Editor;
 
 // NexusFactory Editor Window
 public class NexusFactory : EditorWindow
@@ -25,6 +26,7 @@ public class NexusFactory : EditorWindow
         AddPane<NexusMeshBaker>();
         AddPane<NexusSkyboxGenerator>();
         AddPane<NexusWorldGenerator>();
+        AddPane<NexusReferenceEditor>();
     }
 
     // Method to add a pane only if it doesn’t already exist in the dictionary

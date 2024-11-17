@@ -9,14 +9,19 @@ namespace LuminaryLabs.NexusEngine
     public class BaseMonoSequenceHandler : BaseSequence<BaseMonoSequenceHandlerData>
     {
         private RunnerSequenceDefinition monoSequenceDefinition;
+        private bool completeAfterRunningDefinition = true;
         private bool waitForSequenceToFinish = true;       
+        private bool unloadRunningSequenceOnUnload = false;
+
         private ISequence runningSequence;
 
         protected override UniTask Initialize(BaseMonoSequenceHandlerData currentData)
         {
             // Set the MonoSequence from the provided data
+            completeAfterRunningDefinition  = currentData.completeAfterRunningDefinition;
             monoSequenceDefinition = currentData.monoSequence;
             waitForSequenceToFinish = currentData.waitForSequenceToFinish;
+            unloadRunningSequenceOnUnload = currentData.unloadRunningSequenceOnUnload;
             return UniTask.CompletedTask;
         }
 
@@ -32,11 +37,13 @@ namespace LuminaryLabs.NexusEngine
             SequenceRunData defaultRunData = new SequenceRunData
             {
                 superSequence = this,
+                parent = monoSequenceDefinition.sequenceParent,
                 onBegin = (sequence) => {
                     OnMonoSequenceBegin(sequence);
-                    ApplyModifiers(sequence, monoSequenceDefinition);
+                    RunnerSequenceDefinition.ApplyModifiers(sequence, monoSequenceDefinition);
                 },
                 onFinished = OnMonoSequenceFinished,
+                setupInHeirarchy = monoSequenceDefinition.setupSequenceInHeirarchy
             };
 
             if(monoSequenceDefinition.updateTranform)
@@ -47,33 +54,14 @@ namespace LuminaryLabs.NexusEngine
             }
 
             // Run the provided MonoSequence
-            var runResult = Sequence.Run(monoSequenceDefinition.sequenceToRun, defaultRunData);
+            Sequence.Run(monoSequenceDefinition.sequenceToRun, defaultRunData);
 
-            if (runResult.sequence == null || waitForSequenceToFinish == false)
+            //if we are not waiting for the sequence to finish, complete immediately if toggle is set
+            if (completeAfterRunningDefinition && !waitForSequenceToFinish)
             {
-                await UniTask.NextFrame();
                 Complete();
             }
-
         }
-
-        private void ApplyModifiers(ISequence sequence, RunnerSequenceDefinition definition)
-        {
-            Debug.Log($"(RUNNER) Applying ({definition.baseSequenceDefinitions.Count}) modifiers to " + definition.sequenceToRun.name);
-            foreach (var baseSequenceDefinition in definition.baseSequenceDefinitions)
-            {
-                Debug.Log("(RUNNER) Applying modifiers to " + definition.sequenceToRun.name);
-                if (baseSequenceDefinition != null && baseSequenceDefinition.sequenceToRun != null)
-                {
-                    Sequence.Run(baseSequenceDefinition.sequenceToRun, new SequenceRunData
-                    {
-                        superSequence = sequence,
-                        sequenceData = baseSequenceDefinition.sequenceData,
-                    });
-                }
-            }
-        }
-
         private void OnMonoSequenceBegin(ISequence sequence)
         {
             Debug.Log("MonoSequence began: " + sequence.name);
@@ -91,14 +79,19 @@ namespace LuminaryLabs.NexusEngine
 
         protected override async UniTask Unload()
         {
-
+            if (unloadRunningSequenceOnUnload && runningSequence != null)
+            {
+                await Sequence.Stop(runningSequence);
+            }
         }
     }
 
     [System.Serializable]
     public class BaseMonoSequenceHandlerData : BaseSequenceData
     {
+        public bool completeAfterRunningDefinition = true;
         public bool waitForSequenceToFinish = true;
+        public bool unloadRunningSequenceOnUnload = false;
         [Tooltip("The MonoSequence to run")]
         public RunnerSequenceDefinition monoSequence;
     }
