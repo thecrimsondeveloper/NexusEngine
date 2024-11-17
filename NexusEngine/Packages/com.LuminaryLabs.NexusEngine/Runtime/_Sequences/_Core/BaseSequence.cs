@@ -69,7 +69,7 @@ namespace LuminaryLabs.NexusEngine
     }
 
 
-   public abstract class BaseSequence<T> : BaseSequence where T : BaseSequenceData
+    public abstract class BaseSequence<T> : BaseSequence where T : BaseSequenceData
     {
 
 
