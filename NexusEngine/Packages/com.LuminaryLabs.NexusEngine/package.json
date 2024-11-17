@@ -1,6 +1,6 @@
 {
   "name": "com.luminarylabs.nexusengine",
-  "version": "1.0.118",
+  "version": "1.0.119",
   "displayName": "Nexus Engine",
   "description": "A powerful engine by LuminaryLabs. Everything can be a Sequence, and Nexus Engine is here to help you with that.",
   "changelogUrl": "CHANGELOG.md",
