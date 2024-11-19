@@ -1,0 +1,89 @@
+#pragma kernel CSMain
+
+RWTexture2D<float4> Result;
+
+struct Data
+{
+    float zoom;
+    float offsetX;
+    float offsetY;
+    float audioIntensity;
+
+    float band0;
+    float band1;
+    float band2;
+    float band3;
+    float band4;
+    float band5;
+    float band6;
+    float band7;
+
+    float smoothingFactor; // Smoothing for audio data
+    float colorReactivity; // Color reactivity slider
+    float padding1;        // Padding for 16-byte alignment
+    float padding2;        // Padding for 16-byte alignment
+};
+
+StructuredBuffer<Data> dataBuffer;
+
+// Function to create the glowing circle effect
+float circleGlow(float2 uv, float2 center, float radius, float glowIntensity)
+{
+    float dist = length(uv - center);
+    return exp(-pow(dist / radius, 2.0)) * glowIntensity;
+}
+
+// Function to move the circle independently
+float2 movingCircle(float2 basePosition, float audioInfluence, float time, float speed)
+{
+    return basePosition + float2(
+        sin(time * speed + audioInfluence * 2.0),
+        cos(time * speed + audioInfluence * 3.0)
+    ) * 0.2; // Adjust motion amplitude
+}
+
+[numthreads(24, 24, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    uint width, height;
+    Result.GetDimensions(width, height);
+
+    // Map pixel coordinates to normalized UV space
+    float2 uv = float2(id.xy) / float2(width, height);
+    uv = (uv - 0.5) * 2.0; // Center UV coordinates to [-1, 1]
+
+    // Retrieve audio and time-based parameters
+    float time = dataBuffer[0].audioIntensity;
+    float audio0 = dataBuffer[0].band0;
+    float audio1 = dataBuffer[0].band1;
+    float audio2 = dataBuffer[0].band2;
+
+    // Define circle parameters
+    float2 basePositions[3] = {
+        float2(-0.5, 0.0),
+        float2(0.5, 0.0),
+        float2(0.0, 0.5)
+    };
+
+    float radii[3] = { 0.3, 0.25, 0.2 };
+    float glowIntensities[3] = { 2.0, 1.5, 1.2 };
+
+    // Calculate combined glow and motion
+    float totalGlow = 0.0;
+    for (int i = 0; i < 3; i++)
+    {
+        float2 movingPos = movingCircle(basePositions[i], audio0 + i * 0.1, time, audio1 + i * 0.2);
+        totalGlow += circleGlow(uv, movingPos, radii[i] * (1.0 + audio2), glowIntensities[i]);
+    }
+
+    // Generate color from glow
+    float colorReactivity = dataBuffer[0].colorReactivity;
+    float3 color = float3(
+        0.5 + 0.5 * sin(totalGlow * 3.0 * colorReactivity),
+        0.5 + 0.5 * cos(totalGlow * 3.0 * colorReactivity),
+        0.5 + 0.5 * sin(totalGlow * 1.5 * colorReactivity)
+    );
+
+    // Output final color
+    Result[id.xy] = float4(color, 1.0);
+}
