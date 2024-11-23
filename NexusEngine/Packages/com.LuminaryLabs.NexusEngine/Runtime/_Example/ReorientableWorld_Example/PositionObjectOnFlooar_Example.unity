@@ -296,6 +296,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5798509574730029045, guid: 0472d7b6e2584b84eabece25d654ad68, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8838615060761210664}
     - targetCorrespondingSourceObject: {fileID: 1625424410957261226, guid: 0472d7b6e2584b84eabece25d654ad68, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
@@ -303,6 +306,42 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 0472d7b6e2584b84eabece25d654ad68, type: 3}
+--- !u!1 &8838615060761210663 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5798509574730029045, guid: 0472d7b6e2584b84eabece25d654ad68, type: 3}
+  m_PrefabInstance: {fileID: 8838615060761210662}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8838615060761210664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8838615060761210663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f08577f60b3f3b64f99519b5060bcd38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  whenToDestroy: 0
+  _runType: 2
+  _currentData:
+    stopCurrentlyRunningSequencesOnUnload: 0
+    sequencesToRun:
+    - sequenceToRun:
+        rid: -2
+      sequenceData:
+        rid: 4270122158786347009
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 4270122158786347009
+      type: {class: BaseVFXPropertyHandlerData, ns: , asm: com.NexusEngine}
+      data:
+        visualEffect: {fileID: 0}
+        PropertyUpdateDefinitions: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
