@@ -15,8 +15,8 @@ public class BaseVFXPropertyHandler : BaseSequence<BaseVFXPropertyHandlerData>
 
     protected override UniTask Initialize(BaseVFXPropertyHandlerData currentData)
     {
-
-        _propertyUpdateDefinitions = currentData.PropertyUpdateDefinitions;
+        _visualEffect = currentData.visualEffect;
+        _propertyUpdateDefinitions = new List<PropertyUpdateDefinition>(currentData.PropertyUpdateDefinitions);
         return UniTask.CompletedTask;
     }
 
